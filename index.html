@@ -1,0 +1,1932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Ecosystem Guide</title>
+<script>
+  // Prevent flash of wrong theme - runs before CSS/body render
+  (function() {
+    var stored = localStorage.getItem('claude-guide-theme');
+    if (stored) {
+      document.documentElement.setAttribute('data-theme', stored);
+    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+  })();
+</script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+  :root {
+    --bg: #09090b;
+    --surface: #111114;
+    --surface2: #19191e;
+    --surface3: #222228;
+    --border: #27272a;
+    --border-hover: #3f3f46;
+    --text: #fafafa;
+    --text-dim: #a1a1aa;
+    --text-muted: #71717a;
+
+    --code: #c084fc;
+    --chat: #38bdf8;
+    --cowork: #34d399;
+
+    --mcp: #fb923c;
+    --skill: #f472b6;
+    --plugin: #a78bfa;
+    --project: #22d3ee;
+    --hook: #f87171;
+    --agent: #4ade80;
+    --connector: #fbbf24;
+  }
+
+  /* ════ LIGHT THEME ════ */
+  [data-theme="light"] {
+    --bg: #f8f9fa;
+    --surface: #ffffff;
+    --surface2: #f0f1f3;
+    --surface3: #e4e5e9;
+    --border: #d4d4d8;
+    --border-hover: #a1a1aa;
+    --text: #18181b;
+    --text-dim: #52525b;
+    --text-muted: #71717a;
+
+    --code: #7c3aed;
+    --chat: #0284c7;
+    --cowork: #059669;
+
+    --mcp: #c2410c;
+    --skill: #be185d;
+    --plugin: #6d28d9;
+    --project: #0891b2;
+    --hook: #b91c1c;
+    --agent: #15803d;
+    --connector: #a16207;
+  }
+
+  /* ════ THEME TRANSITION ════ */
+  html.theme-transition,
+  html.theme-transition *,
+  html.theme-transition *::before,
+  html.theme-transition *::after {
+    transition: background-color 0.4s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease !important;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  /* ════ HERO ════ */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 800px 500px at 25% 30%, rgba(192,132,252,.07), transparent),
+      radial-gradient(ellipse 600px 400px at 75% 50%, rgba(56,189,248,.06), transparent),
+      radial-gradient(ellipse 500px 350px at 50% 75%, rgba(52,211,153,.05), transparent);
+    pointer-events: none;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .4rem 1rem;
+    border-radius: 999px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--text-dim);
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+
+  .hero-badge .pulse {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--cowork);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .4; }
+  }
+
+  .hero h1 {
+    font-size: clamp(2.8rem, 7vw, 5rem);
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+    margin-bottom: 1.25rem;
+    position: relative;
+  }
+
+  .hero h1 .grad {
+    background: linear-gradient(135deg, var(--code), var(--chat), var(--cowork));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero p {
+    font-size: 1.2rem;
+    color: var(--text-dim);
+    max-width: 580px;
+    margin-bottom: 2.5rem;
+    position: relative;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    position: relative;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .7rem 1.5rem;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: .9rem;
+    transition: all .2s;
+    cursor: pointer;
+    border: none;
+  }
+
+  .btn:hover { transform: translateY(-2px); }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--code), var(--chat));
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(192,132,252,.2);
+  }
+
+  .btn-ghost {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  /* ════ NAV ════ */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(9,9,11,.88);
+    backdrop-filter: blur(20px) saturate(1.2);
+    border-bottom: 1px solid var(--border);
+    padding: .65rem 2rem;
+    display: flex;
+    gap: 1.25rem;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  [data-theme="light"] nav {
+    background: rgba(248,249,250,.88);
+  }
+
+  /* ════ THEME TOGGLE ════ */
+  .theme-toggle {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .2s, color .2s, border-color .2s;
+    margin-left: auto;
+    flex-shrink: 0;
+    padding: 0;
+  }
+
+  .theme-toggle:hover {
+    background: var(--surface3);
+    color: var(--text);
+    border-color: var(--border-hover);
+  }
+
+  .theme-toggle svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .theme-toggle .icon-sun { display: none; }
+  .theme-toggle .icon-moon { display: block; }
+
+  [data-theme="light"] .theme-toggle .icon-sun { display: block; }
+  [data-theme="light"] .theme-toggle .icon-moon { display: none; }
+
+  nav a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: .78rem;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    transition: color .2s;
+    padding: .25rem 0;
+  }
+
+  nav a:hover { color: var(--text); }
+
+  /* ════ SECTIONS ════ */
+  .section {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 6rem 2rem;
+  }
+
+  .section-header {
+    margin-bottom: 3rem;
+  }
+
+  .section-header h2 {
+    font-size: 2.5rem;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    margin-bottom: .5rem;
+  }
+
+  .section-header p {
+    color: var(--text-dim);
+    font-size: 1.05rem;
+    max-width: 620px;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0;
+  }
+
+  /* ════ INTERFACE CARDS ════ */
+  .iface-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 900px) { .iface-grid { grid-template-columns: 1fr; } }
+
+  .iface-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color .3s, transform .3s, box-shadow .3s;
+  }
+
+  .iface-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,.3); }
+
+  .iface-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  .iface-card.code::after { background: linear-gradient(90deg, var(--code), transparent); }
+  .iface-card.code:hover { border-color: color-mix(in srgb, var(--code) 40%, transparent); }
+  .iface-card.chat::after { background: linear-gradient(90deg, var(--chat), transparent); }
+  .iface-card.chat:hover { border-color: color-mix(in srgb, var(--chat) 40%, transparent); }
+  .iface-card.cowork::after { background: linear-gradient(90deg, var(--cowork), transparent); }
+  .iface-card.cowork:hover { border-color: color-mix(in srgb, var(--cowork) 40%, transparent); }
+
+  .iface-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .code .iface-icon { background: rgba(192,132,252,.12); color: var(--code); }
+  .chat .iface-icon { background: rgba(56,189,248,.12); color: var(--chat); }
+  .cowork .iface-icon { background: rgba(52,211,153,.12); color: var(--cowork); }
+
+  .iface-card h3 { font-size: 1.3rem; font-weight: 800; margin-bottom: .25rem; }
+
+  .iface-audience {
+    font-size: .72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin-bottom: .75rem;
+  }
+
+  .code .iface-audience { color: var(--code); }
+  .chat .iface-audience { color: var(--chat); }
+  .cowork .iface-audience { color: var(--cowork); }
+
+  .iface-card .desc {
+    color: var(--text-dim);
+    font-size: .88rem;
+    margin-bottom: 1.25rem;
+    line-height: 1.55;
+  }
+
+  .iface-card .launch {
+    font-size: .75rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem;
+  }
+
+  .tag {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: .2rem .6rem;
+    border-radius: 6px;
+    font-size: .72rem;
+    font-weight: 500;
+    color: var(--text-dim);
+  }
+
+  /* ════ CUSTOMIZATION STACK ════ */
+  .stack-visual {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    max-width: 740px;
+    margin: 2.5rem auto 0;
+  }
+
+  .stack-layer {
+    padding: 1.5rem 2rem;
+    border: 1px solid var(--border);
+    position: relative;
+    cursor: pointer;
+    transition: all .3s;
+  }
+
+  .stack-layer:first-child { border-radius: 14px 14px 0 0; }
+  .stack-layer:last-child { border-radius: 0 0 14px 14px; }
+  .stack-layer + .stack-layer { border-top: none; }
+
+  .stack-layer:hover { background: var(--surface2); }
+
+  .stack-layer .layer-label {
+    font-size: .7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin-bottom: .25rem;
+  }
+
+  .stack-layer .layer-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    margin-bottom: .25rem;
+  }
+
+  .stack-layer .layer-desc {
+    font-size: .85rem;
+    color: var(--text-dim);
+  }
+
+  .stack-layer .layer-compat {
+    display: flex;
+    gap: .35rem;
+    margin-top: .6rem;
+  }
+
+  .compat {
+    font-size: .65rem;
+    font-weight: 700;
+    padding: .15rem .5rem;
+    border-radius: 999px;
+    letter-spacing: .02em;
+  }
+
+  .compat.y { background: rgba(74,222,128,.1); color: #4ade80; }
+  .compat.n { background: rgba(113,113,122,.08); color: #52525b; }
+
+  .layer-plugin .layer-label { color: var(--plugin); }
+  .layer-plugin { background: rgba(167,139,250,.03); }
+  .layer-skill .layer-label { color: var(--skill); }
+  .layer-skill { background: rgba(244,114,182,.03); }
+  .layer-mcp .layer-label { color: var(--mcp); }
+  .layer-mcp { background: rgba(251,146,60,.03); }
+
+  /* ════ EXTENSION GRID ════ */
+  .ext-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .ext-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: all .3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ext-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(0,0,0,.25);
+  }
+
+  .ext-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+  }
+
+  .ext-card[data-ext="mcp"]::before { background: var(--mcp); }
+  .ext-card[data-ext="mcp"]:hover { border-color: color-mix(in srgb, var(--mcp) 35%, transparent); }
+  .ext-card[data-ext="skill"]::before { background: var(--skill); }
+  .ext-card[data-ext="skill"]:hover { border-color: color-mix(in srgb, var(--skill) 35%, transparent); }
+  .ext-card[data-ext="plugin"]::before { background: var(--plugin); }
+  .ext-card[data-ext="plugin"]:hover { border-color: color-mix(in srgb, var(--plugin) 35%, transparent); }
+  .ext-card[data-ext="project"]::before { background: var(--project); }
+  .ext-card[data-ext="project"]:hover { border-color: color-mix(in srgb, var(--project) 35%, transparent); }
+  .ext-card[data-ext="hook"]::before { background: var(--hook); }
+  .ext-card[data-ext="hook"]:hover { border-color: color-mix(in srgb, var(--hook) 35%, transparent); }
+  .ext-card[data-ext="agent"]::before { background: var(--agent); }
+  .ext-card[data-ext="agent"]:hover { border-color: color-mix(in srgb, var(--agent) 35%, transparent); }
+  .ext-card[data-ext="connector"]::before { background: var(--connector); }
+  .ext-card[data-ext="connector"]:hover { border-color: color-mix(in srgb, var(--connector) 35%, transparent); }
+
+  .ext-card h4 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: .35rem;
+  }
+
+  .ext-card .ext-desc {
+    font-size: .83rem;
+    color: var(--text-dim);
+    margin-bottom: .75rem;
+    line-height: 1.5;
+  }
+
+  .ext-card .ext-compat {
+    display: flex;
+    gap: .35rem;
+    flex-wrap: wrap;
+  }
+
+  /* ════ MATRIX ════ */
+  .matrix-wrap { overflow-x: auto; }
+
+  .matrix {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .85rem;
+    min-width: 700px;
+  }
+
+  .matrix th, .matrix td {
+    padding: .7rem 1rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .matrix thead th {
+    font-weight: 700;
+    font-size: .72rem;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: var(--text-muted);
+    background: var(--surface);
+    position: sticky;
+    top: 0;
+  }
+
+  .matrix td:first-child {
+    text-align: left;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .matrix tbody tr { transition: background .2s; }
+  .matrix tbody tr:hover td { background: var(--surface2); }
+
+  .chk { color: #4ade80; font-weight: 700; }
+  .x { color: #3f3f46; }
+
+  .matrix .ext-dot-inline {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-right: .5rem;
+    vertical-align: middle;
+  }
+
+  /* ════ TIMELINE ════ */
+  .timeline {
+    position: relative;
+    max-width: 700px;
+    margin: 2rem auto 0;
+    padding-left: 2rem;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border);
+  }
+
+  .tl-item {
+    position: relative;
+    padding-bottom: 2rem;
+    padding-left: 1.5rem;
+  }
+
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: -2rem;
+    top: .45rem;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: var(--bg);
+  }
+
+  .tl-item.highlight::before {
+    border-color: var(--code);
+    background: var(--code);
+    box-shadow: 0 0 8px rgba(192,132,252,.4);
+  }
+
+  .tl-date {
+    font-size: .75rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    margin-bottom: .2rem;
+  }
+
+  .tl-title {
+    font-size: .95rem;
+    font-weight: 700;
+    margin-bottom: .15rem;
+  }
+
+  .tl-desc {
+    font-size: .82rem;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  .tl-tag {
+    display: inline-block;
+    padding: .1rem .45rem;
+    border-radius: 4px;
+    font-size: .68rem;
+    font-weight: 700;
+    margin-top: .35rem;
+  }
+
+  .tl-tag-code { background: rgba(192,132,252,.12); color: var(--code); }
+  .tl-tag-chat { background: rgba(56,189,248,.12); color: var(--chat); }
+  .tl-tag-cowork { background: rgba(52,211,153,.12); color: var(--cowork); }
+  .tl-tag-all { background: rgba(167,139,250,.12); color: var(--plugin); }
+
+  /* ════ DECISION FLOW ════ */
+  .flow-container {
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+    max-width: 740px;
+    margin: 0 auto;
+  }
+
+  .flow-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color .3s;
+  }
+
+  .flow-item:hover { border-color: var(--border-hover); }
+
+  .flow-q {
+    padding: 1rem 1.25rem;
+    font-weight: 700;
+    font-size: .92rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+    gap: 1rem;
+  }
+
+  .flow-q span { flex: 1; }
+
+  .flow-chevron {
+    width: 20px; height: 20px;
+    transition: transform .3s;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  .flow-item.open .flow-chevron { transform: rotate(180deg); }
+
+  .flow-a {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .4s ease;
+  }
+
+  .flow-item.open .flow-a { max-height: 500px; }
+
+  .flow-a-inner {
+    padding: 0 1.25rem 1.25rem;
+    color: var(--text-dim);
+    font-size: .88rem;
+    line-height: 1.6;
+  }
+
+  .flow-a-inner strong { color: var(--text); }
+
+  .rec {
+    display: inline-block;
+    padding: .2rem .6rem;
+    border-radius: 6px;
+    font-size: .75rem;
+    font-weight: 700;
+    margin-top: .5rem;
+    margin-right: .25rem;
+  }
+
+  .rec-mcp { background: rgba(251,146,60,.1); color: var(--mcp); }
+  .rec-skill { background: rgba(244,114,182,.1); color: var(--skill); }
+  .rec-plugin { background: rgba(167,139,250,.1); color: var(--plugin); }
+  .rec-project { background: rgba(34,211,238,.1); color: var(--project); }
+  .rec-hook { background: rgba(248,113,113,.1); color: var(--hook); }
+  .rec-agent { background: rgba(74,222,128,.1); color: var(--agent); }
+  .rec-cowork { background: rgba(52,211,153,.1); color: var(--cowork); }
+  .rec-code { background: rgba(192,132,252,.1); color: var(--code); }
+  .rec-chat { background: rgba(56,189,248,.1); color: var(--chat); }
+
+  /* ════ ARCHITECTURE DIAGRAM ════ */
+  .arch-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    margin: 1.5rem 0;
+    overflow-x: auto;
+  }
+
+  .arch-box pre {
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    font-size: .75rem;
+    line-height: 1.55;
+    color: var(--text-dim);
+    white-space: pre;
+    margin: 0;
+  }
+
+  .arch-box .arch-label {
+    font-size: .75rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    margin-bottom: 1rem;
+  }
+
+  /* ════ DETAIL OVERLAY ════ */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.65);
+    backdrop-filter: blur(12px);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s;
+  }
+
+  .overlay.open { opacity: 1; pointer-events: auto; }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 2.5rem;
+    max-width: 660px;
+    width: 92%;
+    max-height: 82vh;
+    overflow-y: auto;
+    transform: translateY(16px) scale(.98);
+    transition: transform .25s;
+    position: relative;
+  }
+
+  .overlay.open .modal { transform: translateY(0) scale(1); }
+
+  .modal h3 { font-size: 1.45rem; font-weight: 800; margin-bottom: .4rem; }
+  .modal .modal-desc { color: var(--text-dim); font-size: .92rem; margin-bottom: 1.25rem; line-height: 1.55; }
+
+  .modal h4 {
+    font-size: .78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--text-muted);
+    margin: 1.5rem 0 .5rem;
+  }
+
+  .modal ul { list-style: none; }
+
+  .modal ul li {
+    padding: .45rem 0;
+    font-size: .88rem;
+    border-bottom: 1px solid var(--border);
+    line-height: 1.5;
+  }
+
+  .modal ul li:last-child { border-bottom: none; }
+
+  .modal code {
+    background: var(--surface3);
+    padding: .1rem .4rem;
+    border-radius: 4px;
+    font-size: .8rem;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 1rem; right: 1rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .2s;
+  }
+
+  .modal-close:hover { background: var(--surface3); color: var(--text); }
+
+  /* ════ TABS ════ */
+  .tab-bar {
+    display: flex;
+    gap: .5rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: .5rem;
+  }
+
+  .tab-btn {
+    padding: .45rem 1rem;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: .82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s;
+    font-family: inherit;
+  }
+
+  .tab-btn:hover { background: var(--surface2); color: var(--text-dim); }
+  .tab-btn.active { background: var(--surface2); color: var(--text); }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ════ FOOTER ════ */
+  footer {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--text-muted);
+    font-size: .82rem;
+    border-top: 1px solid var(--border);
+  }
+
+  footer a { color: var(--text-dim); }
+
+  /* ════ UTILS ════ */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  .mt-4 { margin-top: 2rem; }
+  .mt-2 { margin-top: 1rem; }
+
+  .info-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+  }
+
+  .info-box h5 {
+    font-size: .85rem;
+    font-weight: 700;
+    margin-bottom: .35rem;
+  }
+
+  .info-box p {
+    font-size: .82rem;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  /* ════ LIGHT THEME OVERRIDES ════ */
+  [data-theme="light"] .hero::before {
+    background:
+      radial-gradient(ellipse 800px 500px at 25% 30%, rgba(124,58,237,.06), transparent),
+      radial-gradient(ellipse 600px 400px at 75% 50%, rgba(2,132,199,.05), transparent),
+      radial-gradient(ellipse 500px 350px at 50% 75%, rgba(5,150,105,.04), transparent);
+  }
+
+  [data-theme="light"] .iface-card:hover {
+    box-shadow: 0 12px 40px rgba(0,0,0,.08);
+  }
+
+  [data-theme="light"] .ext-card:hover {
+    box-shadow: 0 8px 30px rgba(0,0,0,.08);
+  }
+
+  [data-theme="light"] .overlay {
+    background: rgba(0,0,0,.35);
+  }
+
+  [data-theme="light"] .tl-item::before {
+    background: var(--bg);
+  }
+
+  [data-theme="light"] .tl-item.highlight::before {
+    background: var(--code);
+  }
+
+  [data-theme="light"] .compat.y { background: rgba(21,128,61,.1); color: #15803d; }
+  [data-theme="light"] .compat.n { background: rgba(113,113,122,.08); color: #a1a1aa; }
+  [data-theme="light"] .chk { color: #15803d; }
+  [data-theme="light"] .x { color: #d4d4d8; }
+
+  [data-theme="light"] .btn-primary {
+    box-shadow: 0 4px 20px rgba(124,58,237,.15);
+  }
+
+  [data-theme="light"] .btn-ghost {
+    background: #ffffff;
+  }
+
+  [data-theme="light"] .arch-box pre {
+    color: var(--text-dim);
+  }
+
+  [data-theme="light"] .modal code {
+    background: var(--surface2);
+  }
+
+  [data-theme="light"] .rec-mcp { background: rgba(194,65,12,.08); }
+  [data-theme="light"] .rec-skill { background: rgba(190,24,93,.08); }
+  [data-theme="light"] .rec-plugin { background: rgba(109,40,217,.08); }
+  [data-theme="light"] .rec-project { background: rgba(8,145,178,.08); }
+  [data-theme="light"] .rec-hook { background: rgba(185,28,28,.08); }
+  [data-theme="light"] .rec-agent { background: rgba(21,128,61,.08); }
+  [data-theme="light"] .rec-cowork { background: rgba(5,150,105,.08); }
+  [data-theme="light"] .rec-code { background: rgba(124,58,237,.08); }
+  [data-theme="light"] .rec-chat { background: rgba(2,132,199,.08); }
+
+  [data-theme="light"] .tl-tag-code { background: rgba(124,58,237,.1); }
+  [data-theme="light"] .tl-tag-chat { background: rgba(2,132,199,.1); }
+  [data-theme="light"] .tl-tag-cowork { background: rgba(5,150,105,.1); }
+  [data-theme="light"] .tl-tag-all { background: rgba(109,40,217,.1); }
+
+  [data-theme="light"] .code .iface-icon { background: rgba(124,58,237,.1); }
+  [data-theme="light"] .chat .iface-icon { background: rgba(2,132,199,.1); }
+  [data-theme="light"] .cowork .iface-icon { background: rgba(5,150,105,.1); }
+
+  [data-theme="light"] .layer-plugin { background: rgba(109,40,217,.03); }
+  [data-theme="light"] .layer-skill { background: rgba(190,24,93,.03); }
+  [data-theme="light"] .layer-mcp { background: rgba(194,65,12,.03); }
+
+  [data-theme="light"] .stack-layer:hover { background: var(--surface2); }
+
+  [data-theme="light"] .matrix thead th { background: var(--surface2); }
+  [data-theme="light"] .matrix tbody tr:hover td { background: var(--surface2); }
+
+  /* ════ Responsive ════ */
+  @media (max-width: 640px) {
+    .section { padding: 3.5rem 1.25rem; }
+    .ext-grid { grid-template-columns: 1fr; }
+    nav { gap: .75rem; padding: .6rem 1rem; }
+    nav a { font-size: .7rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════ HERO ════════════════ -->
+<section class="hero" id="top">
+  <div class="hero-badge">
+    <div class="pulse"></div>
+    Updated March 2026
+  </div>
+  <h1>The <span class="grad">Claude</span> Ecosystem</h1>
+  <p>Three interfaces. Seven extension points. One open standard. Everything your team needs to know.</p>
+  <div class="hero-actions">
+    <a href="#interfaces" class="btn btn-primary">Explore Interfaces</a>
+    <a href="#stack" class="btn btn-ghost">Customization Stack</a>
+    <a href="ama.html" class="btn btn-ghost" style="border-color:var(--accent);color:var(--accent)">Ask Me Anything</a>
+  </div>
+</section>
+
+<!-- ════════════════ NAV ════════════════ -->
+<nav>
+  <a href="#interfaces">Interfaces</a>
+  <a href="#stack">Stack</a>
+  <a href="#extensions">Extensions</a>
+  <a href="#matrix">Matrix</a>
+  <a href="#architecture">Architecture</a>
+  <a href="#timeline">Timeline</a>
+  <a href="#decide">Which Do I Use?</a>
+  <a href="ama.html" style="color:var(--accent)">AMA</a>
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle light/dark theme" title="Toggle theme">
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="5"/>
+      <line x1="12" y1="1" x2="12" y2="3"/>
+      <line x1="12" y1="21" x2="12" y2="23"/>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+      <line x1="1" y1="12" x2="3" y2="12"/>
+      <line x1="21" y1="12" x2="23" y2="12"/>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+    </svg>
+  </button>
+</nav>
+
+<!-- ════════════════ INTERFACES ════════════════ -->
+<div class="section" id="interfaces">
+  <div class="section-header">
+    <h2>Three Interfaces</h2>
+    <p>Same Claude brain, three different surfaces optimized for different users and workflows.</p>
+  </div>
+
+  <div class="iface-grid">
+
+    <div class="iface-card code">
+      <div class="iface-icon">&#9000;</div>
+      <h3>Claude Code</h3>
+      <div class="iface-audience">For Developers</div>
+      <p class="desc">An agentic CLI for your terminal. Reads your entire codebase, edits multi-file projects, runs commands, creates commits, opens PRs, and ships code autonomously.</p>
+      <div class="launch">Available in Terminal, VS Code, JetBrains, GitHub Actions, GitLab CI</div>
+      <div class="tag-row">
+        <span class="tag">Full filesystem</span>
+        <span class="tag">Git integration</span>
+        <span class="tag">Bash execution</span>
+        <span class="tag">Parallel subagents</span>
+        <span class="tag">Worktree isolation</span>
+        <span class="tag">Extended thinking</span>
+      </div>
+    </div>
+
+    <div class="iface-card chat">
+      <div class="iface-icon">&#128172;</div>
+      <h3>Claude Chat</h3>
+      <div class="iface-audience">For Everyone</div>
+      <p class="desc">The conversational web &amp; desktop app at claude.ai. Upload files, analyze images, search the web, use interactive apps, and work within persistent Projects.</p>
+      <div class="launch">Available at claude.ai (web), macOS, Windows, iOS, Android</div>
+      <div class="tag-row">
+        <span class="tag">File uploads</span>
+        <span class="tag">Web search</span>
+        <span class="tag">Interactive Apps</span>
+        <span class="tag">Connectors (50+)</span>
+        <span class="tag">Projects</span>
+        <span class="tag">Artifacts</span>
+      </div>
+    </div>
+
+    <div class="iface-card cowork">
+      <div class="iface-icon">&#128736;</div>
+      <h3>Claude Cowork</h3>
+      <div class="iface-audience">For Knowledge Workers</div>
+      <p class="desc">A desktop agent for non-developers. Describe an outcome, step away, and return to finished work &mdash; organized files, reports, spreadsheets, presentations.</p>
+      <div class="launch">Launched Jan 2026 &middot; macOS &amp; Windows &middot; Pro/Max/Team/Enterprise</div>
+      <div class="tag-row">
+        <span class="tag">Folder access</span>
+        <span class="tag">Coordinator + sub-agents</span>
+        <span class="tag">11+ plugins</span>
+        <span class="tag">Scheduled tasks</span>
+        <span class="tag">Slash commands</span>
+        <span class="tag">No code required</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ════════════════ CUSTOMIZATION STACK ════════════════ -->
+<div class="section" id="stack">
+  <div class="section-header">
+    <h2>The Customization Stack</h2>
+    <p>Three layers that build on each other. MCP connects to services. Skills teach processes. Plugins package everything for distribution.</p>
+  </div>
+
+  <div class="stack-visual">
+
+    <div class="stack-layer layer-plugin" onclick="openDetail('plugin')">
+      <div class="layer-label">Product Layer</div>
+      <div class="layer-title">Plugins</div>
+      <div class="layer-desc">Complete, installable workflow packages. Bundle skills + connectors + slash commands + sub-agents. One-click install from a marketplace.</div>
+      <div class="layer-compat">
+        <span class="compat y">Code</span>
+        <span class="compat n">Chat</span>
+        <span class="compat y">Cowork</span>
+      </div>
+    </div>
+
+    <div class="stack-layer layer-skill" onclick="openDetail('skill')">
+      <div class="layer-label">Instruction Layer</div>
+      <div class="layer-title">Skills</div>
+      <div class="layer-desc">Portable instruction sets (SKILL.md files) that teach Claude specific processes. Same format works everywhere. Open standard at agentskills.io.</div>
+      <div class="layer-compat">
+        <span class="compat y">Code</span>
+        <span class="compat y">Chat</span>
+        <span class="compat y">Cowork</span>
+      </div>
+    </div>
+
+    <div class="stack-layer layer-mcp" onclick="openDetail('mcp')">
+      <div class="layer-label">Transport Layer</div>
+      <div class="layer-title">MCP Servers &amp; Connectors</div>
+      <div class="layer-desc">Open protocol (JSON-RPC 2.0) connecting Claude to live services &mdash; databases, APIs, SaaS apps. The "USB-C" of AI connectivity.</div>
+      <div class="layer-compat">
+        <span class="compat y">Code</span>
+        <span class="compat y">Chat</span>
+        <span class="compat y">Cowork</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="grid-2 mt-4">
+    <div class="info-box">
+      <h5>Skills are the universal primitive</h5>
+      <p>A skill is a folder with a SKILL.md file. The exact same skill works in Claude Code, Claude Chat, and Cowork without modification. Build once, use everywhere. Launched Oct 2025 as an open standard.</p>
+    </div>
+    <div class="info-box">
+      <h5>Plugins are the distribution unit</h5>
+      <p>Plugins bundle multiple skills, connectors, slash commands, and sub-agents into a single installable package. 11+ official plugins (Sales, Finance, Legal, etc.) plus the ability to build your own.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ════════════════ ALL EXTENSIONS ════════════════ -->
+<div class="section" id="extensions">
+  <div class="section-header">
+    <h2>All Extension Points</h2>
+    <p>Seven ways to customize Claude. Click any card for details.</p>
+  </div>
+
+  <div class="ext-grid">
+
+    <div class="ext-card" data-ext="mcp" onclick="openDetail('mcp')">
+      <h4>MCP Servers / Connectors</h4>
+      <div class="ext-desc">Connect Claude to external tools &amp; APIs. Called "Connectors" in Chat (50+), configured via CLI or <code>.mcp.json</code> in Code. Donated to Linux Foundation Dec 2025.</div>
+      <div class="ext-compat">
+        <span class="compat y">Code</span>
+        <span class="compat y">Chat</span>
+        <span class="compat y">Cowork</span>
+      </div>
+    </div>
+
+    <div class="ext-card" data-ext="skill" onclick="openDetail('skill')">
+      <h4>Skills</h4>
+      <div class="ext-desc">Portable instruction sets (SKILL.md). Claude auto-invokes them based on task context via progressive disclosure. Same open format across all surfaces.</div>
+      <div class="ext-compat">
+        <span class="compat y">Code</span>
+        <span class="compat y">Chat</span>
+        <span class="compat y">Cowork</span>
+      </div>
+    </div>
+
+    <div class="ext-card" data-ext="plugin" onclick="openDetail('plugin')">
+      <h4>Plugins</h4>
+      <div class="ext-desc">Installable bundles of skills + connectors + agents + hooks + slash commands. 15+ official plugins with 85+ skills. Marketplace distribution.</div>
+      <div class="ext-compat">
+        <span class="compat y">Code</span>
+        <span class="compat n">Chat</span>
+        <span class="compat y">Cowork</span>
+      </div>
+    </div>
+
+    <div class="ext-card" data-ext="project" onclick="openDetail('project')">
+      <h4>Projects / CLAUDE.md</h4>
+      <div class="ext-desc">Persistent context. CLAUDE.md files in Code (auto-loaded per repo). Named project spaces with knowledge bases in Chat.</div>
+      <div class="ext-compat">
+        <span class="compat y">Code</span>
+        <span class="compat y">Chat</span>
+        <span class="compat y">Cowork</span>
+      </div>
+    </div>
+
+    <div class="ext-card" data-ext="agent" onclick="openDetail('agent')">
+      <h4>Subagents / Agent Teams</h4>
+      <div class="ext-desc">Specialized AI assistants with isolated context, custom prompts, tool restrictions, and their own models. Run in parallel or in git worktree isolation.</div>
+      <div class="ext-compat">
+        <span class="compat y">Code</span>
+        <span class="compat n">Chat</span>
+        <span class="compat y">Cowork</span>
+      </div>
+    </div>
+
+    <div class="ext-card" data-ext="hook" onclick="openDetail('hook')">
+      <h4>Hooks</h4>
+      <div class="ext-desc">Event-driven automation. Run scripts, call APIs, or invoke Claude at 16+ lifecycle points (PreToolUse, SessionStart, etc.).</div>
+      <div class="ext-compat">
+        <span class="compat y">Code</span>
+        <span class="compat n">Chat</span>
+        <span class="compat n">Cowork</span>
+      </div>
+    </div>
+
+    <div class="ext-card" data-ext="connector" onclick="openDetail('connector')">
+      <h4>Interactive Apps</h4>
+      <div class="ext-desc">Live app interfaces (Slack, Figma, Asana, Canva) embedded directly inside Claude Chat conversations via the MCP Apps extension.</div>
+      <div class="ext-compat">
+        <span class="compat n">Code</span>
+        <span class="compat y">Chat</span>
+        <span class="compat n">Cowork</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ════════════════ MATRIX ════════════════ -->
+<div class="section" id="matrix">
+  <div class="section-header">
+    <h2>Compatibility Matrix</h2>
+    <p>The definitive reference for which extension works where.</p>
+  </div>
+
+  <div class="matrix-wrap">
+    <table class="matrix">
+      <thead>
+        <tr>
+          <th style="text-align:left">Extension</th>
+          <th>Claude Code</th>
+          <th>Claude Chat</th>
+          <th>Claude Cowork</th>
+          <th>Adds Tools?</th>
+          <th>Adds Instructions?</th>
+          <th>Launched</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="ext-dot-inline" style="background:var(--mcp)"></span>MCP / Connectors</td>
+          <td><span class="chk">&#10003;</span></td>
+          <td><span class="chk">&#10003;</span></td>
+          <td><span class="chk">&#10003;</span></td>
+          <td><span class="chk">&#10003;</span></td>
+          <td><span class="x">&#10005;</span></td>
+          <td style="color:var(--text-muted);font-size:.78rem">Nov 2024</td>
+        </tr>
+        <tr>
+          <td><span class="ext-dot-inline" style="background:var(--skill)"></span>Skills</td>
+          <td><span class="chk">&#10003;</span></td>
+          <td><span class="chk">&#10003;</span></td>
+          <td><span class="chk">&#10003;</span></td>
+          <td><span class="x">&#10005;</span></td>
+          <td><span class="chk">&#10003;</span></td>
+          <td style="color:var(--text-muted);font-size:.78rem">Oct 2025</td>
+        </tr>
+        <tr>
+          <td><span class="ext-dot-inline" style="background:var(--plugin)"></span>Plugins</td>
+          <td><span class="chk">&#10003;</span></td>
+          <td><span class="x">&#10005;</span></td>
+          <td><span class="chk">&#10003;</span></td>
+          <td><span class="chk">&#10003;</span></td>
+          <td><span class="chk">&#10003;</span></td>
+          <td style="color:var(--text-muted);font-size:.78rem">Jan 2026</td>
+        </tr>
+        <tr>
+          <td><span class="ext-dot-inline" style="background:var(--project)"></span>Projects / CLAUDE.md</td>
+          <td><span class="chk">&#10003;</span></td>
+          <td><span class="chk">&#10003;</span></td>
+          <td><span class="chk">&#10003;</span></td>
+          <td><span class="x">&#10005;</span></td>
+          <td><span class="chk">&#10003;</span></td>
+          <td style="color:var(--text-muted);font-size:.78rem">2024</td>
+        </tr>
+        <tr>
+          <td><span class="ext-dot-inline" style="background:var(--agent)"></span>Subagents</td>
+          <td><span class="chk">&#10003;</span></td>
+          <td><span class="x">&#10005;</span></td>
+          <td><span class="chk">&#10003;</span></td>
+          <td><span class="x">&#10005;</span></td>
+          <td><span class="chk">&#10003;</span></td>
+          <td style="color:var(--text-muted);font-size:.78rem">2025</td>
+        </tr>
+        <tr>
+          <td><span class="ext-dot-inline" style="background:var(--hook)"></span>Hooks</td>
+          <td><span class="chk">&#10003;</span></td>
+          <td><span class="x">&#10005;</span></td>
+          <td><span class="x">&#10005;</span></td>
+          <td><span class="x">&#10005;</span></td>
+          <td><span class="x">&#10005;</span></td>
+          <td style="color:var(--text-muted);font-size:.78rem">2025</td>
+        </tr>
+        <tr>
+          <td><span class="ext-dot-inline" style="background:var(--connector)"></span>Interactive Apps</td>
+          <td><span class="x">&#10005;</span></td>
+          <td><span class="chk">&#10003;</span></td>
+          <td><span class="x">&#10005;</span></td>
+          <td><span class="chk">&#10003;</span></td>
+          <td><span class="x">&#10005;</span></td>
+          <td style="color:var(--text-muted);font-size:.78rem">Jan 2026</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ════════════════ ARCHITECTURE ════════════════ -->
+<div class="section" id="architecture">
+  <div class="section-header">
+    <h2>Architecture</h2>
+    <p>How all the pieces connect.</p>
+  </div>
+
+  <div class="arch-box">
+    <div class="arch-label">System Overview</div>
+<pre>
+                              YOUR TEAM
+     ┌──────────────────┬─────────────────┬──────────────────┐
+     │    Developer      │ Knowledge Worker│     Everyone     │
+     │        │          │        │        │        │         │
+     │        ▼          │        ▼        │        ▼         │
+     │  ┌──────────┐     │  ┌──────────┐  │  ┌──────────┐    │
+     │  │  Claude   │     │  │  Claude  │  │  │  Claude  │    │
+     │  │   Code    │     │  │  Cowork  │  │  │   Chat   │    │
+     │  │   (CLI)   │     │  │(Desktop) │  │  │(Web/App) │    │
+     │  └────┬─────┘     │  └────┬─────┘  │  └────┬─────┘    │
+     └───────┼───────────┴───────┼────────┴───────┼──────────┘
+             │                   │                │
+             ▼                   ▼                ▼
+     ┌───────────────────────────────────────────────────────┐
+     │              SHARED  EXTENSION  LAYER                 │
+     │                                                       │
+     │  ┌────────────────────────────────────────────────┐   │
+     │  │  PLUGINS  (Product Layer)                      │   │
+     │  │  Bundle: skills + agents + hooks + MCP + cmds  │   │
+     │  └────────────────────────────────────────────────┘   │
+     │  ┌────────────────────────────────────────────────┐   │
+     │  │  SKILLS  (Instruction Layer)                   │   │
+     │  │  Portable SKILL.md files · Open standard       │   │
+     │  └────────────────────────────────────────────────┘   │
+     │  ┌────────────────────────────────────────────────┐   │
+     │  │  MCP / CONNECTORS  (Transport Layer)           │   │
+     │  │  JSON-RPC 2.0 · stdio / HTTP · 50+ built-in   │   │
+     │  └───────────────────────┬────────────────────────┘   │
+     │                          │                            │
+     │  Projects · Hooks · Subagents · Interactive Apps      │
+     └──────────────────────────┼────────────────────────────┘
+                                │
+                                ▼
+     ┌───────────────────────────────────────────────────────┐
+     │               EXTERNAL  SERVICES                      │
+     │  Slack · Asana · GitHub · Postgres · Stripe · Figma   │
+     │  Google Workspace · DocuSign · Salesforce · ...        │
+     └───────────────────────────────────────────────────────┘
+</pre>
+  </div>
+
+  <div class="grid-2">
+    <div class="arch-box">
+      <div class="arch-label">Skill Anatomy</div>
+<pre>
+my-skill/
+├── SKILL.md          ← Instructions + YAML frontmatter
+├── template.xlsx     ← Supporting files
+├── examples/         ← Reference examples
+└── scripts/
+    └── validate.sh   ← Helper scripts
+
+── SKILL.md frontmatter ──
+---
+name: quarterly-report
+description: Generate quarterly financial reports
+allowed-tools: Read, Write, Bash
+model: opus
+---
+# Instructions
+1. Read the raw data from ...
+2. Calculate metrics ...
+3. Generate formatted report ...
+</pre>
+    </div>
+
+    <div class="arch-box">
+      <div class="arch-label">Plugin Anatomy</div>
+<pre>
+my-plugin/
+├── .claude-plugin/
+│   └── plugin.json   ← Manifest (name, version, etc.)
+├── skills/
+│   ├── deploy/
+│   │   └── SKILL.md  ← /my-plugin:deploy
+│   └── review/
+│       └── SKILL.md  ← /my-plugin:review
+├── agents/
+│   └── qa-bot.md     ← Custom subagent
+├── hooks/
+│   └── hooks.json    ← Event automation
+├── .mcp.json          ← Bundled MCP servers
+├── .lsp.json          ← Code intelligence
+└── settings.json      ← Default settings
+</pre>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ════════════════ TIMELINE ════════════════ -->
+<div class="section" id="timeline">
+  <div class="section-header">
+    <h2>Product Timeline</h2>
+    <p>Major launches from the last 8 months.</p>
+  </div>
+
+  <div class="timeline">
+
+    <div class="tl-item">
+      <div class="tl-date">Jul 14, 2025</div>
+      <div class="tl-title">Connectors launch in Claude Chat</div>
+      <div class="tl-desc">One-click MCP integrations: Jira, Confluence, Asana, Slack, Sentry, Linear, and more.</div>
+      <span class="tl-tag tl-tag-chat">Chat</span>
+    </div>
+
+    <div class="tl-item highlight">
+      <div class="tl-date">Oct 16, 2025</div>
+      <div class="tl-title">Agent Skills introduced</div>
+      <div class="tl-desc">Skills launch simultaneously across Claude Chat, Claude Code, and the API. Same SKILL.md format everywhere. Built-in skills for Excel, PowerPoint, Word, PDFs.</div>
+      <span class="tl-tag tl-tag-all">All Surfaces</span>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-date">Nov 21, 2025</div>
+      <div class="tl-title">MCP Apps Extension</div>
+      <div class="tl-desc">Co-developed with OpenAI. MCP servers can now render interactive UIs (sandboxed HTML iframes) inside AI clients.</div>
+      <span class="tl-tag tl-tag-all">Ecosystem</span>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-date">Dec 9, 2025</div>
+      <div class="tl-title">MCP donated to Linux Foundation</div>
+      <div class="tl-desc">Anthropic donates MCP to the Agentic AI Foundation (AAIF), co-founded with Block and OpenAI. Backed by Google, Microsoft, AWS.</div>
+      <span class="tl-tag tl-tag-all">Ecosystem</span>
+    </div>
+
+    <div class="tl-item highlight">
+      <div class="tl-date">Dec 18, 2025</div>
+      <div class="tl-title">Skills become an open standard</div>
+      <div class="tl-desc">Published at agentskills.io. Organization-wide skill management for Team/Enterprise. Partner directory: Atlassian, Canva, Figma, Notion, Ramp, Sentry.</div>
+      <span class="tl-tag tl-tag-all">All Surfaces</span>
+    </div>
+
+    <div class="tl-item highlight">
+      <div class="tl-date">Jan 12, 2026</div>
+      <div class="tl-title">Claude Cowork launches</div>
+      <div class="tl-desc">Research preview for Max subscribers on macOS. "Claude Code without the code" &mdash; a GUI agent for knowledge work.</div>
+      <span class="tl-tag tl-tag-cowork">Cowork</span>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-date">Jan 26, 2026</div>
+      <div class="tl-title">Interactive Apps in Claude Chat</div>
+      <div class="tl-desc">Slack, Figma, Asana, Canva, Box, and Clay embedded directly in conversations via MCP Apps.</div>
+      <span class="tl-tag tl-tag-chat">Chat</span>
+    </div>
+
+    <div class="tl-item highlight">
+      <div class="tl-date">Jan 30, 2026</div>
+      <div class="tl-title">Plugins launch for Cowork</div>
+      <div class="tl-desc">11 open-source plugins: Productivity, Enterprise Search, Sales, Finance, Data, Legal, Marketing, Customer Support, and more. 85+ skills, 69+ commands.</div>
+      <span class="tl-tag tl-tag-cowork">Cowork</span>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-date">Feb 5, 2026</div>
+      <div class="tl-title">Claude Opus 4.6 released</div>
+      <div class="tl-desc">Latest flagship model powering all three interfaces.</div>
+      <span class="tl-tag tl-tag-all">All Surfaces</span>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-date">Feb 24, 2026</div>
+      <div class="tl-title">Enterprise Cowork expansion</div>
+      <div class="tl-desc">12+ new connectors (Google Workspace, DocuSign, FactSet, etc.) plus department-specific plugins for HR, Design, Engineering, Operations.</div>
+      <span class="tl-tag tl-tag-cowork">Cowork</span>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-date">Mar 6, 2026</div>
+      <div class="tl-title">Claude Marketplace (Preview)</div>
+      <div class="tl-desc">Enterprise marketplace: GitLab, Harvey, Lovable, Replit, Rogo, Snowflake available through Anthropic spend commitments.</div>
+      <span class="tl-tag tl-tag-all">Ecosystem</span>
+    </div>
+
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ════════════════ DECISION HELPER ════════════════ -->
+<div class="section" id="decide">
+  <div class="section-header">
+    <h2>Which Should I Use?</h2>
+    <p>Common scenarios mapped to the right interface and extension.</p>
+  </div>
+
+  <div class="flow-container">
+
+    <div class="flow-item" onclick="toggleFlow(this)">
+      <div class="flow-q">
+        <span>"I want Claude to talk to Slack / Asana / our database"</span>
+        <svg class="flow-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+      </div>
+      <div class="flow-a"><div class="flow-a-inner">
+        Connect Claude to external services using <strong>MCP Servers</strong> (in Code) or <strong>Connectors</strong> (in Chat). Both use the same protocol. 50+ pre-built connectors available in Chat; thousands of community MCP servers for Code.<br>
+        <span class="rec rec-mcp">MCP Server / Connector</span>
+      </div></div>
+    </div>
+
+    <div class="flow-item" onclick="toggleFlow(this)">
+      <div class="flow-q">
+        <span>"I want Claude to generate Excel reports in a specific format"</span>
+        <svg class="flow-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+      </div>
+      <div class="flow-a"><div class="flow-a-inner">
+        Create a <strong>Skill</strong> with your report template and formatting instructions. Skills work across all three interfaces &mdash; the same SKILL.md file will work whether your team uses Chat, Code, or Cowork.<br>
+        <span class="rec rec-skill">Skill</span>
+      </div></div>
+    </div>
+
+    <div class="flow-item" onclick="toggleFlow(this)">
+      <div class="flow-q">
+        <span>"I want a reusable /deploy command for my dev team"</span>
+        <svg class="flow-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+      </div>
+      <div class="flow-a"><div class="flow-a-inner">
+        Create a <strong>Skill</strong> at <code>.claude/skills/deploy/SKILL.md</code> and check it into your repo. For distribution across multiple repos, bundle it in a <strong>Plugin</strong> and host on GitHub.<br>
+        <span class="rec rec-skill">Skill</span>
+        <span class="rec rec-plugin">or Plugin</span>
+      </div></div>
+    </div>
+
+    <div class="flow-item" onclick="toggleFlow(this)">
+      <div class="flow-q">
+        <span>"Claude should always know our coding conventions"</span>
+        <svg class="flow-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+      </div>
+      <div class="flow-a"><div class="flow-a-inner">
+        In Code: put conventions in <strong>CLAUDE.md</strong> at your repo root (auto-loaded every session). In Chat: create a <strong>Project</strong> with custom instructions. In Cowork: use <strong>folder-specific instructions</strong>.<br>
+        <span class="rec rec-project">Project / CLAUDE.md</span>
+      </div></div>
+    </div>
+
+    <div class="flow-item" onclick="toggleFlow(this)">
+      <div class="flow-q">
+        <span>"I want to auto-lint code before Claude commits"</span>
+        <svg class="flow-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+      </div>
+      <div class="flow-a"><div class="flow-a-inner">
+        Set up a <strong>Hook</strong> on <code>PreToolUse</code> or <code>PostToolUse</code> events. Hooks run shell scripts, call APIs, or invoke Claude at 16+ lifecycle points. Claude Code only.<br>
+        <span class="rec rec-hook">Hook</span>
+        <span class="rec rec-code">Code only</span>
+      </div></div>
+    </div>
+
+    <div class="flow-item" onclick="toggleFlow(this)">
+      <div class="flow-q">
+        <span>"Our finance team wants Claude to help with reconciliation"</span>
+        <svg class="flow-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+      </div>
+      <div class="flow-a"><div class="flow-a-inner">
+        Install the <strong>Finance Plugin</strong> in Cowork from the Anthropic marketplace. One-click install, includes specialized skills for journal entries, reconciliation, variance analysis. For Chat users, the same skills are available individually.<br>
+        <span class="rec rec-plugin">Plugin (Cowork)</span>
+        <span class="rec rec-skill">or Skills (Chat)</span>
+      </div></div>
+    </div>
+
+    <div class="flow-item" onclick="toggleFlow(this)">
+      <div class="flow-q">
+        <span>"I need Claude to process 200 invoices while I'm away"</span>
+        <svg class="flow-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+      </div>
+      <div class="flow-a"><div class="flow-a-inner">
+        <strong>Claude Cowork</strong> is built for autonomous file tasks. Grant it folder access, describe the task, and step away. It uses a coordinator + sub-agent model to parallelize work. You can even schedule recurring tasks.<br>
+        <span class="rec rec-cowork">Cowork</span>
+      </div></div>
+    </div>
+
+    <div class="flow-item" onclick="toggleFlow(this)">
+      <div class="flow-q">
+        <span>"I want to share a full toolkit across my engineering org"</span>
+        <svg class="flow-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+      </div>
+      <div class="flow-a"><div class="flow-a-inner">
+        Build a <strong>Plugin</strong> that bundles your team's skills, subagents, hooks, and MCP configs. Host on a GitHub marketplace repo. For org-wide enforcement, use <strong>managed settings</strong> and <strong>managed-mcp.json</strong>.<br>
+        <span class="rec rec-plugin">Plugin</span>
+      </div></div>
+    </div>
+
+    <div class="flow-item" onclick="toggleFlow(this)">
+      <div class="flow-q">
+        <span>"I want to use Figma/Slack inside a Claude conversation"</span>
+        <svg class="flow-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+      </div>
+      <div class="flow-a"><div class="flow-a-inner">
+        <strong>Interactive Apps</strong> in Claude Chat embed live app interfaces directly in your conversation. Built on the MCP Apps extension. Currently available for Slack, Figma, Asana, Canva, Box, Clay, and more.<br>
+        <span class="rec rec-chat">Interactive Apps (Chat)</span>
+      </div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════ DETAIL OVERLAY ════════════════ -->
+<div class="overlay" id="overlay" onclick="closeModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="document.getElementById('overlay').classList.remove('open')">&times;</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<!-- ════════════════ FOOTER ════════════════ -->
+<footer>
+  Internal team reference &middot; Claude Ecosystem Guide &middot; March 2026<br>
+  Sources: <a href="https://docs.anthropic.com" target="_blank">docs.anthropic.com</a> &middot;
+  <a href="https://code.claude.com/docs" target="_blank">code.claude.com</a> &middot;
+  <a href="https://support.claude.com" target="_blank">support.claude.com</a> &middot;
+  <a href="https://agentskills.io" target="_blank">agentskills.io</a>
+</footer>
+
+<script>
+const details = {
+  mcp: {
+    title: 'MCP Servers & Connectors',
+    color: 'var(--mcp)',
+    desc: 'The Model Context Protocol is an open standard (JSON-RPC 2.0) connecting Claude to external tools and services. In Claude Chat these appear as "Connectors" (50+ pre-built). In Claude Code they\'re configured via CLI or config files. Donated to the Linux Foundation\'s Agentic AI Foundation in Dec 2025.',
+    sections: [
+      { heading: 'How It Works', items: [
+        'Server exposes tools via JSON-RPC over stdio or HTTP',
+        'Claude discovers available tools at session start (or on-demand via Tool Search)',
+        'Claude calls tools as needed &mdash; results flow back into context',
+        'MCP Apps extension enables interactive UI rendering (sandboxed iframes)'
+      ]},
+      { heading: 'In Claude Chat', items: [
+        'Called <strong>Connectors</strong> &mdash; Settings &rarr; Connectors',
+        '50+ pre-built: Jira, Confluence, Slack, Asana, Linear, Sentry, etc.',
+        '<strong>Interactive Apps</strong>: live Figma, Slack, Canva embedded in conversations'
+      ]},
+      { heading: 'In Claude Code', items: [
+        '<code>claude mcp add my-server -- npx my-mcp-server</code>',
+        'Scopes: local, project (<code>.mcp.json</code>), user, managed (org-wide)',
+        'Supports OAuth 2.0, custom auth headers, env var expansion',
+        'Tool Search: auto-defers loading when tools exceed 10% context'
+      ]},
+      { heading: 'In Claude Cowork', items: [
+        'Connectors configured in Customize menu',
+        'Bundled within plugins (e.g., Salesforce connector in Sales plugin)',
+        'Users control which connectors are active and internet access'
+      ]}
+    ]
+  },
+  skill: {
+    title: 'Skills',
+    color: 'var(--skill)',
+    desc: 'Skills are the universal primitive of the Claude ecosystem. A skill is a folder with a SKILL.md file containing YAML frontmatter + markdown instructions. The same skill works in Claude Code, Claude Chat, and Cowork without modification. Published as an open standard at agentskills.io (Dec 2025).',
+    sections: [
+      { heading: 'How It Works (All Surfaces)', items: [
+        'Claude reads skill descriptions at startup (progressive disclosure)',
+        'Full skill content loads only when Claude determines relevance',
+        'Model-invoked: Claude auto-activates skills based on task context',
+        'Same SKILL.md format everywhere &mdash; build once, use everywhere'
+      ]},
+      { heading: 'In Claude Chat', items: [
+        'Toggle skills on/off in <strong>Settings &rarr; Capabilities &rarr; Skills</strong>',
+        'Built-in: Excel generation, PowerPoint, Word docs, fillable PDFs, algorithmic art',
+        'Create custom skills using the "skill-creator" skill in conversation',
+        'Org-managed skills for Team/Enterprise (Dec 2025 update)'
+      ]},
+      { heading: 'In Claude Code', items: [
+        'Project: <code>.claude/skills/my-skill/SKILL.md</code>',
+        'Personal: <code>~/.claude/skills/my-skill/SKILL.md</code>',
+        'Also invocable via <code>/skill-name</code> slash command',
+        'Extra features: frontmatter for model override, tool restrictions, subagent context, hooks'
+      ]},
+      { heading: 'In Claude Cowork', items: [
+        'Skills bundled inside plugins',
+        'Also available standalone via Customize menu',
+        'Same SKILL.md format as Chat and Code'
+      ]},
+      { heading: 'Partner Skills Directory', items: [
+        'Atlassian, Canva, Cloudflare, Figma, Notion, Ramp, Sentry',
+        'Open standard means any vendor can publish skills'
+      ]}
+    ]
+  },
+  plugin: {
+    title: 'Plugins',
+    color: 'var(--plugin)',
+    desc: 'Plugins are the distribution unit. They package skills + connectors + slash commands + sub-agents + hooks into installable bundles. In Cowork: 15+ official plugins for knowledge work (Sales, Finance, Legal, etc.). In Code: dev-focused plugins (code review, testing, CI/CD). Not directly available in Chat (Chat uses Skills + Connectors individually).',
+    sections: [
+      { heading: 'What Plugins Bundle', items: [
+        'Skills (SKILL.md files &rarr; slash commands)',
+        'Sub-agents (custom AI assistants)',
+        'Hooks (event-driven automation)',
+        'MCP server / connector configs',
+        'LSP servers (code intelligence)',
+        'Slash commands and default settings'
+      ]},
+      { heading: 'In Claude Cowork (Primary Home)', items: [
+        'Customize menu &rarr; Browse Plugins &rarr; Install',
+        '11+ official: Productivity, Sales, Finance, Legal, Data, Marketing, HR, etc.',
+        'Partner plugins: LSEG, S&P Global, FactSet, Morningstar, PitchBook',
+        '85+ skills, 69+ slash commands across official plugins'
+      ]},
+      { heading: 'In Claude Code', items: [
+        'Install: <code>/plugin install &lt;name&gt;</code>',
+        'Dev-focused: TypeScript LSP, Python LSP, code review, frontend design',
+        'Namespace isolation: <code>/my-plugin:skill-name</code>',
+        'Manifest: <code>.claude-plugin/plugin.json</code>'
+      ]},
+      { heading: 'Distribution', items: [
+        'Anthropic & Partners marketplace',
+        'Organization private marketplaces',
+        'GitHub repositories',
+        'Open-source: github.com/anthropics/knowledge-work-plugins'
+      ]}
+    ]
+  },
+  project: {
+    title: 'Projects / CLAUDE.md',
+    color: 'var(--project)',
+    desc: 'Persistent context that survives across sessions. In Code: CLAUDE.md files auto-loaded per repo. In Chat: named project spaces with uploaded files and custom instructions. In Cowork: folder-specific and global instructions.',
+    sections: [
+      { heading: 'In Claude Code (CLAUDE.md)', items: [
+        '<code>CLAUDE.md</code> at repo root &mdash; auto-loaded every session',
+        '<code>.claude/CLAUDE.md</code> for additional context',
+        '<code>CLAUDE.local.md</code> for personal overrides (gitignored)',
+        '<code>.claude/rules/</code> directory for modular path-specific rules',
+        'Import files with <code>@path/to/file</code> syntax',
+        'Load order: Managed &gt; Project &gt; User'
+      ]},
+      { heading: 'In Claude Chat (Projects)', items: [
+        'Create named projects in sidebar',
+        'Upload files as persistent knowledge base',
+        'Set custom instructions per project',
+        'Available on Pro/Max/Team/Enterprise plans'
+      ]},
+      { heading: 'In Claude Cowork', items: [
+        '<strong>Global instructions</strong>: standing preferences applied across all sessions',
+        '<strong>Folder-specific instructions</strong>: context applied when working in specific directories',
+        'Set in Customize menu'
+      ]}
+    ]
+  },
+  agent: {
+    title: 'Subagents & Agent Teams',
+    color: 'var(--agent)',
+    desc: 'Specialized AI assistants with their own isolated context, custom prompts, tool restrictions, and models. Claude Code has built-in agents (Explore, Plan) plus custom agent support. Cowork uses a coordinator + sub-agent architecture for parallel work.',
+    sections: [
+      { heading: 'In Claude Code', items: [
+        'Built-in: <strong>Explore</strong> (fast read-only, Haiku), <strong>Plan</strong> (research), <strong>general-purpose</strong>',
+        'Custom agents: <code>.claude/agents/my-agent.md</code>',
+        'Frontmatter: model, tools, permissions, memory, hooks, skills',
+        'Run in foreground/background, with worktree isolation',
+        '<strong>Agent Teams</strong>: parallel agents with independent contexts and communication'
+      ]},
+      { heading: 'In Claude Cowork', items: [
+        'Coordinator decomposes tasks into parallel sub-agent jobs',
+        'Example: one agent extracts data, another synthesizes, third assembles output',
+        'Coordinator merges outputs and presents draft for review',
+        'Sub-agents bundled within plugins'
+      ]},
+      { heading: 'Configuration (Code)', items: [
+        '<code>name</code>, <code>description</code> (required)',
+        '<code>tools</code> / <code>disallowedTools</code>: control available tools',
+        '<code>model</code>: sonnet, opus, haiku, or inherit',
+        '<code>memory</code>: persistent cross-session knowledge',
+        '<code>isolation: worktree</code>: git worktree isolation',
+        '<code>skills</code>: preload skills into agent context'
+      ]}
+    ]
+  },
+  hook: {
+    title: 'Hooks',
+    color: 'var(--hook)',
+    desc: 'Deterministic, event-driven automation in Claude Code. Run shell scripts, call HTTP endpoints, invoke Claude prompts, or delegate to subagents at 16+ lifecycle points. Not available in Chat or Cowork.',
+    sections: [
+      { heading: 'Hook Events (16+)', items: [
+        '<code>SessionStart</code> / <code>SessionEnd</code>',
+        '<code>UserPromptSubmit</code> &mdash; before Claude processes input',
+        '<code>PreToolUse</code> / <code>PostToolUse</code> / <code>PostToolUseFailure</code>',
+        '<code>PermissionRequest</code> &mdash; custom approval logic',
+        '<code>SubagentStart</code> / <code>SubagentStop</code>',
+        '<code>PreCompact</code>, <code>ConfigChange</code>, <code>WorktreeCreate</code>, and more'
+      ]},
+      { heading: 'Hook Types', items: [
+        '<strong>Command:</strong> run a shell script (exit 0 = allow, exit 2 = block)',
+        '<strong>HTTP:</strong> POST to a remote endpoint',
+        '<strong>Prompt:</strong> single-turn LLM evaluation',
+        '<strong>Agent:</strong> multi-turn agentic verification'
+      ]},
+      { heading: 'Configuration', items: [
+        '<code>~/.claude/settings.json</code> (user-wide)',
+        '<code>.claude/settings.json</code> (project-wide)',
+        'Skill/agent frontmatter (component-scoped)',
+        'Regex matchers: <code>"matcher": "Edit|Write"</code>',
+        'Supports async hooks (background, non-blocking)'
+      ]},
+      { heading: 'Example Use Cases', items: [
+        'Auto-lint files after every edit',
+        'Block commits to protected branches',
+        'Log all tool usage for compliance',
+        'Validate user prompts before processing',
+        'Notify Slack when a session starts'
+      ]}
+    ]
+  },
+  connector: {
+    title: 'Interactive Apps',
+    color: 'var(--connector)',
+    desc: 'Live application interfaces embedded directly inside Claude Chat conversations. Built on the MCP Apps extension (Nov 2025), these render sandboxed HTML iframes letting you interact with external apps without leaving Claude.',
+    sections: [
+      { heading: 'How It Works', items: [
+        'MCP Apps extension renders interactive UIs via sandboxed iframes',
+        'Claude can read from and write to the embedded app',
+        'Bidirectional: you interact with the app, Claude sees the results'
+      ]},
+      { heading: 'Available Apps (Jan 2026+)', items: [
+        'Slack &mdash; read/send messages in channels',
+        'Figma &mdash; view and discuss designs',
+        'Asana &mdash; manage tasks and projects',
+        'Canva &mdash; create and edit designs',
+        'Box &mdash; browse and manage files',
+        'Clay &mdash; CRM and prospecting'
+      ]},
+      { heading: 'Availability', items: [
+        'Claude Chat only (claude.ai web interface)',
+        'Not available in Claude Code or Cowork',
+        'Requires connector to be enabled in Settings'
+      ]}
+    ]
+  }
+};
+
+function openDetail(key) {
+  const d = details[key];
+  const overlay = document.getElementById('overlay');
+  let html = `<h3 style="color:${d.color}">${d.title}</h3><p class="modal-desc">${d.desc}</p>`;
+  d.sections.forEach(s => {
+    html += `<h4>${s.heading}</h4><ul>`;
+    s.items.forEach(i => html += `<li>${i}</li>`);
+    html += `</ul>`;
+  });
+  document.getElementById('modalContent').innerHTML = html;
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('overlay')) {
+    document.getElementById('overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.getElementById('overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+});
+
+function toggleFlow(el) {
+  el.classList.toggle('open');
+}
+
+// ════ THEME TOGGLE ════
+(function() {
+  const html = document.documentElement;
+  const stored = localStorage.getItem('claude-guide-theme');
+
+  // Determine initial theme
+  if (stored) {
+    html.setAttribute('data-theme', stored);
+  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+    html.setAttribute('data-theme', 'light');
+  }
+  // else: no attribute = dark (default)
+
+  // Listen for system preference changes (only if no stored preference)
+  window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', function(e) {
+    if (!localStorage.getItem('claude-guide-theme')) {
+      html.setAttribute('data-theme', e.matches ? 'light' : 'dark');
+    }
+  });
+
+  // Toggle button
+  document.getElementById('themeToggle').addEventListener('click', function() {
+    html.classList.add('theme-transition');
+    const current = html.getAttribute('data-theme');
+    const next = current === 'light' ? 'dark' : 'light';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('claude-guide-theme', next);
+
+    // Remove transition class after animation completes
+    setTimeout(function() {
+      html.classList.remove('theme-transition');
+    }, 450);
+  });
+})();
+</script>
+
+</body>
+</html>

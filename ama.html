@@ -1,0 +1,2816 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Ecosystem AMA</title>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+  :root {
+    --bg: #09090b;
+    --surface: #111114;
+    --surface2: #18181b;
+    --surface3: #27272a;
+    --border: #27272a;
+    --text: #fafafa;
+    --text-dim: #a1a1aa;
+    --text-muted: #71717a;
+    --accent: #a78bfa;
+    --accent2: #c084fc;
+    --user-bg: #6d28d9;
+    --bot-bg: #18181b;
+    --green: #34d399;
+    --blue: #38bdf8;
+    --orange: #fb923c;
+    --pink: #f472b6;
+    --red: #f87171;
+    --yellow: #fbbf24;
+  }
+
+  /* ── LIGHT MODE OVERRIDES ── */
+  html[data-theme="light"] {
+    --bg: #f5f5f7;
+    --surface: #ffffff;
+    --surface2: #eeeef0;
+    --surface3: #dddde0;
+    --border: #d4d4d8;
+    --text: #18181b;
+    --text-dim: #3f3f46;
+    --text-muted: #71717a;
+    --accent: #7c3aed;
+    --accent2: #9333ea;
+    --user-bg: #7c3aed;
+    --bot-bg: #e8e8ec;
+    --green: #059669;
+    --blue: #0284c7;
+    --orange: #ea580c;
+    --pink: #db2777;
+    --red: #dc2626;
+    --yellow: #ca8a04;
+  }
+
+  /* ── SMOOTH TRANSITIONS ── */
+  html.theme-transition,
+  html.theme-transition *,
+  html.theme-transition *::before,
+  html.theme-transition *::after {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease !important;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── HEADER ── */
+  header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(9,9,11,.92);
+    backdrop-filter: blur(16px);
+    flex-shrink: 0;
+  }
+
+  .header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .header-left h1 {
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  .header-left h1 span { color: var(--accent); }
+
+  .header-left p {
+    font-size: .78rem;
+    color: var(--text-muted);
+    margin-top: .15rem;
+  }
+
+  .header-right {
+    display: flex;
+    gap: .5rem;
+  }
+
+  .back-link {
+    font-size: .78rem;
+    color: var(--text-dim);
+    text-decoration: none;
+    padding: .35rem .75rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    transition: all .2s;
+  }
+
+  .back-link:hover { background: var(--surface2); color: var(--text); }
+
+  /* ── CATEGORIES ── */
+  .cats-bar {
+    padding: .75rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    flex-shrink: 0;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .cats-inner {
+    display: flex;
+    gap: .4rem;
+    max-width: 900px;
+    margin: 0 auto;
+    min-width: max-content;
+  }
+
+  .cat-pill {
+    padding: .3rem .7rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: .72rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s;
+    white-space: nowrap;
+    font-family: inherit;
+  }
+
+  .cat-pill:hover { background: var(--surface2); color: var(--text-dim); border-color: var(--surface3); }
+  .cat-pill.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  /* ── CHAT AREA ── */
+  .chat-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+    scroll-behavior: smooth;
+  }
+
+  .chat-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  /* ── MESSAGES ── */
+  .msg {
+    display: flex;
+    gap: .65rem;
+    max-width: 85%;
+    animation: fadeUp .3s ease;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .msg.bot { align-self: flex-start; }
+  .msg.user { align-self: flex-end; flex-direction: row-reverse; }
+
+  .msg-avatar {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .8rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .bot .msg-avatar { background: rgba(167,139,250,.12); color: var(--accent); }
+  .user .msg-avatar { background: rgba(99,102,241,.2); color: #818cf8; }
+
+  .msg-bubble {
+    padding: .85rem 1.1rem;
+    border-radius: 14px;
+    font-size: .88rem;
+    line-height: 1.6;
+  }
+
+  .bot .msg-bubble {
+    background: var(--bot-bg);
+    border: 1px solid var(--border);
+    border-bottom-left-radius: 4px;
+    color: var(--text);
+  }
+
+  .user .msg-bubble {
+    background: var(--user-bg);
+    border-bottom-right-radius: 4px;
+    color: #fff;
+  }
+
+  .msg-bubble p { margin-bottom: .5rem; }
+  .msg-bubble p:last-child { margin-bottom: 0; }
+
+  .msg-bubble code {
+    background: rgba(255,255,255,.08);
+    padding: .1rem .35rem;
+    border-radius: 4px;
+    font-size: .82rem;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+  }
+
+  .msg-bubble pre {
+    background: rgba(0,0,0,.3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: .75rem 1rem;
+    overflow-x: auto;
+    margin: .5rem 0;
+    font-size: .8rem;
+    line-height: 1.5;
+  }
+
+  .msg-bubble pre code {
+    background: none;
+    padding: 0;
+    font-size: inherit;
+  }
+
+  .msg-bubble ul, .msg-bubble ol {
+    padding-left: 1.25rem;
+    margin: .4rem 0;
+  }
+
+  .msg-bubble li { margin-bottom: .25rem; }
+
+  .msg-bubble strong { color: #fff; font-weight: 700; }
+  .bot .msg-bubble strong { color: var(--text); }
+
+  .msg-bubble a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .msg-bubble h1, .msg-bubble h2, .msg-bubble h3, .msg-bubble h4 {
+    font-size: .92rem;
+    font-weight: 700;
+    margin: .75rem 0 .35rem;
+  }
+
+  .msg-bubble h1:first-child, .msg-bubble h2:first-child, .msg-bubble h3:first-child {
+    margin-top: 0;
+  }
+
+  /* ── TYPING INDICATOR ── */
+  .typing-dots {
+    display: flex;
+    gap: 4px;
+    padding: .85rem 1.1rem;
+  }
+
+  .typing-dots span {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    animation: bounce 1.4s infinite;
+  }
+
+  .typing-dots span:nth-child(2) { animation-delay: .2s; }
+  .typing-dots span:nth-child(3) { animation-delay: .4s; }
+
+  @keyframes bounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: .4; }
+    30% { transform: translateY(-6px); opacity: 1; }
+  }
+
+  /* ── SUGGESTED QUESTIONS ── */
+  .suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem;
+    margin-top: .5rem;
+  }
+
+  .sug-chip {
+    padding: .35rem .7rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-dim);
+    font-size: .78rem;
+    cursor: pointer;
+    transition: all .2s;
+    font-family: inherit;
+    text-align: left;
+    line-height: 1.4;
+  }
+
+  .sug-chip:hover {
+    background: var(--surface2);
+    border-color: var(--accent);
+    color: var(--text);
+  }
+
+  /* ── "DID YOU MEAN" ── */
+  .dym-list {
+    list-style: none;
+    margin-top: .5rem;
+  }
+
+  .dym-list li {
+    padding: .4rem .65rem;
+    margin: .25rem 0;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    font-size: .84rem;
+    transition: all .2s;
+    color: var(--text-dim);
+  }
+
+  .dym-list li:hover {
+    background: var(--surface2);
+    border-color: var(--accent);
+    color: var(--text);
+  }
+
+  /* ── INPUT BAR ── */
+  .input-bar {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border);
+    background: rgba(9,9,11,.95);
+    backdrop-filter: blur(16px);
+    flex-shrink: 0;
+  }
+
+  .input-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    gap: .5rem;
+    align-items: flex-end;
+  }
+
+  .input-field {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: .7rem 1rem;
+    color: var(--text);
+    font-size: .88rem;
+    font-family: inherit;
+    outline: none;
+    resize: none;
+    min-height: 42px;
+    max-height: 120px;
+    line-height: 1.5;
+    transition: border-color .2s;
+  }
+
+  .input-field::placeholder { color: var(--text-muted); }
+  .input-field:focus { border-color: var(--accent); }
+
+  .send-btn {
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    border: none;
+    background: var(--accent);
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .2s;
+    flex-shrink: 0;
+  }
+
+  .send-btn:hover { background: var(--accent2); transform: scale(1.05); }
+  .send-btn:disabled { opacity: .4; cursor: default; transform: none; }
+
+  .send-btn svg { width: 18px; height: 18px; }
+
+  /* ── API KEY SECTION ── */
+  .api-section {
+    margin-top: .75rem;
+    padding: .75rem;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: rgba(167,139,250,.04);
+  }
+
+  .api-section p {
+    font-size: .78rem;
+    color: var(--text-muted);
+    margin-bottom: .5rem;
+  }
+
+  .api-row {
+    display: flex;
+    gap: .4rem;
+  }
+
+  .api-input {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: .45rem .65rem;
+    color: var(--text);
+    font-size: .8rem;
+    font-family: 'SF Mono', monospace;
+    outline: none;
+  }
+
+  .api-input:focus { border-color: var(--accent); }
+
+  .api-btn {
+    padding: .45rem .85rem;
+    border-radius: 8px;
+    border: none;
+    background: var(--accent);
+    color: #fff;
+    font-size: .78rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    white-space: nowrap;
+  }
+
+  /* ── FEEDBACK ── */
+  .feedback {
+    display: flex;
+    gap: .35rem;
+    margin-top: .5rem;
+  }
+
+  .fb-btn {
+    padding: .2rem .5rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: .7rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .2s;
+  }
+
+  .fb-btn:hover { background: var(--surface2); color: var(--text-dim); }
+  .fb-btn.selected { background: rgba(167,139,250,.12); border-color: var(--accent); color: var(--accent); }
+
+  /* ── LIGHT MODE SPECIFIC OVERRIDES ── */
+  html[data-theme="light"] header {
+    background: rgba(245,245,247,.92);
+  }
+
+  html[data-theme="light"] .input-bar {
+    background: rgba(245,245,247,.95);
+  }
+
+  html[data-theme="light"] .msg-bubble code {
+    background: rgba(0,0,0,.07);
+  }
+
+  html[data-theme="light"] .msg-bubble pre {
+    background: #f4f4f5;
+    border-color: var(--border);
+  }
+
+  html[data-theme="light"] .user .msg-bubble {
+    color: #fff;
+  }
+
+  html[data-theme="light"] .bot .msg-bubble strong {
+    color: var(--text);
+  }
+
+  html[data-theme="light"] .msg-bubble strong {
+    color: #18181b;
+  }
+
+  html[data-theme="light"] .user .msg-bubble strong {
+    color: #fff;
+  }
+
+  html[data-theme="light"] .bot .msg-avatar {
+    background: rgba(124,58,237,.1);
+  }
+
+  html[data-theme="light"] .user .msg-avatar {
+    background: rgba(124,58,237,.15);
+    color: var(--accent);
+  }
+
+  html[data-theme="light"] .api-section {
+    background: rgba(124,58,237,.04);
+  }
+
+  html[data-theme="light"] .fb-btn.selected {
+    background: rgba(124,58,237,.1);
+  }
+
+  /* ── THEME TOGGLE ── */
+  .theme-toggle {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .2s;
+    flex-shrink: 0;
+  }
+
+  .theme-toggle:hover {
+    background: var(--surface2);
+    color: var(--text);
+  }
+
+  .theme-toggle svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .theme-toggle .icon-sun { display: none; }
+  .theme-toggle .icon-moon { display: block; }
+
+  html[data-theme="light"] .theme-toggle .icon-sun { display: block; }
+  html[data-theme="light"] .theme-toggle .icon-moon { display: none; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .msg { max-width: 95%; }
+    header { padding: 1rem; }
+    .input-bar { padding: .75rem 1rem; }
+    .chat-area { padding: 1rem; }
+  }
+</style>
+<script>
+  // Apply theme BEFORE paint to prevent flash
+  (function() {
+    var stored = localStorage.getItem('claude-guide-theme');
+    var theme;
+    if (stored === 'light' || stored === 'dark') {
+      theme = stored;
+    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+      theme = 'light';
+    } else {
+      theme = 'dark';
+    }
+    document.documentElement.setAttribute('data-theme', theme);
+  })();
+</script>
+</head>
+<body>
+
+<header>
+  <div class="header-row">
+    <div class="header-left">
+      <h1>Ask <span>Claude</span> Ecosystem</h1>
+      <p>Type a question or browse by category. 100 pre-built answers + optional live Claude API.</p>
+    </div>
+    <div class="header-right">
+      <a href="index.html" class="back-link">&#8592; Guide</a>
+      <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle light/dark mode">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="cats-bar">
+  <div class="cats-inner" id="catBar">
+    <button class="cat-pill active" data-cat="all">All</button>
+    <button class="cat-pill" data-cat="getting-started">Getting Started</button>
+    <button class="cat-pill" data-cat="claude-code">Claude Code</button>
+    <button class="cat-pill" data-cat="claude-chat">Claude Chat</button>
+    <button class="cat-pill" data-cat="cowork">Cowork</button>
+    <button class="cat-pill" data-cat="mcp">MCP</button>
+    <button class="cat-pill" data-cat="skills">Skills</button>
+    <button class="cat-pill" data-cat="plugins">Plugins</button>
+    <button class="cat-pill" data-cat="hooks">Hooks</button>
+    <button class="cat-pill" data-cat="workflows">Workflows</button>
+    <button class="cat-pill" data-cat="security">Security</button>
+    <button class="cat-pill" data-cat="troubleshooting">Troubleshooting</button>
+  </div>
+</div>
+
+<div class="chat-area" id="chatArea">
+  <div class="chat-inner" id="chatInner"></div>
+</div>
+
+<div class="input-bar">
+  <div class="input-inner">
+    <textarea class="input-field" id="inputField" rows="1" placeholder="Ask anything about the Claude ecosystem..." autofocus></textarea>
+    <button class="send-btn" id="sendBtn" onclick="handleSend()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════
+// THEME TOGGLE
+// ════════════════════════════════════════
+function toggleTheme() {
+  const html = document.documentElement;
+  html.classList.add('theme-transition');
+  const current = html.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('claude-guide-theme', next);
+  // Remove transition class after animation completes
+  setTimeout(() => html.classList.remove('theme-transition'), 350);
+}
+
+// Listen for system theme changes (only if user hasn't set a preference)
+window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', function(e) {
+  if (!localStorage.getItem('claude-guide-theme')) {
+    document.documentElement.setAttribute('data-theme', e.matches ? 'light' : 'dark');
+  }
+});
+
+// ════════════════════════════════════════
+// Q&A DATABASE
+// ════════════════════════════════════════
+const QA = [
+  // ── GETTING STARTED ──
+  {
+    id: "gs-01", cat: "getting-started",
+    q: "What is the Claude ecosystem and what are its main components?",
+    alt: ["overview of claude tools", "what claude products exist", "claude ecosystem overview"],
+    tags: ["overview", "intro"],
+    related: ["gs-02", "gs-03"],
+    a: `The Claude ecosystem has **three main interfaces** and a shared **extension layer**:
+
+**Interfaces:**
+- **Claude Chat** (claude.ai) — Web/desktop/mobile app for everyone. Conversational AI with file uploads, web search, Projects, Connectors, and Interactive Apps.
+- **Claude Code** — Agentic CLI for developers. Full filesystem access, git integration, bash execution, parallel subagents. Lives in your terminal, VS Code, or JetBrains.
+- **Claude Cowork** — Desktop agent for knowledge workers. Autonomous file processing, reports, spreadsheets. Uses coordinator + sub-agent architecture. Launched Jan 2026.
+
+**Shared Extension Layer:**
+- **MCP/Connectors** — Connect to external services (Slack, Asana, databases)
+- **Skills** — Portable instruction sets (same format across all 3 interfaces)
+- **Plugins** — Installable bundles (skills + connectors + agents). Primary in Cowork + Code
+- **Projects/CLAUDE.md** — Persistent context and instructions
+- **Hooks** — Event-driven automation (Code only)
+- **Subagents** — Specialized AI assistants (Code + Cowork)`
+  },
+  {
+    id: "gs-02", cat: "getting-started",
+    q: "How do I decide whether to use Claude Code, Claude Chat, or Claude Cowork?",
+    alt: ["which claude should I use", "code vs chat vs cowork", "when to use which claude tool", "difference between code chat cowork"],
+    tags: ["comparison", "choosing"],
+    related: ["gs-01", "cc-01", "cw-01"],
+    a: `Here's a quick decision framework:
+
+**Use Claude Chat when:**
+- You need a quick answer, brainstorm, or document analysis
+- You're uploading files for review (PDFs, images, data)
+- You want to use Interactive Apps (Slack, Figma embedded in chat)
+- Non-technical tasks: writing, research, strategy
+
+**Use Claude Code when:**
+- You're writing, debugging, or refactoring code
+- You need multi-file edits across a codebase
+- You want git automation (commits, PRs, branch workflows)
+- You need CI/CD integration (GitHub Actions, GitLab)
+- You're a developer working in a terminal or IDE
+
+**Use Claude Cowork when:**
+- You need to batch-process files (invoices, reports, data cleanup)
+- You want to describe an outcome and step away while it works
+- The task involves non-code files (spreadsheets, presentations, docs)
+- You want plugin-based workflows (Sales, Finance, Legal)
+- You're not a developer but need agent-level automation
+
+**Rule of thumb:** Code = developer tasks. Chat = quick conversations. Cowork = autonomous knowledge work.`
+  },
+  {
+    id: "gs-03", cat: "getting-started",
+    q: "How do I install and set up Claude Code for the first time?",
+    alt: ["install claude code", "claude code setup", "getting started with claude code CLI", "how to get claude code"],
+    tags: ["install", "setup"],
+    related: ["cc-01", "cc-03"],
+    a: `**Install globally via npm:**
+\`\`\`bash
+npm install -g @anthropic-ai/claude-code
+\`\`\`
+
+**Start the authentication flow:**
+\`\`\`bash
+claude
+\`\`\`
+
+This opens a browser window to authenticate with your Anthropic account. Takes about 30 seconds.
+
+**Key first steps after install:**
+1. Navigate to your project directory
+2. Run \`claude\` to start a session
+3. Create a \`CLAUDE.md\` at your repo root with project context (conventions, tech stack, etc.)
+4. Try \`/help\` to see available commands
+
+**IDE integrations:**
+- **VS Code:** Install the Claude Code extension from the marketplace
+- **JetBrains:** Available as a plugin for IntelliJ, PyCharm, WebStorm, etc.
+
+**Verify installation:**
+\`\`\`bash
+claude --version
+\`\`\``
+  },
+  {
+    id: "gs-04", cat: "getting-started",
+    q: "What models are available and how do I choose?",
+    alt: ["which model should I use", "opus vs sonnet vs haiku", "claude models comparison", "model selection"],
+    tags: ["models", "pricing"],
+    related: ["gs-01"],
+    a: `**Current model family (Claude 4.5/4.6):**
+
+| Model | Best For | Speed | Cost |
+|-------|---------|-------|------|
+| **Opus 4.6** | Complex coding, architecture, deep reasoning | Slower | Highest |
+| **Sonnet 4.6** | Balanced — great default for most tasks | Fast | Medium |
+| **Haiku 4.5** | Quick tasks, subagents, high-volume | Fastest | Lowest |
+
+**How they're used across interfaces:**
+- **Claude Chat**: Sonnet 4.6 by default (Free/Pro). Opus available on Max.
+- **Claude Code**: Opus 4.6 by default. Switch with \`/model\` command.
+- **Cowork**: Sonnet 4.6 by default.
+
+**In Claude Code, you can override per-skill or per-agent:**
+\`\`\`yaml
+# In SKILL.md frontmatter
+model: haiku  # Use Haiku for this skill (cheaper/faster)
+\`\`\`
+
+**Rule of thumb:** Start with the default. Use Opus for hard problems. Use Haiku for subagents and high-volume tasks.`
+  },
+  {
+    id: "gs-05", cat: "getting-started",
+    q: "What data does Claude see and what stays local?",
+    alt: ["privacy", "data security", "what does claude send", "is my code sent to anthropic"],
+    tags: ["privacy", "security"],
+    related: ["sec-01", "sec-02"],
+    a: `**Claude Code:**
+- Reads files from your local filesystem as needed during conversation
+- Sends conversation context (including file contents it reads) to Anthropic's API
+- Does NOT send your entire codebase — only files it actively reads
+- Session transcripts can be stored locally and optionally sent for improvement (configurable)
+- \`CLAUDE.md\` and \`.claude/\` config files are read locally
+
+**Claude Chat:**
+- Receives what you type/upload in the conversation
+- File uploads are processed and discarded after the session (not used for training on paid plans)
+- Projects store uploaded files persistently
+
+**Claude Cowork:**
+- Accesses files in folders you explicitly grant access to
+- Conversation history stored locally only
+- No sharing capabilities in research preview
+- Excluded from audit logs currently
+
+**Key controls:**
+- Paid plans: your data is NOT used for model training
+- You can configure telemetry settings in Claude Code
+- Use \`.gitignore\`-style patterns to prevent sensitive files from being read`
+  },
+  {
+    id: "gs-06", cat: "getting-started",
+    q: "How do I set up Claude for my team with organization-level settings?",
+    alt: ["team setup", "org configuration", "enterprise setup", "managed settings"],
+    tags: ["team", "enterprise", "org"],
+    related: ["sec-05", "mcp-08"],
+    a: `**For Claude Code teams:**
+
+1. **Managed settings** — Enforce org-wide policies:
+   - Allowed/denied MCP servers via \`managed-mcp.json\`
+   - Permission modes and tool restrictions
+   - Pushed via system configuration (not git)
+
+2. **Project-level config** — Shared via git:
+   - \`CLAUDE.md\` at repo root (coding standards, conventions)
+   - \`.claude/settings.json\` (hooks, permissions)
+   - \`.mcp.json\` (shared MCP servers)
+   - \`.claude/skills/\` (team skills)
+   - \`.claude/agents/\` (custom subagents)
+
+3. **User-level config** — Personal preferences:
+   - \`~/.claude/settings.json\`
+   - \`~/.claude/CLAUDE.md\`
+
+**For Claude Chat teams (Team/Enterprise plans):**
+- Organization-managed Skills (Dec 2025 update)
+- Shared Projects with team knowledge bases
+- Admin controls for connectors and data access
+
+**For Cowork teams:**
+- Plugin marketplace management
+- Connector allowlists
+- Global and folder-specific instructions`
+  },
+  // ── CLAUDE CODE ──
+  {
+    id: "cc-01", cat: "claude-code",
+    q: "What is Claude Code and when should I use it?",
+    alt: ["what is claude code", "claude code explained", "why use claude code"],
+    tags: ["overview", "intro"],
+    related: ["gs-02", "cc-02"],
+    a: `**Claude Code** is Anthropic's agentic CLI for developers. It runs in your terminal and operates directly on your codebase.
+
+**Key capabilities:**
+- Reads and edits files across your entire project
+- Runs bash commands, tests, and build tools
+- Creates git commits, branches, and pull requests
+- Spawns parallel subagents for complex tasks
+- Supports extended thinking for hard problems
+
+**Use it when you need:**
+- Multi-file code changes
+- Automated code review and refactoring
+- Git workflow automation (commits, PRs)
+- CI/CD integration (headless mode)
+- Project scaffolding and architecture
+- Bug hunting across a codebase
+
+**Where it runs:**
+Terminal, VS Code, JetBrains IDEs, GitHub Actions, GitLab CI, and a web version at code.claude.com.`
+  },
+  {
+    id: "cc-02", cat: "claude-code",
+    q: "What is CLAUDE.md and how should I structure it?",
+    alt: ["claude.md file", "how to write claude.md", "project context file", "claude md best practices"],
+    tags: ["claude-md", "context", "config"],
+    related: ["cc-01", "cc-03"],
+    a: `**CLAUDE.md** is a markdown file at your repo root that gives Claude persistent context about your project. It's auto-loaded at every session start.
+
+**Recommended structure:**
+\`\`\`markdown
+# Project Name
+
+## Tech Stack
+- TypeScript, React 18, Next.js 14
+- PostgreSQL with Prisma ORM
+- Vitest for testing
+
+## Conventions
+- Use pnpm, not npm
+- Components in src/components/ with PascalCase
+- Tests co-located: MyComponent.test.tsx
+- Use Zod for runtime validation
+
+## Architecture
+- Monorepo with Turborepo
+- API routes in src/app/api/
+- Shared types in packages/types/
+
+## Commands
+- \\\`pnpm dev\\\` — start dev server
+- \\\`pnpm test\\\` — run tests
+- \\\`pnpm lint\\\` — run ESLint
+\`\`\`
+
+**Best practices:**
+- Keep under 200 lines (context efficiency)
+- Be specific and actionable, not vague
+- Use \`CLAUDE.local.md\` for personal overrides (gitignored)
+- Use \`.claude/rules/\` for path-specific rules
+- Import other files with \`@path/to/file\` syntax`
+  },
+  {
+    id: "cc-03", cat: "claude-code",
+    q: "How do I use Claude Code with git?",
+    alt: ["git integration", "auto commit", "create PR with claude", "branch workflow"],
+    tags: ["git", "commit", "pr"],
+    related: ["cc-01", "wf-01"],
+    a: `Claude Code has deep git integration. Here's how to use it:
+
+**Creating commits:**
+\`\`\`
+> claude "fix the login validation bug and commit the changes"
+\`\`\`
+Claude will edit files, stage them, and create a commit with a descriptive message.
+
+**Creating PRs:**
+\`\`\`
+> claude "create a PR for the changes on this branch"
+\`\`\`
+Uses \`gh\` CLI under the hood. Generates title, description, and test plan.
+
+**Code review:**
+\`\`\`
+> claude "review the changes in this PR: #123"
+\`\`\`
+
+**Branch workflows:**
+\`\`\`
+> claude "create a feature branch, implement user avatars, commit, and open a PR"
+\`\`\`
+
+**Worktree isolation for subagents:**
+Subagents can run in isolated git worktrees to avoid conflicts:
+\`\`\`yaml
+# In agent config
+isolation: worktree
+\`\`\`
+
+**Safety:** Claude Code won't force-push or run destructive git operations without your explicit approval.`
+  },
+  {
+    id: "cc-04", cat: "claude-code",
+    q: "How do I restrict Claude Code's permissions and tool access?",
+    alt: ["permission mode", "restrict tools", "safety settings", "allowed tools disallowed tools"],
+    tags: ["permissions", "safety"],
+    related: ["sec-04", "cc-01"],
+    a: `**Permission modes** (set in settings or per-agent):
+- \`default\` — Standard checking, prompts for approval
+- \`acceptEdits\` — Auto-accept file edits, prompt for other tools
+- \`dontAsk\` — Auto-deny any permission prompts
+- \`bypassPermissions\` — Skip all checks (use with caution)
+- \`plan\` — Read-only exploration mode
+
+**Tool restrictions** (in skill/agent frontmatter):
+\`\`\`yaml
+# Only allow these tools:
+allowed-tools: Read, Grep, Glob
+
+# Or deny specific tools:
+disallowedTools: Bash, Write
+\`\`\`
+
+**MCP server restrictions** (managed settings):
+\`\`\`json
+{
+  "allowedMcpServers": [
+    { "serverName": "github" },
+    { "serverUrl": "https://approved-server.example.com/*" }
+  ],
+  "deniedMcpServers": [
+    { "serverCommand": "npx untrusted-*" }
+  ]
+}
+\`\`\`
+
+**Best practice:** Use \`plan\` mode for exploration, \`default\` for development, and managed settings for org-wide enforcement.`
+  },
+  {
+    id: "cc-05", cat: "claude-code",
+    q: "How do I use Claude Code in CI/CD (headless mode)?",
+    alt: ["github actions", "gitlab ci", "headless mode", "ci cd integration", "automated claude"],
+    tags: ["ci", "automation", "headless"],
+    related: ["cc-03", "wf-01"],
+    a: `Claude Code can run non-interactively in CI/CD pipelines:
+
+**Basic headless usage:**
+\`\`\`bash
+claude --print "review this PR and post comments" --no-input
+\`\`\`
+
+**GitHub Actions example:**
+\`\`\`yaml
+- name: Claude Code Review
+  run: |
+    npx @anthropic-ai/claude-code \\
+      --print "Review the PR diff and suggest improvements" \\
+      --no-input
+  env:
+    ANTHROPIC_API_KEY: \${{ secrets.ANTHROPIC_API_KEY }}
+\`\`\`
+
+**GitLab CI example:**
+\`\`\`yaml
+code-review:
+  script:
+    - npx @anthropic-ai/claude-code --print "Review changes" --no-input
+\`\`\`
+
+**Key flags:**
+- \`--print\` — Output result to stdout (no interactive UI)
+- \`--no-input\` — Don't wait for user input
+- \`--model\` — Override model (use haiku for cost savings)
+- \`--max-turns\` — Limit agentic loops
+
+**Use cases in CI:** automated code review, PR description generation, test writing, documentation updates, security scanning.`
+  },
+  {
+    id: "cc-06", cat: "claude-code",
+    q: "What keyboard shortcuts and slash commands does Claude Code support?",
+    alt: ["commands", "keyboard shortcuts", "slash commands", "claude code commands list"],
+    tags: ["commands", "shortcuts"],
+    related: ["cc-01"],
+    a: `**Built-in slash commands:**
+- \`/help\` — Show help
+- \`/model\` — Switch model (opus, sonnet, haiku)
+- \`/memory\` — Toggle auto-memory
+- \`/compact\` — Compress context
+- \`/clear\` — Clear conversation
+- \`/status\` — Show session info
+
+**Built-in skills (slash commands):**
+- \`/commit\` — Analyze changes and create a git commit
+- \`/simplify\` — Review code for quality and efficiency
+- \`/loop 5m /command\` — Run a command on a recurring interval
+- \`/claude-api\` — Load API reference docs
+
+**Custom skills:** Any SKILL.md in \`.claude/skills/\` becomes a \`/skill-name\` command.
+
+**Key keyboard shortcuts:**
+- \`Ctrl+C\` — Cancel current operation
+- \`Ctrl+D\` — Exit session
+- \`Tab\` — Autocomplete file paths and commands
+- \`Up/Down\` — Navigate command history
+- \`Esc\` — Cancel current input
+
+Customize keybindings in \`~/.claude/keybindings.json\`.`
+  },
+  // ── CLAUDE CHAT ──
+  {
+    id: "ch-01", cat: "claude-chat",
+    q: "What is Claude Chat and how does it differ from Claude Code?",
+    alt: ["claude.ai features", "chat vs code", "claude chat explained"],
+    tags: ["overview", "comparison"],
+    related: ["gs-02", "cc-01"],
+    a: `**Claude Chat** is the conversational interface at claude.ai (also available as a desktop and mobile app).
+
+**Key differences from Claude Code:**
+
+| Feature | Claude Chat | Claude Code |
+|---------|-----------|------------|
+| Interface | Web/desktop/mobile | Terminal/IDE |
+| File access | Upload only | Full filesystem |
+| Code execution | Limited (artifacts) | Full bash access |
+| Target user | Everyone | Developers |
+| Git integration | No | Yes |
+| Autonomy | Prompt-response | Multi-step agentic |
+
+**Claude Chat's unique features:**
+- **Connectors** (50+) — One-click MCP integrations (Jira, Slack, Asana)
+- **Interactive Apps** — Live Figma, Slack, Canva embedded in chat
+- **Projects** — Named spaces with persistent knowledge bases
+- **Artifacts** — Interactive code/content outputs
+- **Skills** — Same skill format as Code, auto-invoked by Claude
+- **Web search** — Real-time information retrieval
+
+**Available on:** Web (claude.ai), macOS, Windows, iOS, Android`
+  },
+  {
+    id: "ch-02", cat: "claude-chat",
+    q: "How do I use Projects in Claude Chat?",
+    alt: ["claude projects", "persistent context chat", "project knowledge base"],
+    tags: ["projects", "context"],
+    related: ["ch-01", "cc-02"],
+    a: `**Projects** give Claude persistent context in claude.ai conversations.
+
+**Setup:**
+1. Click "Projects" in the sidebar
+2. Create a new project (give it a name)
+3. Add custom instructions (like CLAUDE.md for Chat)
+4. Upload knowledge base files (docs, code, data)
+
+**Custom instructions examples:**
+- "You are a senior React developer helping our frontend team"
+- "Always respond in bullet points with code examples"
+- "Our API uses REST with JSON. Base URL: api.example.com"
+
+**Knowledge base:**
+- Upload reference docs, style guides, API specs
+- Files persist across conversations within the project
+- Claude can reference them without re-uploading
+
+**Available on:** Pro, Max, Team, and Enterprise plans.
+
+**Team features (Team/Enterprise):**
+- Shared projects across team members
+- Organization-managed knowledge bases
+- Admin controls for project access`
+  },
+  {
+    id: "ch-03", cat: "claude-chat",
+    q: "How do I set up Connectors in Claude Chat?",
+    alt: ["claude connectors", "chat integrations", "connect slack to claude", "mcp in chat"],
+    tags: ["connectors", "integrations", "mcp"],
+    related: ["mcp-01", "ch-01"],
+    a: `**Connectors** are Claude Chat's name for MCP integrations. 50+ pre-built, one-click install.
+
+**Setup:**
+1. Go to **Settings → Connectors** (or claude.ai/settings/connectors)
+2. Browse available connectors
+3. Click "Connect" and authorize the service
+4. The connector's tools become available in all your conversations
+
+**Popular connectors:**
+- Jira, Confluence (Atlassian)
+- Slack, Asana, Linear
+- Sentry, Intercom
+- Zapier (connects to 5000+ apps)
+- Google Workspace (Feb 2026)
+
+**Interactive Apps** (Jan 2026+):
+Some connectors also enable live app embeds in conversations:
+- Figma — view and discuss designs inline
+- Slack — read/send messages without leaving Claude
+- Canva — create designs directly
+
+**Managing connectors:**
+- Toggle individual connectors on/off
+- Control which conversations can access which connectors
+- Enterprise admins can manage org-wide connector policies`
+  },
+  {
+    id: "ch-04", cat: "claude-chat",
+    q: "How do I use Skills in Claude Chat?",
+    alt: ["skills in chat", "claude.ai skills", "chat skills setup", "enable skills"],
+    tags: ["skills", "chat"],
+    related: ["sk-01", "ch-01"],
+    a: `Skills work in Claude Chat using the **exact same format** as Claude Code and Cowork.
+
+**How to manage skills:**
+1. Go to **Settings → Capabilities → Skills**
+2. Toggle skills on/off
+3. Upload custom skills or access org-provisioned ones
+
+**Built-in skills in Claude Chat include:**
+- Excel spreadsheet generation (with formulas)
+- PowerPoint presentations
+- Word documents
+- Fillable PDFs
+- Algorithmic art and canvas design
+
+**How they activate:**
+Skills use **progressive disclosure** — Claude reads skill metadata at startup and loads the full instructions only when it determines relevance. No manual triggering needed; Claude auto-invokes the right skill.
+
+**Creating custom skills in Chat:**
+Use the built-in "skill-creator" skill to interactively build new skills right in a conversation.
+
+**Org-managed skills (Team/Enterprise):**
+Admins can provision skills across the organization (Dec 2025 update). Partner skills available from Atlassian, Canva, Figma, Notion, Ramp, Sentry.`
+  },
+  // ── COWORK ──
+  {
+    id: "cw-01", cat: "cowork",
+    q: "What is Claude Cowork and how does it differ from Claude Code?",
+    alt: ["cowork explained", "cowork vs code", "what is cowork", "claude cowork overview"],
+    tags: ["overview", "comparison"],
+    related: ["gs-02", "cc-01"],
+    a: `**Claude Cowork** is a desktop agent for knowledge workers. Think "Claude Code without the code."
+
+**Key differences:**
+
+| Feature | Claude Code | Claude Cowork |
+|---------|-----------|--------------|
+| User | Developers | Business/ops/analysts |
+| Interface | Terminal/CLI | Desktop app GUI |
+| Task model | Interactive coding | Autonomous knowledge work |
+| File access | Full codebase | Granted folders |
+| Autonomy | Step-by-step with approval | Describe outcome → step away |
+| Plugins | Dev-focused | Business-focused (Sales, Finance, etc.) |
+| Architecture | Single agent | Coordinator + parallel sub-agents |
+
+**What Cowork excels at:**
+- Batch file processing (200 invoices, 50 PDFs)
+- Report and presentation generation
+- Data extraction and transformation
+- Cross-application workflows
+- Scheduled recurring tasks
+
+**Launched:** Jan 12, 2026 (research preview)
+**Available on:** macOS, Windows (Feb 2026)
+**Plans:** Pro, Max, Team, Enterprise`
+  },
+  {
+    id: "cw-02", cat: "cowork",
+    q: "How do plugins work in Cowork?",
+    alt: ["cowork plugins", "install cowork plugin", "browse plugins", "plugin marketplace"],
+    tags: ["plugins", "cowork"],
+    related: ["pl-01", "cw-01"],
+    a: `**Plugins** are Cowork's primary extension mechanism. They're pre-packaged workflows for specific job functions.
+
+**Installation:**
+1. Open the **Customize** menu in Cowork
+2. Click **Browse Plugins**
+3. Choose from three tabs: Anthropic & Partners, Your Organization, Personal
+4. Click **Install**
+
+**Official plugins (11+):**
+- **Productivity** — Task management, calendars, workflows
+- **Enterprise Search** — Search across email, chat, docs, wikis
+- **Sales** — Prospecting, outreach, deal strategy
+- **Finance** — Journal entries, reconciliation, variance analysis
+- **Data** — SQL, datasets, dashboards, visualizations
+- **Legal** — Contract review, NDA triage, compliance
+- **Marketing** — Campaign strategy, content creation
+- **Customer Support** — Ticket triage, response drafting
+- **Product Management** — Roadmaps, specs, prioritization
+- **HR** — Recruiting, onboarding, policy
+- **Plugin Create** — Build your own plugins interactively
+
+**Each plugin bundles:** Skills + MCP connectors + slash commands + sub-agents.
+
+**Open source:** github.com/anthropics/knowledge-work-plugins`
+  },
+  {
+    id: "cw-03", cat: "cowork",
+    q: "Can I schedule recurring tasks in Cowork?",
+    alt: ["scheduled tasks", "recurring tasks", "automation schedule", "cron cowork"],
+    tags: ["scheduling", "automation"],
+    related: ["cw-01"],
+    a: `Yes! Cowork supports **scheduled recurring tasks**.
+
+**How to set up:**
+1. Complete a task in Cowork
+2. Click the scheduling option
+3. Choose cadence: hourly, daily, weekly, weekdays, or manual
+
+**Important limitations:**
+- Tasks only run while your computer is **awake** and the Desktop app is **open**
+- No cloud execution — it's local to your machine
+- If the computer is asleep at the scheduled time, the task is skipped
+
+**Good use cases:**
+- Daily report compilation from updated data
+- Weekly email digest preparation
+- Daily file organization for incoming documents
+- Recurring data exports and formatting
+
+**Not recommended for:** mission-critical tasks that must run at exact times (use a proper cron/scheduler for those).`
+  },
+  // ── MCP ──
+  {
+    id: "mcp-01", cat: "mcp",
+    q: "What is MCP and why should my team care about it?",
+    alt: ["model context protocol explained", "what is mcp", "why mcp matters", "mcp overview"],
+    tags: ["overview", "intro"],
+    related: ["mcp-02", "mcp-03"],
+    a: `**MCP (Model Context Protocol)** is an open standard that connects AI models to external tools and services. Think of it as the **"USB-C of AI"** — a universal connector.
+
+**Why it matters:**
+- **Vendor-neutral:** Works with Claude, ChatGPT, Gemini, and others
+- **Open standard:** Donated to Linux Foundation (Dec 2025), backed by Google, Microsoft, AWS, OpenAI
+- **Universal:** Same MCP server works across Claude Code, Chat, and Cowork
+- **Growing ecosystem:** Thousands of community servers, 50+ built-in connectors
+
+**What MCP enables:**
+- Connect Claude to your databases (PostgreSQL, MySQL, MongoDB)
+- Integrate with project tools (Jira, Asana, Linear, GitHub)
+- Access communication platforms (Slack, email)
+- Query internal APIs and services
+- Render interactive UIs inside conversations (MCP Apps extension)
+
+**The protocol:**
+- JSON-RPC 2.0 based
+- Transport: stdio (local) or HTTP (remote)
+- Servers expose: **tools** (actions), **resources** (data), and **prompts** (templates)
+- 97M+ monthly SDK downloads`
+  },
+  {
+    id: "mcp-02", cat: "mcp",
+    q: "How do I install and configure an MCP server in Claude Code?",
+    alt: ["add mcp server", "mcp setup code", "configure mcp", "claude mcp add"],
+    tags: ["setup", "config"],
+    related: ["mcp-01", "mcp-04"],
+    a: `**Quick install via CLI:**
+\`\`\`bash
+# Local stdio server
+claude mcp add my-server -- npx @example/mcp-server
+
+# Remote HTTP server
+claude mcp add --transport http my-api https://api.example.com/mcp
+
+# With environment variables
+claude mcp add my-db -- npx @example/postgres-mcp \\
+  --env DB_URL=postgresql://localhost/mydb
+\`\`\`
+
+**Configuration scopes:**
+- **Local** (default): \`~/.claude.json\` — private to you, per-project
+- **Project**: \`.mcp.json\` — checked into git, shared with team
+- **User**: \`~/.claude.json\` globally — all your projects
+- **Managed**: \`managed-mcp.json\` — org-wide, admin-controlled
+
+**Example .mcp.json (team-shared):**
+\`\`\`json
+{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["@modelcontextprotocol/server-github"],
+      "env": { "GITHUB_TOKEN": "\${GITHUB_TOKEN}" }
+    }
+  }
+}
+\`\`\`
+
+**Verify connection:**
+\`\`\`
+> claude "list available MCP tools"
+\`\`\`
+
+**Manage servers:**
+\`\`\`bash
+claude mcp list           # Show configured servers
+claude mcp remove my-db   # Remove a server
+\`\`\``
+  },
+  {
+    id: "mcp-03", cat: "mcp",
+    q: "What are the most useful MCP servers for development teams?",
+    alt: ["best mcp servers", "recommended mcp", "popular mcp servers", "top mcp integrations"],
+    tags: ["recommendations", "servers"],
+    related: ["mcp-01", "mcp-02"],
+    a: `**Essential for most dev teams:**
+- **GitHub** — Repos, PRs, issues, actions
+- **Slack** — Team communication
+- **Linear / Jira / Asana** — Project management
+- **Sentry** — Error tracking and debugging
+- **PostgreSQL / MySQL** — Database querying
+
+**For web development:**
+- **Playwright** — Browser automation and testing
+- **Puppeteer** — Web scraping and screenshots
+- **Vercel / Netlify** — Deployment management
+
+**For data teams:**
+- **BigQuery** — Data warehouse queries
+- **Snowflake** — Analytics
+- **Jupyter** — Notebook interaction
+
+**For DevOps:**
+- **AWS / GCP / Azure** — Cloud management
+- **Docker** — Container management
+- **Kubernetes** — Cluster operations
+
+**For documentation:**
+- **Notion** — Knowledge base
+- **Confluence** — Wiki and docs
+
+**Finding servers:**
+- Official directory at modelcontextprotocol.io
+- GitHub: github.com/modelcontextprotocol/servers
+- NPM: search for \`@modelcontextprotocol/\``
+  },
+  {
+    id: "mcp-04", cat: "mcp",
+    q: "How do I build a custom MCP server for our internal tools?",
+    alt: ["custom mcp server", "build mcp server", "create mcp integration", "mcp server development"],
+    tags: ["development", "custom"],
+    related: ["mcp-01", "mcp-02"],
+    a: `**Using the TypeScript SDK:**
+\`\`\`bash
+npm install @modelcontextprotocol/sdk
+\`\`\`
+
+**Minimal server example:**
+\`\`\`typescript
+import { Server } from "@modelcontextprotocol/sdk/server";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio";
+
+const server = new Server({ name: "my-server", version: "1.0.0" }, {
+  capabilities: { tools: {} }
+});
+
+server.setRequestHandler("tools/list", async () => ({
+  tools: [{
+    name: "get_user",
+    description: "Look up a user by email",
+    inputSchema: {
+      type: "object",
+      properties: { email: { type: "string" } },
+      required: ["email"]
+    }
+  }]
+}));
+
+server.setRequestHandler("tools/call", async (req) => {
+  if (req.params.name === "get_user") {
+    const user = await myApi.getUser(req.params.arguments.email);
+    return { content: [{ type: "text", text: JSON.stringify(user) }] };
+  }
+});
+
+new StdioServerTransport().connect(server);
+\`\`\`
+
+**SDKs available in:** TypeScript, Python, Go, Rust, Java, C#
+
+**Test locally:**
+\`\`\`bash
+claude mcp add my-server -- node ./my-server.js
+\`\`\``
+  },
+  {
+    id: "mcp-05", cat: "mcp",
+    q: "How do I debug MCP connection issues?",
+    alt: ["mcp not connecting", "mcp troubleshooting", "mcp debug", "mcp server won't start"],
+    tags: ["debugging", "troubleshooting"],
+    related: ["mcp-02", "ts-04"],
+    a: `**Step 1: Check server status**
+\`\`\`bash
+claude mcp list  # Shows status of all configured servers
+\`\`\`
+
+**Step 2: Test the server directly**
+\`\`\`bash
+# Run the server command manually to see errors
+npx @example/mcp-server
+\`\`\`
+
+**Step 3: Check environment variables**
+MCP servers often need env vars (API keys, tokens). Make sure they're set:
+\`\`\`bash
+echo $GITHUB_TOKEN  # Check if it's set
+\`\`\`
+
+**Step 4: Check logs**
+Claude Code logs MCP interactions. Look for errors in the session output.
+
+**Common issues:**
+- **"Server not found"** — Check the command path. Try running it manually.
+- **"Connection timeout"** — Server is slow to start. Increase timeout in config.
+- **"Auth error"** — Missing or expired API token in env vars.
+- **"Tool not available"** — Server connected but tool not exposed. Check server's tool list.
+- **SSE deprecated** — Use HTTP transport instead of SSE for remote servers.
+
+**Nuclear option:**
+\`\`\`bash
+claude mcp remove my-server
+claude mcp add my-server -- npx @example/mcp-server  # Re-add fresh
+\`\`\``
+  },
+  {
+    id: "mcp-06", cat: "mcp",
+    q: "How do I share MCP configurations across my team?",
+    alt: ["team mcp config", "shared mcp", "mcp json project"],
+    tags: ["team", "sharing"],
+    related: ["mcp-02", "gs-06"],
+    a: `**Use a project-level \`.mcp.json\` file (checked into git):**
+\`\`\`json
+{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["@modelcontextprotocol/server-github"],
+      "env": { "GITHUB_TOKEN": "\${GITHUB_TOKEN}" }
+    },
+    "postgres": {
+      "command": "npx",
+      "args": ["@modelcontextprotocol/server-postgres"],
+      "env": { "DATABASE_URL": "\${DATABASE_URL}" }
+    }
+  }
+}
+\`\`\`
+
+**Key points:**
+- Use \`\${ENV_VAR}\` syntax — each dev sets their own tokens locally
+- \`.mcp.json\` at repo root is auto-discovered by Claude Code
+- Add to your project's onboarding docs: "Set these env vars: GITHUB_TOKEN, DATABASE_URL"
+
+**For org-wide enforcement:**
+Use \`managed-mcp.json\` (system-level, not in git):
+\`\`\`json
+{
+  "mcpServers": { ... },
+  "allowedMcpServers": [{ "serverName": "github" }],
+  "deniedMcpServers": [{ "serverCommand": "npx untrusted-*" }]
+}
+\`\`\``
+  },
+  // ── SKILLS ──
+  {
+    id: "sk-01", cat: "skills",
+    q: "What are Skills and how do they work across all Claude interfaces?",
+    alt: ["skills explained", "what are agent skills", "skills overview", "portable skills"],
+    tags: ["overview", "intro"],
+    related: ["sk-02", "sk-03"],
+    a: `**Skills** are the universal primitive of the Claude ecosystem. They're portable instruction sets (SKILL.md files) that teach Claude specific processes.
+
+**Key facts:**
+- **Same format everywhere** — one SKILL.md works in Code, Chat, and Cowork
+- **Open standard** — published at agentskills.io (Dec 2025)
+- **Auto-invoked** — Claude reads metadata and activates relevant skills automatically (progressive disclosure)
+- **Launched:** Oct 16, 2025, simultaneously across all surfaces
+
+**A skill is just a folder:**
+\`\`\`
+my-skill/
+├── SKILL.md       ← Instructions + YAML frontmatter
+├── template.xlsx  ← Supporting files (optional)
+└── examples/      ← Reference examples (optional)
+\`\`\`
+
+**How they're used per interface:**
+- **Chat:** Settings → Capabilities → Skills. Claude auto-invokes. Built-in: Excel, PowerPoint, Word, PDFs.
+- **Code:** \`.claude/skills/\` directory. Also invocable via \`/skill-name\`. Extra: frontmatter for model, tools, hooks.
+- **Cowork:** Bundled inside plugins or standalone via Customize menu.
+
+**Partner directory:** Atlassian, Canva, Figma, Notion, Ramp, Sentry, and growing.`
+  },
+  {
+    id: "sk-02", cat: "skills",
+    q: "How do I create a custom Skill?",
+    alt: ["build a skill", "write skill.md", "custom skill creation", "make my own skill"],
+    tags: ["creation", "custom"],
+    related: ["sk-01", "sk-03"],
+    a: `**In Claude Code:**
+
+1. Create the folder:
+\`\`\`bash
+mkdir -p .claude/skills/my-skill
+\`\`\`
+
+2. Write the SKILL.md:
+\`\`\`markdown
+---
+name: quarterly-report
+description: Generate formatted quarterly financial reports from raw data
+allowed-tools: Read, Write, Bash
+model: sonnet
+---
+# Quarterly Report Generator
+
+## Steps
+1. Read the raw data file from the path provided by the user
+2. Calculate key metrics: revenue, expenses, profit margin, YoY growth
+3. Format into a markdown table with section headers
+4. Write the output to reports/Q{quarter}-{year}.md
+
+## Format Requirements
+- Use USD formatting with commas
+- Include percentage changes with arrows (↑/↓)
+- Add an executive summary at the top (3-5 bullet points)
+\`\`\`
+
+3. Use it: \`/quarterly-report Q4 2025 data.csv\`
+
+**In Claude Chat:**
+- Use the "skill-creator" skill in conversation
+- Or upload a SKILL.md via Settings → Capabilities → Skills
+
+**Frontmatter options:**
+- \`description\` — When to auto-invoke (critical for progressive disclosure)
+- \`allowed-tools\` — Restrict tool access
+- \`model\` — Override model (opus, sonnet, haiku)
+- \`context: fork\` — Run in isolated subagent
+- \`disable-model-invocation: true\` — Only manual invocation`
+  },
+  {
+    id: "sk-03", cat: "skills",
+    q: "What is the difference between Skills, Commands, and Hooks?",
+    alt: ["skills vs commands vs hooks", "difference between skills and hooks", "when to use skills vs hooks"],
+    tags: ["comparison"],
+    related: ["sk-01", "hk-01"],
+    a: `Three different extension types for different purposes:
+
+**Skills** = "How to do something"
+- Portable instruction sets (SKILL.md files)
+- Work across Chat, Code, and Cowork
+- Auto-invoked by Claude based on task context
+- Can also be manually triggered via \`/skill-name\`
+- Example: "How to generate a quarterly report"
+
+**Commands** = Legacy version of Skills (Code only)
+- Markdown files in \`.claude/commands/\`
+- Always user-invoked (never auto-triggered)
+- Now merged into the Skills system
+- Still work for backward compatibility
+- **Recommendation: use Skills instead**
+
+**Hooks** = "When something happens, do this"
+- Event-driven automation (Code only)
+- Run shell scripts, call APIs, invoke Claude
+- Triggered by lifecycle events (PreToolUse, SessionStart, etc.)
+- NOT user-invocable — they fire automatically
+- Example: "Auto-lint after every file edit"
+
+**Key distinction:** Skills teach Claude *what* to do. Hooks automate *when* to react. Skills are about instructions; hooks are about events.`
+  },
+  {
+    id: "sk-04", cat: "skills",
+    q: "How do I share Skills across my organization?",
+    alt: ["org skills", "distribute skills", "team skills sharing"],
+    tags: ["sharing", "team"],
+    related: ["sk-02", "pl-01"],
+    a: `**Three distribution strategies:**
+
+**1. Project-level (via git):**
+\`\`\`
+.claude/skills/
+├── deploy/SKILL.md
+├── code-review/SKILL.md
+└── onboarding/SKILL.md
+\`\`\`
+Checked into your repo. Everyone who clones gets the skills.
+
+**2. Plugin (for cross-repo distribution):**
+Bundle skills into a plugin and host on GitHub:
+\`\`\`
+my-org-plugin/
+├── .claude-plugin/plugin.json
+└── skills/
+    ├── deploy/SKILL.md
+    └── review/SKILL.md
+\`\`\`
+Team members install with \`/plugin install\`.
+
+**3. Organization-managed (Team/Enterprise):**
+- Admin provisions skills org-wide via managed settings
+- Works in Chat (Dec 2025 update) and Code
+- Skills appear automatically for all org members
+
+**For Claude Chat specifically:**
+- Upload custom skills via Settings → Capabilities → Skills
+- Org admins can push skills to all team members
+- Partner skills from the directory are also available`
+  },
+  // ── PLUGINS ──
+  {
+    id: "pl-01", cat: "plugins",
+    q: "What are Plugins and how do they differ from Skills?",
+    alt: ["plugins explained", "plugins vs skills", "what are plugins", "plugin overview"],
+    tags: ["overview", "comparison"],
+    related: ["sk-01", "pl-02"],
+    a: `**Think of it this way:** Skills are individual recipes. Plugins are complete cookbooks.
+
+**Skills** = A single SKILL.md file with instructions for one task
+**Plugins** = An installable package that bundles multiple things:
+- Multiple skills
+- MCP server configs (connectors)
+- Subagent definitions
+- Hooks (event automation)
+- Slash commands
+- LSP servers (code intelligence)
+- Default settings
+
+**Where plugins live:**
+- **Cowork** (primary home) — 15+ official plugins for knowledge work
+- **Claude Code** — Dev-focused plugins (TypeScript LSP, code review)
+- **NOT in Claude Chat** — Chat uses Skills + Connectors individually
+
+**Example:** The "Finance" plugin in Cowork bundles:
+- 8+ skills (reconciliation, journal entries, variance analysis...)
+- Slash commands (\`/reconcile\`, \`/forecast\`)
+- Connectors (accounting software integration)
+- Sub-agents (parallel data processing)
+
+**All in one install** vs. setting up each piece individually.`
+  },
+  {
+    id: "pl-02", cat: "plugins",
+    q: "How do I build a custom Plugin?",
+    alt: ["create plugin", "build plugin", "custom plugin development", "plugin.json"],
+    tags: ["development", "custom"],
+    related: ["pl-01", "sk-02"],
+    a: `**Directory structure:**
+\`\`\`
+my-plugin/
+├── .claude-plugin/
+│   └── plugin.json        ← Manifest (required)
+├── skills/
+│   ├── deploy/
+│   │   └── SKILL.md
+│   └── review/
+│       └── SKILL.md
+├── agents/
+│   └── qa-bot.md
+├── hooks/
+│   └── hooks.json
+├── .mcp.json               ← Bundled MCP servers
+├── .lsp.json               ← Code intelligence
+└── settings.json           ← Default settings
+\`\`\`
+
+**Minimal plugin.json:**
+\`\`\`json
+{
+  "name": "my-team-plugin",
+  "version": "1.0.0",
+  "description": "Our team's Claude workflows",
+  "author": { "name": "Your Team" },
+  "skills": ["skills/deploy", "skills/review"],
+  "agents": ["agents/qa-bot.md"]
+}
+\`\`\`
+
+**Test locally:**
+\`\`\`bash
+claude --plugin-dir ./my-plugin
+\`\`\`
+
+**Distribute:**
+- Push to a GitHub repo
+- Team installs with \`/plugin install github:org/my-plugin\`
+- Or use a private marketplace
+
+**In Cowork:** Use the "Plugin Create" plugin to build interactively.`
+  },
+  // ── HOOKS ──
+  {
+    id: "hk-01", cat: "hooks",
+    q: "What are Hooks and when should I use them?",
+    alt: ["hooks explained", "what are hooks", "claude code hooks overview", "event automation"],
+    tags: ["overview", "intro"],
+    related: ["hk-02", "sk-03"],
+    a: `**Hooks** are event-driven automation in Claude Code. They run code at specific lifecycle points — think of them as "triggers" that fire when things happen.
+
+**Use hooks when you want to:**
+- Auto-lint code after Claude edits a file
+- Block certain operations (e.g., no commits to main)
+- Log all tool usage for compliance/auditing
+- Validate user prompts before processing
+- Notify Slack when a session starts
+- Run custom checks before tool execution
+
+**Hook events (16+):**
+- \`SessionStart\` / \`SessionEnd\`
+- \`UserPromptSubmit\` — before Claude processes input
+- \`PreToolUse\` / \`PostToolUse\` — before/after any tool call
+- \`PermissionRequest\` — custom approval logic
+- \`SubagentStart\` / \`SubagentStop\`
+- \`PreCompact\` — before context compression
+- And more...
+
+**Hook types:**
+- **Command** — run a shell script
+- **HTTP** — POST to an endpoint
+- **Prompt** — single-turn LLM evaluation
+- **Agent** — multi-turn agentic verification
+
+**Availability:** Claude Code only (not Chat or Cowork).`
+  },
+  {
+    id: "hk-02", cat: "hooks",
+    q: "How do I set up a Hook in Claude Code?",
+    alt: ["configure hook", "hook setup", "add hook", "hooks settings.json"],
+    tags: ["setup", "config"],
+    related: ["hk-01", "hk-03"],
+    a: `**Add hooks to your settings file:**
+
+\`\`\`json
+// .claude/settings.json (project-level)
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "type": "command",
+        "command": "npx eslint --fix $CLAUDE_FILE_PATH"
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "type": "command",
+        "command": "echo 'Bash command about to run: $CLAUDE_TOOL_INPUT'"
+      }
+    ],
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "echo 'Session started at $(date)' >> ~/.claude/session.log"
+      }
+    ]
+  }
+}
+\`\`\`
+
+**Exit codes matter:**
+- \`exit 0\` — Allow / proceed
+- \`exit 2\` — **Block** the action (stderr shown as feedback)
+- Other — Proceed (stderr logged but not shown)
+
+**Blocking example** (prevent commits to main):
+\`\`\`json
+{
+  "PreToolUse": [{
+    "matcher": "Bash",
+    "type": "command",
+    "command": "if echo $CLAUDE_TOOL_INPUT | grep -q 'git commit.*main'; then echo 'Blocked: no direct commits to main' >&2; exit 2; fi"
+  }]
+}
+\`\`\`
+
+**Async hooks** (non-blocking background tasks):
+\`\`\`json
+{ "type": "command", "command": "curl ...", "async": true }
+\`\`\``
+  },
+  {
+    id: "hk-03", cat: "hooks",
+    q: "What are common Hook patterns for enterprise teams?",
+    alt: ["enterprise hooks", "hook best practices", "hook examples", "compliance hooks"],
+    tags: ["enterprise", "patterns"],
+    related: ["hk-01", "hk-02"],
+    a: `**1. Auto-formatting after edits:**
+\`\`\`json
+{ "PostToolUse": [{
+  "matcher": "Edit|Write",
+  "type": "command",
+  "command": "npx prettier --write $CLAUDE_FILE_PATH"
+}]}
+\`\`\`
+
+**2. Audit logging (compliance):**
+\`\`\`json
+{ "PostToolUse": [{
+  "type": "command",
+  "command": "echo '{\"tool\":\"$CLAUDE_TOOL_NAME\",\"time\":\"$(date -u +%FT%TZ)\",\"session\":\"$CLAUDE_SESSION_ID\"}' >> /var/log/claude-audit.jsonl",
+  "async": true
+}]}
+\`\`\`
+
+**3. Security check before bash commands:**
+\`\`\`json
+{ "PreToolUse": [{
+  "matcher": "Bash",
+  "type": "prompt",
+  "prompt": "Evaluate if this bash command is safe to run in a production-adjacent environment. Block if it could delete data, expose secrets, or affect running services."
+}]}
+\`\`\`
+
+**4. Slack notification on session start:**
+\`\`\`json
+{ "SessionStart": [{
+  "type": "http",
+  "url": "https://hooks.slack.com/services/YOUR/WEBHOOK/URL",
+  "headers": { "Content-Type": "application/json" },
+  "body": "{ \\"text\\": \\"Claude Code session started by $USER\\" }",
+  "async": true
+}]}
+\`\`\`
+
+**5. Validate sensitive file access:**
+\`\`\`json
+{ "PreToolUse": [{
+  "matcher": "Read|Edit",
+  "type": "command",
+  "command": "if echo $CLAUDE_TOOL_INPUT | grep -qE '\\.(env|pem|key)$'; then echo 'Blocked: sensitive file' >&2; exit 2; fi"
+}]}
+\`\`\``
+  },
+  // ── WORKFLOWS ──
+  {
+    id: "wf-01", cat: "workflows",
+    q: "What's the recommended workflow for using Claude Code on a feature branch?",
+    alt: ["feature branch workflow", "daily workflow", "development workflow with claude"],
+    tags: ["workflow", "git"],
+    related: ["cc-03", "cc-01"],
+    a: `**Recommended feature branch workflow:**
+
+\`\`\`
+1. Create branch
+   > git checkout -b feat/my-feature
+
+2. Start Claude Code session
+   > claude
+
+3. Describe the full task upfront
+   > "Implement user avatar upload: API endpoint, React component,
+      tests, and database migration. Follow our CLAUDE.md conventions."
+
+4. Review Claude's plan and approve
+   Claude will outline what it intends to do. Approve or adjust.
+
+5. Let Claude work — review at checkpoints
+   Claude edits files, runs tests, fixes issues. You review.
+
+6. Commit when satisfied
+   > "commit these changes with a descriptive message"
+
+7. Create PR
+   > "create a PR for this branch against main"
+\`\`\`
+
+**Tips:**
+- **Start broad, get specific.** Give the full picture first, then drill into details.
+- **Use CLAUDE.md** for conventions so you don't repeat yourself.
+- **Let Claude run tests** — it can iterate on failures.
+- **Use \`/compact\`** if the context gets too long mid-session.
+- **Use worktrees** for parallel features: \`isolation: worktree\` on subagents.`
+  },
+  {
+    id: "wf-02", cat: "workflows",
+    q: "How do I get Claude to follow our coding standards?",
+    alt: ["coding conventions", "style guide", "enforce standards", "code quality"],
+    tags: ["standards", "quality"],
+    related: ["cc-02", "hk-01"],
+    a: `**Layer 1: CLAUDE.md (passive context)**
+Put your standards in CLAUDE.md at the repo root:
+\`\`\`markdown
+## Coding Standards
+- Use TypeScript strict mode
+- No any types — use unknown + type guards
+- Components: functional with hooks, no class components
+- Naming: camelCase for variables, PascalCase for components
+- Max file length: 300 lines. Split if larger.
+- Always co-locate tests: Component.test.tsx
+\`\`\`
+
+**Layer 2: Skills (active templates)**
+Create a code-review skill that references your standards:
+\`\`\`markdown
+---
+name: review
+description: Review code against our team standards
+---
+Review the code changes and check against these standards:
+@CLAUDE.md
+Flag any violations with specific line numbers.
+\`\`\`
+
+**Layer 3: Hooks (automated enforcement)**
+Auto-lint after every edit:
+\`\`\`json
+{ "PostToolUse": [{
+  "matcher": "Edit|Write",
+  "type": "command",
+  "command": "npx eslint --fix $CLAUDE_FILE_PATH && npx prettier --write $CLAUDE_FILE_PATH"
+}]}
+\`\`\`
+
+**Layer 4: Managed settings (org-wide)**
+Enforce via managed configuration that can't be overridden by individual devs.`
+  },
+  {
+    id: "wf-03", cat: "workflows",
+    q: "How do I use Claude for large-scale refactoring safely?",
+    alt: ["refactoring", "large codebase changes", "safe refactoring", "bulk changes"],
+    tags: ["refactoring", "safety"],
+    related: ["wf-01", "cc-04"],
+    a: `**Strategy: incremental with verification gates.**
+
+**1. Start with a plan:**
+\`\`\`
+> "I want to migrate from Moment.js to date-fns across the codebase.
+   First, analyze the scope: how many files, what patterns are used?"
+\`\`\`
+
+**2. Use subagents for parallel work:**
+Claude can spawn multiple agents in git worktrees:
+- Agent 1: Migrate utility functions
+- Agent 2: Migrate React components
+- Agent 3: Update tests
+
+**3. Run tests after each batch:**
+\`\`\`
+> "After each file change, run the relevant tests.
+   Stop and report if any test fails."
+\`\`\`
+
+**4. Review in stages:**
+Don't try to do everything in one commit. Break into logical chunks:
+- Commit 1: Add date-fns, create adapter layer
+- Commit 2: Migrate utilities
+- Commit 3: Migrate components
+- Commit 4: Remove Moment.js
+
+**5. Use hooks for safety:**
+\`\`\`json
+{ "PostToolUse": [{
+  "matcher": "Edit",
+  "type": "command",
+  "command": "npx tsc --noEmit"
+}]}
+\`\`\`
+This runs TypeScript type-checking after every edit.
+
+**Key principle:** Let Claude do the heavy lifting, but keep humans at the verification checkpoints.`
+  },
+  {
+    id: "wf-04", cat: "workflows",
+    q: "How should I structure prompts for complex multi-step tasks?",
+    alt: ["prompt engineering", "complex prompts", "multi step tasks", "how to prompt claude code"],
+    tags: ["prompts", "tips"],
+    related: ["wf-01"],
+    a: `**The STAR method for complex prompts:**
+
+**S — Situation:** What's the current state?
+**T — Task:** What do you want accomplished?
+**A — Approach:** Any constraints or preferences?
+**R — Result:** What does "done" look like?
+
+**Example:**
+\`\`\`
+Situation: We have a REST API with Express that handles user management.
+The auth middleware is in src/middleware/auth.ts.
+
+Task: Add rate limiting to all API endpoints. Use a sliding window
+algorithm with Redis.
+
+Approach:
+- Use the 'rate-limiter-flexible' package
+- Different limits per route tier (public: 100/min, auth: 500/min)
+- Follow our existing middleware patterns in src/middleware/
+- Add tests using our Vitest setup
+
+Result: All endpoints rate-limited, tests passing, README updated
+with the rate limit values.
+\`\`\`
+
+**Anti-patterns to avoid:**
+- "Fix the code" (too vague)
+- "Refactor everything to be better" (no clear scope)
+- Giving one instruction at a time (let Claude plan the full task)
+
+**Pro tip:** If the task is truly large, use extended thinking (\`/model opus\`) and let Claude create a plan first before executing.`
+  },
+  // ── SECURITY ──
+  {
+    id: "sec-01", cat: "security",
+    q: "What data does Claude Code read from my filesystem?",
+    alt: ["filesystem access", "what files does claude read", "file access scope"],
+    tags: ["privacy", "filesystem"],
+    related: ["gs-05", "sec-02"],
+    a: `**Claude Code reads files on-demand, not proactively.**
+
+**What it reads:**
+- Files you explicitly mention or ask about
+- Files it determines are relevant while working on your task
+- \`CLAUDE.md\` and \`.claude/\` configuration files (at session start)
+- Git status and diff information
+
+**What it does NOT do:**
+- Scan your entire filesystem on startup
+- Read files outside the current project directory (by default)
+- Access \`.env\` files unless you ask (and it warns you)
+- Upload your codebase to any external service
+
+**Controls:**
+- Use \`.gitignore\` patterns — Claude respects them
+- Set \`allowed-tools: Read, Grep\` in skill frontmatter to limit writes
+- Use \`plan\` permission mode for read-only exploration
+- Configure \`claudeMdExcludes\` to skip certain CLAUDE.md files
+
+**Key principle:** Claude Code has the *ability* to read any file you have access to, but it only reads files relevant to the current task.`
+  },
+  {
+    id: "sec-02", cat: "security",
+    q: "How do I handle sensitive data when using Claude?",
+    alt: ["secrets", "api keys", "PII", "sensitive data protection"],
+    tags: ["secrets", "sensitive"],
+    related: ["sec-01", "hk-03"],
+    a: `**Best practices for sensitive data:**
+
+**1. Never commit secrets to CLAUDE.md:**
+\`\`\`markdown
+## Environment
+Use env vars for all secrets. Never hardcode.
+- DB: $DATABASE_URL
+- API: $API_KEY
+\`\`\`
+
+**2. Use hooks to block sensitive file access:**
+\`\`\`json
+{ "PreToolUse": [{
+  "matcher": "Read|Edit",
+  "type": "command",
+  "command": "if echo $CLAUDE_TOOL_INPUT | grep -qE '\\.(env|pem|key|secret)'; then echo 'Blocked: sensitive file' >&2; exit 2; fi"
+}]}
+\`\`\`
+
+**3. Use MCP env var expansion:**
+\`\`\`json
+{ "env": { "DB_URL": "\${DATABASE_URL}" } }
+\`\`\`
+Secrets stay in your shell environment, not in config files.
+
+**4. On paid plans:**
+- Your data is NOT used for model training
+- Enterprise plans: data retention controls, SSO, audit logs
+
+**5. Claude Code will warn you** if it detects you're about to commit files like \`.env\`, \`credentials.json\`, or private keys.
+
+**6. For high-sensitivity work:**
+Consider using \`plan\` permission mode (read-only) or restrict tools to \`Read, Grep, Glob\` only.`
+  },
+  {
+    id: "sec-03", cat: "security",
+    q: "How do I audit what Claude Code did in a session?",
+    alt: ["audit log", "session history", "what did claude do", "review session"],
+    tags: ["audit", "logging"],
+    related: ["sec-01", "hk-03"],
+    a: `**Built-in session history:**
+Claude Code maintains conversation transcripts. Review past sessions:
+\`\`\`bash
+claude --resume  # List and resume previous sessions
+\`\`\`
+
+**Git-based auditing:**
+Every file change Claude makes goes through git. Use:
+\`\`\`bash
+git log --oneline    # See all commits
+git diff HEAD~3      # See recent changes
+\`\`\`
+
+**Custom audit logging with hooks:**
+\`\`\`json
+{
+  "PostToolUse": [{
+    "type": "command",
+    "command": "echo '{\\"tool\\":\\"'$CLAUDE_TOOL_NAME'\\",\\"time\\":\\"'$(date -u +%FT%TZ)'\\",\\"session\\":\\"'$CLAUDE_SESSION_ID'\\"}' >> ~/.claude/audit.jsonl",
+    "async": true
+  }]
+}
+\`\`\`
+
+This logs every tool usage (file reads, edits, bash commands) to a JSONL file.
+
+**For enterprise compliance:**
+- HTTP hooks can POST audit events to your SIEM
+- Track: who, when, what tool, what file, what action
+- Managed settings can enforce audit hooks org-wide`
+  },
+  {
+    id: "sec-04", cat: "security",
+    q: "What are the permission boundaries for Claude Code's tools?",
+    alt: ["tool permissions", "what can claude do", "permission model", "safety boundaries"],
+    tags: ["permissions", "safety"],
+    related: ["cc-04", "sec-01"],
+    a: `**Claude Code's default permission model:**
+
+**Always allowed (no prompt):**
+- Read files
+- Search files (Grep, Glob)
+- Read git status/log/diff
+
+**Requires approval:**
+- Edit/Write files
+- Run bash commands
+- Create git commits
+- MCP tool calls
+
+**Never done without explicit request:**
+- Force push (\`git push --force\`)
+- Delete branches (\`git branch -D\`)
+- \`rm -rf\` or destructive operations
+- Sending data to external services
+
+**Override with permission modes:**
+- \`default\` — Standard (prompt for writes/bash)
+- \`acceptEdits\` — Auto-approve file edits
+- \`plan\` — Read-only, no modifications
+- \`bypassPermissions\` — Skip all checks (use carefully)
+
+**Hooks add another layer:**
+\`PreToolUse\` hooks can block any tool call before it executes, based on custom logic (regex matching, script evaluation).
+
+**Managed settings** (enterprise) can enforce permission modes org-wide and override user preferences.`
+  },
+  {
+    id: "sec-05", cat: "security",
+    q: "How do I enforce organization-wide policies for Claude usage?",
+    alt: ["org policies", "enterprise governance", "managed settings enforcement"],
+    tags: ["enterprise", "governance"],
+    related: ["gs-06", "sec-03"],
+    a: `**Managed settings** give admins org-wide control that users can't override.
+
+**What you can manage:**
+
+**1. MCP server policies (\`managed-mcp.json\`):**
+\`\`\`json
+{
+  "allowedMcpServers": [
+    { "serverName": "github" },
+    { "serverUrl": "https://*.yourcompany.com/*" }
+  ],
+  "deniedMcpServers": [
+    { "serverCommand": "npx *" }
+  ]
+}
+\`\`\`
+
+**2. Permission modes:**
+Force all users into a specific permission mode.
+
+**3. Tool restrictions:**
+Deny specific tools org-wide (e.g., block direct database access).
+
+**4. Audit hooks:**
+Enforce logging hooks that users can't disable.
+
+**5. Skill management (Chat):**
+Provision org-approved skills to all Team/Enterprise members.
+
+**Deployment:**
+- macOS: \`/Library/Application Support/ClaudeCode/\`
+- Linux: \`/etc/claude-code/\`
+- Windows: \`C:\\Program Files\\ClaudeCode\\\`
+
+Push via MDM (Jamf, Intune), Chef, Puppet, or Ansible.
+
+**Precedence:** Managed > Local > Project > User (managed always wins).`
+  },
+  // ── TROUBLESHOOTING ──
+  {
+    id: "ts-01", cat: "troubleshooting",
+    q: "Claude Code is running slowly — how do I fix it?",
+    alt: ["slow performance", "claude code slow", "speed up claude", "performance issues"],
+    tags: ["performance", "speed"],
+    related: ["ts-02", "ts-05"],
+    a: `**Common causes and fixes:**
+
+**1. Large context window:**
+- Use \`/compact\` to compress conversation history
+- Start a fresh session for new tasks
+- Use subagents (they get their own context)
+
+**2. Too many MCP tools loaded:**
+- Tool Search auto-defers when tools exceed 10% context
+- Remove unused MCP servers: \`claude mcp remove unused-server\`
+- Set threshold: \`ENABLE_TOOL_SEARCH=auto:5\`
+
+**3. Slow MCP servers:**
+- Check server startup time (run the command manually)
+- Use HTTP transport for remote servers (faster than stdio for some)
+- Increase timeout in MCP config
+
+**4. Large files being read:**
+- Claude may be reading unnecessarily large files
+- Add binary/large files to \`.gitignore\`
+- Use specific file paths instead of asking Claude to "look at everything"
+
+**5. Model choice:**
+- Opus is slower but smarter
+- Switch to Sonnet (\`/model sonnet\`) for faster responses
+- Use Haiku for subagents
+
+**Quick diagnostic:**
+\`\`\`bash
+claude mcp list  # Check for slow/failing MCP servers
+\`\`\``
+  },
+  {
+    id: "ts-02", cat: "troubleshooting",
+    q: "I'm getting rate limited — what should I do?",
+    alt: ["rate limit", "too many requests", "429 error", "usage limits"],
+    tags: ["rate-limit", "errors"],
+    related: ["ts-01", "gs-04"],
+    a: `**Rate limits vary by plan and model:**
+
+**Immediate fixes:**
+1. **Switch to a lighter model:** \`/model sonnet\` or \`/model haiku\`
+2. **Reduce subagent parallelism:** Fewer concurrent agents = fewer API calls
+3. **Use \`/compact\`** to reduce context size (smaller requests)
+4. **Wait and retry** — rate limits reset on a rolling window
+
+**Longer-term solutions:**
+- **Upgrade plan** for higher limits
+- **Use Haiku for subagents** — much higher rate limits
+- **Cache results** — don't re-ask the same questions
+- **Batch operations** — ask Claude to do multiple things in one turn
+
+**In CI/CD:**
+- Add retry logic with exponential backoff
+- Use Haiku for automated tasks (cheapest, highest limits)
+- Stagger pipeline runs to avoid burst usage
+
+**Check your usage:**
+Visit your Anthropic dashboard for current usage and limits.`
+  },
+  {
+    id: "ts-03", cat: "troubleshooting",
+    q: "Claude keeps making the same mistake — how do I fix it?",
+    alt: ["repeated mistakes", "claude not learning", "wrong output", "correct claude behavior"],
+    tags: ["correction", "behavior"],
+    related: ["cc-02", "wf-02"],
+    a: `**Root cause: Claude doesn't have persistent memory of corrections (by default).**
+
+**Fix 1: Add to CLAUDE.md (permanent fix)**
+If Claude repeatedly gets something wrong:
+\`\`\`markdown
+## Important Notes
+- DO NOT use moment.js — we migrated to date-fns
+- Tests go in __tests__/ NOT next to source files
+- Use pnpm, NEVER npm
+\`\`\`
+
+**Fix 2: Use auto-memory**
+Claude Code can save corrections to memory files:
+\`\`\`
+> "Remember: always use our custom Button component from @/components/ui, never raw HTML buttons"
+\`\`\`
+This persists in \`~/.claude/projects/<project>/memory/MEMORY.md\`.
+
+**Fix 3: Create a skill**
+For complex patterns, create a skill with step-by-step instructions.
+
+**Fix 4: Use hooks for automated enforcement**
+\`\`\`json
+{ "PostToolUse": [{
+  "matcher": "Write|Edit",
+  "type": "command",
+  "command": "grep -l 'moment' $CLAUDE_FILE_PATH && echo 'Error: moment.js detected, use date-fns' >&2 && exit 2 || exit 0"
+}]}
+\`\`\`
+
+**Fix 5: Be explicit in your prompt**
+Instead of: "Fix the date handling"
+Say: "Fix the date handling using date-fns (NOT moment.js)"`
+  },
+  {
+    id: "ts-04", cat: "troubleshooting",
+    q: "My CLAUDE.md isn't being picked up — what's wrong?",
+    alt: ["claude.md not working", "instructions not loaded", "claude ignoring claude.md"],
+    tags: ["config", "claude-md"],
+    related: ["cc-02", "ts-01"],
+    a: `**Checklist:**
+
+**1. File location correct?**
+- Must be at the repo root: \`./CLAUDE.md\`
+- Or inside \`.claude/\`: \`./.claude/CLAUDE.md\`
+- Not in a subdirectory (unless intentionally scoped)
+
+**2. File name correct?**
+- Must be exactly \`CLAUDE.md\` (case-sensitive)
+- Not \`Claude.md\` or \`claude.md\`
+
+**3. Check if excluded:**
+Look for \`claudeMdExcludes\` in settings:
+\`\`\`json
+{ "claudeMdExcludes": ["**/CLAUDE.md"] }  // This would exclude it!
+\`\`\`
+
+**4. File too long?**
+- Keep under 200 lines for reliable loading
+- Use \`.claude/rules/\` for modular content
+- Use \`@path/to/file\` imports for additional context
+
+**5. Verify it's loading:**
+\`\`\`
+> "What does our CLAUDE.md say about testing conventions?"
+\`\`\`
+If Claude doesn't know, the file isn't loaded.
+
+**6. Are you in the right directory?**
+Claude Code loads CLAUDE.md from the **current working directory** and its ancestors.
+
+**7. Local overrides:**
+\`CLAUDE.local.md\` overrides \`CLAUDE.md\` for personal preferences (auto-gitignored).`
+  },
+  {
+    id: "ts-05", cat: "troubleshooting",
+    q: "Claude Code lost context mid-conversation — what happened?",
+    alt: ["context lost", "forgot context", "amnesia", "context window full"],
+    tags: ["context", "memory"],
+    related: ["ts-01"],
+    a: `**Most likely: context window compression happened.**
+
+When your conversation exceeds the context window, Claude Code automatically compacts older messages. This is normal and usually seamless, but sometimes important details get compressed.
+
+**Prevention:**
+- Use \`/compact\` proactively before context fills up
+- Put critical info in CLAUDE.md (always loaded, never compacted)
+- Break large tasks into smaller sessions
+- Use subagents for independent subtasks (separate context windows)
+
+**Recovery:**
+- Re-state the important context: "We're working on X. The key constraint is Y."
+- Reference files: "Check src/config.ts for the config we discussed"
+- Use \`/status\` to see current session info
+
+**Auto-memory helps:**
+Important patterns Claude learns during a session can be saved to memory:
+\`\`\`
+~/.claude/projects/<project>/memory/MEMORY.md
+\`\`\`
+First 200 lines are auto-loaded at session start.
+
+**Pro tip:** For very long tasks, ask Claude to "summarize what we've done so far and what's left" before context gets compressed. This creates a natural checkpoint.`
+  }
+];
+
+// ════════════════════════════════════════
+// FUSE SETUP
+// ════════════════════════════════════════
+const fuse = new Fuse(QA, {
+  keys: [
+    { name: 'q', weight: 0.4 },
+    { name: 'alt', weight: 0.35 },
+    { name: 'tags', weight: 0.15 },
+    { name: 'a', weight: 0.1 }
+  ],
+  threshold: 0.45,
+  distance: 300,
+  includeScore: true,
+  minMatchCharLength: 2,
+  shouldSort: true
+});
+
+// ════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════
+let sessionHistory = [];
+let activeCat = 'all';
+
+// ════════════════════════════════════════
+// GREETINGS
+// ════════════════════════════════════════
+const greetings = [
+  "Hey! I can answer questions about Claude Code, Chat, Cowork, MCP, Skills, Plugins, Hooks, and more. Try a suggestion below or type your own.",
+  "Welcome! Ask me anything about the Claude ecosystem — interfaces, extensions, workflows, troubleshooting. I have 100+ pre-built answers ready.",
+  "Hi there! I'm your team's Claude ecosystem guide. What would you like to know? You can browse categories above or just ask.",
+  "Ready to help! Whether it's MCP setup, Skills vs Plugins, or getting started with Cowork — just ask."
+];
+
+// ════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  const greeting = greetings[Math.floor(Math.random() * greetings.length)];
+  addBotMessage(greeting, getRandomSuggestions('all', 4));
+  setupInput();
+  setupCategoryPills();
+});
+
+function setupInput() {
+  const input = document.getElementById('inputField');
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  });
+  // Auto-resize
+  input.addEventListener('input', () => {
+    input.style.height = 'auto';
+    input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+  });
+}
+
+function setupCategoryPills() {
+  document.querySelectorAll('.cat-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      activeCat = pill.dataset.cat;
+      const suggestions = getRandomSuggestions(activeCat, 5);
+      if (activeCat === 'all') {
+        addBotMessage("Showing suggestions from all categories:", suggestions);
+      } else {
+        const catLabel = pill.textContent;
+        addBotMessage(`Here are some questions about **${catLabel}**:`, suggestions);
+      }
+    });
+  });
+}
+
+// ════════════════════════════════════════
+// SEND
+// ════════════════════════════════════════
+function handleSend() {
+  const input = document.getElementById('inputField');
+  const text = input.value.trim();
+  if (!text) return;
+
+  input.value = '';
+  input.style.height = 'auto';
+  askQuestion(text);
+}
+
+function askQuestion(text) {
+  addUserMessage(text);
+  sessionHistory.push(text);
+
+  // Show typing indicator
+  const typingId = showTyping();
+
+  // Simulate thinking delay
+  const delay = 300 + Math.random() * 400;
+  setTimeout(() => {
+    removeTyping(typingId);
+    processQuestion(text);
+  }, delay);
+}
+
+// ════════════════════════════════════════
+// PROCESS
+// ════════════════════════════════════════
+function processQuestion(text) {
+  // Easter eggs
+  const lower = text.toLowerCase();
+  if (lower.includes('meaning of life') || lower === '42') {
+    addBotMessage("42. But if you're asking about Claude's meaning, it's to help your team ship better work faster. What Claude question can I help with?");
+    return;
+  }
+  if (lower.includes('tell me a joke') || lower === 'joke') {
+    addBotMessage("Why do programmers prefer dark mode? Because light attracts bugs. Anyway, what Claude question can I help with?");
+    return;
+  }
+
+  const results = fuse.search(text);
+
+  if (results.length === 0) {
+    showNoResults(text);
+    return;
+  }
+
+  const best = results[0];
+
+  if (best.score <= 0.15) {
+    // High confidence
+    showAnswer(best.item);
+  } else if (best.score <= 0.35) {
+    // Medium confidence
+    showAnswer(best.item, true);
+  } else {
+    // Low confidence — show "did you mean?"
+    showDidYouMean(results.slice(0, 3).map(r => r.item), text);
+  }
+}
+
+// ════════════════════════════════════════
+// RENDER
+// ════════════════════════════════════════
+function showAnswer(entry, hedged = false) {
+  let text = '';
+  if (hedged) {
+    const hedges = [
+      `I think you're asking about **${entry.q.toLowerCase()}** — here's what I know:`,
+      `This might be what you're looking for:`,
+      `Based on your question, here's the most relevant answer:`
+    ];
+    text = hedges[Math.floor(Math.random() * hedges.length)] + '\n\n';
+  }
+  text += entry.a;
+
+  // Get related questions
+  const related = (entry.related || [])
+    .map(id => QA.find(q => q.id === id))
+    .filter(Boolean)
+    .map(q => q.q);
+
+  addBotMessage(text, related.length > 0 ? related : null, true);
+}
+
+function showDidYouMean(candidates, originalQ) {
+  const inner = document.createElement('div');
+
+  const preamble = document.createElement('p');
+  preamble.textContent = "Hmm, I want to make sure I answer the right thing. Were you asking about one of these?";
+  inner.appendChild(preamble);
+
+  const list = document.createElement('ul');
+  list.className = 'dym-list';
+  candidates.forEach(c => {
+    const li = document.createElement('li');
+    li.textContent = c.q;
+    li.onclick = () => {
+      addUserMessage(c.q);
+      const tid = showTyping();
+      setTimeout(() => {
+        removeTyping(tid);
+        showAnswer(c);
+      }, 300);
+    };
+    list.appendChild(li);
+  });
+  inner.appendChild(list);
+
+  const fallback = document.createElement('p');
+  fallback.style.cssText = 'margin-top:.75rem;font-size:.82rem;color:var(--text-muted)';
+  fallback.textContent = 'Not what you meant? Try rephrasing or browse by category above.';
+  inner.appendChild(fallback);
+
+  addBotMessageEl(inner);
+}
+
+function showNoResults(text) {
+  const inner = document.createElement('div');
+
+  const p1 = document.createElement('p');
+  p1.textContent = "I don't have a pre-built answer for that one yet. Here's what you can try:";
+  inner.appendChild(p1);
+
+  const ul = document.createElement('ul');
+  ul.style.cssText = 'margin:.5rem 0;padding-left:1.25rem';
+  ['Browse by category using the pills above', 'Try rephrasing with different keywords', 'Check docs.anthropic.com or code.claude.com/docs'].forEach(t => {
+    const li = document.createElement('li');
+    li.textContent = t;
+    li.style.cssText = 'margin:.25rem 0;font-size:.88rem';
+    ul.appendChild(li);
+  });
+  inner.appendChild(ul);
+
+  // API fallback option
+  const apiSection = document.createElement('div');
+  apiSection.className = 'api-section';
+  apiSection.innerHTML = `
+    <p>Or ask Claude directly with your API key (sent only to Anthropic, not stored):</p>
+    <div class="api-row">
+      <input type="password" class="api-input" id="apiKeyInput" placeholder="sk-ant-..." value="${sessionStorage.getItem('claude_key') || ''}">
+      <button class="api-btn" onclick="askClaude('${text.replace(/'/g, "\\'")}')">Ask Claude</button>
+    </div>
+  `;
+  inner.appendChild(apiSection);
+
+  addBotMessageEl(inner);
+}
+
+// ════════════════════════════════════════
+// CLAUDE API FALLBACK
+// ════════════════════════════════════════
+async function askClaude(question) {
+  const keyInput = document.getElementById('apiKeyInput');
+  const key = keyInput.value.trim();
+  if (!key) { keyInput.focus(); return; }
+
+  sessionStorage.setItem('claude_key', key);
+  const typingId = showTyping();
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1024,
+        system: `You are a helpful assistant that answers questions about the Anthropic Claude ecosystem. You know about:
+- Claude Code (agentic CLI for developers), Claude Chat (claude.ai web/desktop), Claude Cowork (desktop agent for knowledge workers)
+- MCP (Model Context Protocol), Skills (portable SKILL.md files), Plugins (bundled packages), Hooks (event automation), Subagents, Projects/CLAUDE.md
+- The customization stack: MCP (transport) → Skills (instruction) → Plugins (product)
+- Skills work across all 3 interfaces. Plugins are primarily Cowork + Code.
+Answer concisely with practical examples. Use markdown formatting.`,
+        messages: [{ role: 'user', content: question }]
+      })
+    });
+
+    removeTyping(typingId);
+
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      addBotMessage(`**API Error (${resp.status}):** ${err.error?.message || 'Check your API key and try again.'}`);
+      return;
+    }
+
+    const data = await resp.json();
+    const answer = data.content?.[0]?.text || 'No response received.';
+    addBotMessage(answer + '\n\n*— Answered live by Claude API*', null, true);
+  } catch (e) {
+    removeTyping(typingId);
+    addBotMessage(`**Connection error:** ${e.message}. Check your network and API key.`);
+  }
+}
+
+// ════════════════════════════════════════
+// DOM HELPERS
+// ════════════════════════════════════════
+function addUserMessage(text) {
+  const chat = document.getElementById('chatInner');
+  const msg = document.createElement('div');
+  msg.className = 'msg user';
+  msg.innerHTML = `
+    <div class="msg-avatar">Y</div>
+    <div class="msg-bubble">${escapeHtml(text)}</div>
+  `;
+  chat.appendChild(msg);
+  scrollToBottom();
+}
+
+function addBotMessage(markdown, suggestions = null, showFeedback = false) {
+  const chat = document.getElementById('chatInner');
+  const msg = document.createElement('div');
+  msg.className = 'msg bot';
+
+  let html = `<div class="msg-avatar">C</div><div class="msg-bubble">`;
+  html += marked.parse(markdown);
+
+  if (showFeedback) {
+    html += `<div class="feedback">
+      <span style="font-size:.72rem;color:var(--text-muted)">Helpful?</span>
+      <button class="fb-btn" onclick="this.classList.add('selected')">Yes</button>
+      <button class="fb-btn" onclick="logUnhelpful(this)">No</button>
+    </div>`;
+  }
+
+  html += `</div>`;
+  msg.innerHTML = html;
+
+  if (suggestions && suggestions.length > 0) {
+    const sugDiv = document.createElement('div');
+    sugDiv.className = 'suggestions';
+    sugDiv.style.marginLeft = '38px';
+    suggestions.forEach(s => {
+      const chip = document.createElement('button');
+      chip.className = 'sug-chip';
+      chip.textContent = s;
+      chip.onclick = () => askQuestion(s);
+      sugDiv.appendChild(chip);
+    });
+    const wrapper = document.createElement('div');
+    wrapper.appendChild(msg);
+    wrapper.appendChild(sugDiv);
+    chat.appendChild(wrapper);
+  } else {
+    chat.appendChild(msg);
+  }
+
+  scrollToBottom();
+}
+
+function addBotMessageEl(contentEl) {
+  const chat = document.getElementById('chatInner');
+  const msg = document.createElement('div');
+  msg.className = 'msg bot';
+  const avatar = document.createElement('div');
+  avatar.className = 'msg-avatar';
+  avatar.textContent = 'C';
+  const bubble = document.createElement('div');
+  bubble.className = 'msg-bubble';
+  bubble.appendChild(contentEl);
+  msg.appendChild(avatar);
+  msg.appendChild(bubble);
+  chat.appendChild(msg);
+  scrollToBottom();
+}
+
+function showTyping() {
+  const chat = document.getElementById('chatInner');
+  const id = 'typing-' + Date.now();
+  const msg = document.createElement('div');
+  msg.className = 'msg bot';
+  msg.id = id;
+  msg.innerHTML = `
+    <div class="msg-avatar">C</div>
+    <div class="msg-bubble" style="padding:0">
+      <div class="typing-dots"><span></span><span></span><span></span></div>
+    </div>
+  `;
+  chat.appendChild(msg);
+  scrollToBottom();
+  return id;
+}
+
+function removeTyping(id) {
+  const el = document.getElementById(id);
+  if (el) el.remove();
+}
+
+function scrollToBottom() {
+  const area = document.getElementById('chatArea');
+  requestAnimationFrame(() => {
+    area.scrollTop = area.scrollHeight;
+  });
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function getRandomSuggestions(cat, count) {
+  const pool = cat === 'all' ? QA : QA.filter(q => q.cat === cat);
+  const shuffled = [...pool].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, count).map(q => q.q);
+}
+
+function logUnhelpful(btn) {
+  btn.classList.add('selected');
+  // Store in localStorage for maintainer review
+  const unanswered = JSON.parse(localStorage.getItem('ama_unhelpful') || '[]');
+  const lastQ = sessionHistory[sessionHistory.length - 1];
+  if (lastQ) unanswered.push({ q: lastQ, time: new Date().toISOString() });
+  localStorage.setItem('ama_unhelpful', JSON.stringify(unanswered));
+}
+
+// Admin view: Ctrl+Shift+A
+document.addEventListener('keydown', e => {
+  if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+    const data = JSON.parse(localStorage.getItem('ama_unhelpful') || '[]');
+    if (data.length === 0) {
+      addBotMessage('**Admin:** No unhelpful feedback logged yet.');
+    } else {
+      let md = '**Admin — Unhelpful Feedback Log:**\n\n';
+      data.forEach((d, i) => { md += `${i + 1}. "${d.q}" — ${d.time}\n`; });
+      addBotMessage(md);
+    }
+  }
+});
+</script>
+
+</body>
+</html>
