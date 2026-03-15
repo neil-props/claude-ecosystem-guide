@@ -13,6 +13,7 @@ This roadmap delivers a comprehensive Claude Code ecosystem reference as two art
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [ ] **Phase 1: Foundation** - Multi-page site structure, shared layout, build pipeline, and code infrastructure
+- [ ] **Phase 1.1: Design System** - INSERTED - Visual design system, page layouts, component library, and design mockups
 - [ ] **Phase 2: Knowledge Base** - Extract existing content into markdown knowledge files as single source of truth
 - [ ] **Phase 3: Conceptual Content** - Write conceptual overviews for all 10 ecosystem extension points
 - [ ] **Phase 4: Guides and Reference** - Write how-to guides and technical reference specs for all extension points
@@ -36,6 +37,22 @@ Decimal phases appear between their surrounding integers in numeric order.
 Plans:
 - [ ] 01-01: TBD
 - [ ] 01-02: TBD
+
+### Phase 1.1: Design System (INSERTED)
+**Goal**: A polished visual design system is defined with mockups approved, establishing the look and feel for all site pages, content layers, and interactive elements
+**Depends on**: Phase 1
+**Requirements**: DSGN-01, DSGN-02, DSGN-03, DSGN-04, DSGN-05, DSGN-06, DSGN-07
+**Success Criteria** (what must be TRUE):
+  1. Visual design system (color palette, typography, spacing) is defined for both dark and light themes
+  2. Page layout mockups show sidebar, content area, and mobile navigation patterns
+  3. Content layer UI (tabs/accordions for concept/howto/reference/decision-tree) is designed and approved
+  4. Interactive element designs (decision wizard, search results, code blocks, copy feedback) are mocked up
+  5. Reusable component library (cards, callouts, tables, badges, nav items) is implemented in CSS
+**Plans**: TBD
+
+Plans:
+- [ ] 1.1-01: TBD
+- [ ] 1.1-02: TBD
 
 ### Phase 2: Knowledge Base
 **Goal**: All existing content from index.html and ama.html is extracted into structured markdown knowledge files that serve as the single source of truth
@@ -117,11 +134,12 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
+Phases execute in numeric order: 1 → 1.1 → 2 → 3 → 4 → 5 → 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 0/2 | Not started | - |
+| 1.1. Design System | 0/2 | Not started | - |
 | 2. Knowledge Base | 0/2 | Not started | - |
 | 3. Conceptual Content | 0/2 | Not started | - |
 | 4. Guides and Reference | 0/3 | Not started | - |
