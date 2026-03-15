@@ -128,13 +128,71 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| (populated during roadmap creation) | | |
+| SITE-01 | Phase 1: Foundation | Pending |
+| SITE-02 | Phase 5: Decision Guidance and Recipes | Pending |
+| SITE-03 | Phase 1: Foundation | Pending |
+| SITE-04 | Phase 1: Foundation | Pending |
+| SITE-05 | Phase 1: Foundation | Pending |
+| SITE-06 | Phase 1: Foundation | Pending |
+| SITE-07 | Phase 1: Foundation | Pending |
+| SITE-08 | Phase 1: Foundation | Pending |
+| SITE-09 | Phase 1: Foundation | Pending |
+| CONC-01 | Phase 3: Conceptual Content | Pending |
+| CONC-02 | Phase 3: Conceptual Content | Pending |
+| CONC-03 | Phase 3: Conceptual Content | Pending |
+| CONC-04 | Phase 3: Conceptual Content | Pending |
+| CONC-05 | Phase 3: Conceptual Content | Pending |
+| CONC-06 | Phase 3: Conceptual Content | Pending |
+| CONC-07 | Phase 3: Conceptual Content | Pending |
+| CONC-08 | Phase 3: Conceptual Content | Pending |
+| CONC-09 | Phase 3: Conceptual Content | Pending |
+| CONC-10 | Phase 3: Conceptual Content | Pending |
+| HOWT-01 | Phase 4: Guides and Reference | Pending |
+| HOWT-02 | Phase 4: Guides and Reference | Pending |
+| HOWT-03 | Phase 4: Guides and Reference | Pending |
+| HOWT-04 | Phase 4: Guides and Reference | Pending |
+| HOWT-05 | Phase 4: Guides and Reference | Pending |
+| HOWT-06 | Phase 4: Guides and Reference | Pending |
+| HOWT-07 | Phase 4: Guides and Reference | Pending |
+| HOWT-08 | Phase 4: Guides and Reference | Pending |
+| HOWT-09 | Phase 4: Guides and Reference | Pending |
+| HOWT-10 | Phase 4: Guides and Reference | Pending |
+| REFR-01 | Phase 4: Guides and Reference | Pending |
+| REFR-02 | Phase 4: Guides and Reference | Pending |
+| REFR-03 | Phase 4: Guides and Reference | Pending |
+| REFR-04 | Phase 4: Guides and Reference | Pending |
+| REFR-05 | Phase 4: Guides and Reference | Pending |
+| REFR-06 | Phase 4: Guides and Reference | Pending |
+| REFR-07 | Phase 4: Guides and Reference | Pending |
+| REFR-08 | Phase 4: Guides and Reference | Pending |
+| DECT-01 | Phase 5: Decision Guidance and Recipes | Pending |
+| DECT-02 | Phase 5: Decision Guidance and Recipes | Pending |
+| DECT-03 | Phase 5: Decision Guidance and Recipes | Pending |
+| RECP-01 | Phase 5: Decision Guidance and Recipes | Pending |
+| RECP-02 | Phase 5: Decision Guidance and Recipes | Pending |
+| RECP-03 | Phase 5: Decision Guidance and Recipes | Pending |
+| RECP-04 | Phase 5: Decision Guidance and Recipes | Pending |
+| RECP-05 | Phase 5: Decision Guidance and Recipes | Pending |
+| KNOW-01 | Phase 2: Knowledge Base | Pending |
+| KNOW-02 | Phase 2: Knowledge Base | Pending |
+| KNOW-03 | Phase 2: Knowledge Base | Pending |
+| KNOW-04 | Phase 2: Knowledge Base | Pending |
+| KNOW-05 | Phase 1: Foundation | Pending |
+| AGNT-01 | Phase 6: Agent | Pending |
+| AGNT-02 | Phase 6: Agent | Pending |
+| AGNT-03 | Phase 6: Agent | Pending |
+| AGNT-04 | Phase 6: Agent | Pending |
+| AGNT-05 | Phase 6: Agent | Pending |
+| AGNT-06 | Phase 6: Agent | Pending |
+| AGNT-07 | Phase 6: Agent | Pending |
+| AGNT-08 | Phase 6: Agent | Pending |
+| AGNT-09 | Phase 6: Agent | Pending |
 
 **Coverage:**
-- v1 requirements: 47 total
-- Mapped to phases: 0
-- Unmapped: 47 ⚠️
+- v1 requirements: 59 total
+- Mapped to phases: 59
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-14*
-*Last updated: 2026-03-14 after initial definition*
+*Last updated: 2026-03-14 after roadmap creation*
