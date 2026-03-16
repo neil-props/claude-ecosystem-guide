@@ -8,7 +8,7 @@
     "build:search": "node build/build.js && npx pagefind --site docs",
     "dev": "npx serve docs",
     "clean": "rm -rf docs",
-    "test": "node --test tests/test-build.js tests/test-anchors.js tests/test-highlighting.js tests/test-nav.js"
+    "test": "node --test tests/test-build.js tests/test-anchors.js tests/test-highlighting.js tests/test-nav.js tests/test-agent.js"
   },
   "dependencies": {
     "glob": "^11.0.0",
