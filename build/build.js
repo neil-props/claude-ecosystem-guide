@@ -15,6 +15,7 @@ import javascript from 'highlight.js/lib/languages/javascript';
 import typescript from 'highlight.js/lib/languages/typescript';
 import markdown from 'highlight.js/lib/languages/markdown';
 import xml from 'highlight.js/lib/languages/xml';
+import plaintext from 'highlight.js/lib/languages/plaintext';
 
 hljs.registerLanguage('yaml', yaml);
 hljs.registerLanguage('json', json);
@@ -28,6 +29,7 @@ hljs.registerLanguage('markdown', markdown);
 hljs.registerLanguage('md', markdown);
 hljs.registerLanguage('xml', xml);
 hljs.registerLanguage('html', xml);
+hljs.registerLanguage('plaintext', plaintext);
 
 // Resolve paths relative to project root
 const __filename = fileURLToPath(import.meta.url);
