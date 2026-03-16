@@ -126,16 +126,16 @@ Plans:
   3. Agent reads the user's local project files (CLAUDE.md, .mcp.json, settings) and gives contextual setup recommendations
   4. Agent handles comparison questions ("what's the difference between X and Y?") with structured, side-by-side responses
   5. Agent can audit a user's Claude Code setup and flag issues or suggest improvements
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 06-01: TBD
-- [ ] 06-02: TBD
+- [ ] 06-01-PLAN.md — Test scaffold, agent file with complete system prompt, first 5 condensed skill files (MCP, Skills, Plugins, Hooks, Agents)
+- [ ] 06-02-PLAN.md — Remaining 5 condensed skill files (Projects, Connectors, Commands, Memory, Settings), interactive verification checkpoint
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 1.1 → 2 → 3 → 4 → 5 → 6
+Phases execute in numeric order: 1 -> 1.1 -> 2 -> 3 -> 4 -> 5 -> 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
