@@ -21,11 +21,11 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Design System
 
-- [ ] **DSGN-01**: Visual design system defined — color palette, typography scale, spacing system for both dark and light themes
-- [ ] **DSGN-02**: Page layout design — sidebar behavior, content area proportions, header/footer patterns
+- [x] **DSGN-01**: Visual design system defined — color palette, typography scale, spacing system for both dark and light themes
+- [x] **DSGN-02**: Page layout design — sidebar behavior, content area proportions, header/footer patterns
 - [ ] **DSGN-03**: Content layer UI — tab/accordion pattern for concept/howto/reference/decision-tree views per topic
 - [ ] **DSGN-04**: Interactive element design — decision wizard UI, search results display, code block styling, copy feedback
-- [ ] **DSGN-05**: Mobile navigation design — hamburger/drawer pattern, touch-friendly interactions
+- [x] **DSGN-05**: Mobile navigation design — hamburger/drawer pattern, touch-friendly interactions
 - [ ] **DSGN-06**: Design mockups created and approved before implementation
 - [ ] **DSGN-07**: Component library — reusable styled components (cards, callouts, tables, badges, nav items)
 
@@ -147,11 +147,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SITE-07 | Phase 1: Foundation | Complete |
 | SITE-08 | Phase 1: Foundation | Complete |
 | SITE-09 | Phase 1: Foundation | Complete |
-| DSGN-01 | Phase 1.1: Design System | Pending |
-| DSGN-02 | Phase 1.1: Design System | Pending |
+| DSGN-01 | Phase 1.1: Design System | Complete |
+| DSGN-02 | Phase 1.1: Design System | Complete |
 | DSGN-03 | Phase 1.1: Design System | Pending |
 | DSGN-04 | Phase 1.1: Design System | Pending |
-| DSGN-05 | Phase 1.1: Design System | Pending |
+| DSGN-05 | Phase 1.1: Design System | Complete |
 | DSGN-06 | Phase 1.1: Design System | Pending |
 | DSGN-07 | Phase 1.1: Design System | Pending |
 | CONC-01 | Phase 3: Conceptual Content | Pending |
