@@ -1,53 +1,119 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-
-/* ════ DARK THEME (default) ════ */
+/* ════ PROPS DESIGN TOKENS ════ */
 :root {
-  --bg: #09090b;
-  --surface: #111114;
-  --surface2: #19191e;
-  --surface3: #222228;
-  --border: #27272a;
-  --border-hover: #3f3f46;
-  --text: #fafafa;
-  --text-dim: #a1a1aa;
-  --text-muted: #71717a;
+  /* Color tokens */
+  --oxford-blue: #001639;
+  --isabelline: #EBE6E0;
+  --turquoise: #51DDCD;
+  --icterine: #FFFA78;
+  --text-only: #FEFDFD;
 
-  --code: #c084fc;
-  --chat: #38bdf8;
-  --cowork: #34d399;
+  /* Oxford tints */
+  --oxford-900: #001639;
+  --oxford-700: #002859;
+  --oxford-500: #004FAB;
 
-  --mcp: #fb923c;
-  --skill: #f472b6;
-  --plugin: #a78bfa;
-  --project: #22d3ee;
-  --hook: #f87171;
-  --agent: #4ade80;
-  --connector: #fbbf24;
+  /* Isabelline tints */
+  --isabelline-700: #C4BBB1;
+  --isabelline-300: #F0ECE8;
+  --isabelline-100: #F8F6F4;
+
+  /* Turquoise tints */
+  --turquoise-700: #37CABD;
+  --turquoise-300: #8AE8DE;
+  --turquoise-100: #C5F4EF;
+
+  /* Icterine tints */
+  --icterine-700: #E5E06C;
+  --icterine-300: #FFFCA3;
+  --icterine-100: #FFFED1;
+
+  /* Neutrals */
+  --dark-gray: #1a1a1a;
+  --medium-gray: #464646;
+  --muted-gray: #7E899A;
+
+  /* Typography tokens */
+  --font-serif: 'IBM Plex Serif', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+
+  /* Fluid type scale */
+  --text-display: clamp(4rem, 5vw + 2rem, 7rem);
+  --text-h1: clamp(2.25rem, 3vw + 1rem, 3.5rem);
+  --text-h2: clamp(1.5rem, 2vw + 0.5rem, 2.25rem);
+  --text-h3: clamp(1.25rem, 1.5vw + 0.5rem, 1.75rem);
+  --text-h4: clamp(1.1rem, 1vw + 0.5rem, 1.25rem);
+  --text-body: 1rem;
+  --text-sm: 0.875rem;
+  --text-xs: 0.75rem;
+
+  /* Fluid spacing (8-step) */
+  --space-1: clamp(0.25rem, 0.5vw, 0.5rem);
+  --space-2: clamp(0.5rem, 1vw, 0.75rem);
+  --space-3: clamp(0.75rem, 1.5vw, 1rem);
+  --space-4: clamp(1rem, 2vw, 1.5rem);
+  --space-5: clamp(1.5rem, 3vw, 2rem);
+  --space-6: clamp(2rem, 4vw, 3rem);
+  --space-7: clamp(3rem, 5vw, 4rem);
+  --space-8: clamp(4rem, 6vw, 6rem);
+  --section-sm: var(--space-6);
+  --section-md: var(--space-7);
+  --section-lg: var(--space-8);
+  --section-page-top: var(--space-7);
+
+  /* Border radius tokens */
+  --radius-sm: 0.5rem;
+  --radius-md: 1rem;
+  --radius-lg: clamp(1.5rem, 2vw, 2rem);
+  --radius-xl: clamp(2rem, 3vw, 3.125rem);
+  --radius-full: 100px;
+
+  /* Shadow tokens (Oxford Blue rgba) */
+  --shadow-sm: 0 1px 2px rgba(0, 22, 57, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 22, 57, 0.1), 0 2px 4px -2px rgba(0, 22, 57, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 22, 57, 0.1), 0 4px 6px -4px rgba(0, 22, 57, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 22, 57, 0.1), 0 8px 10px -6px rgba(0, 22, 57, 0.1);
+
+  /* Transition tokens */
+  --transition-fast: 150ms ease;
+  --transition-base: 300ms ease;
+  --transition-slow: 500ms ease;
+
+  /* Gradient tokens */
+  --gradient-oxford-deep: linear-gradient(135deg, #001639, #002859);
+  --gradient-oxford-bright: linear-gradient(135deg, #001639, #004FAB);
+  --gradient-turquoise-fade: linear-gradient(135deg, #37CABD, #51DDCD);
+  --gradient-turquoise-icterine: linear-gradient(135deg, #51DDCD, #FFFA78);
+  --gradient-oxford-turquoise: linear-gradient(135deg, #001639, #51DDCD);
+  --gradient-isabelline-soft: linear-gradient(135deg, #EBE6E0, #FEFDFD);
+
+  /* Semantic mapping - Dark theme (default) */
+  --bg: var(--oxford-blue);
+  --surface: #001E4D;
+  --surface2: #002666;
+  --surface3: #003080;
+  --border: #003D99;
+  --border-hover: #0050CC;
+  --text: var(--text-only);
+  --text-dim: #B8C4D6;
+  --text-muted: var(--muted-gray);
+  --accent: var(--turquoise);
+  --accent-secondary: var(--icterine);
 }
 
 /* ════ LIGHT THEME ════ */
 [data-theme="light"] {
-  --bg: #f8f9fa;
-  --surface: #ffffff;
-  --surface2: #f0f1f3;
-  --surface3: #e4e5e9;
-  --border: #d4d4d8;
-  --border-hover: #a1a1aa;
-  --text: #18181b;
-  --text-dim: #52525b;
-  --text-muted: #71717a;
-
-  --code: #7c3aed;
-  --chat: #0284c7;
-  --cowork: #059669;
-
-  --mcp: #c2410c;
-  --skill: #be185d;
-  --plugin: #6d28d9;
-  --project: #0891b2;
-  --hook: #b91c1c;
-  --agent: #15803d;
-  --connector: #a16207;
+  --bg: var(--isabelline);
+  --surface: #FFFFFF;
+  --surface2: var(--isabelline-300);
+  --surface3: var(--isabelline-700);
+  --border: #D0C9C0;
+  --border-hover: #A89F94;
+  --text: var(--oxford-blue);
+  --text-dim: var(--medium-gray);
+  --text-muted: var(--muted-gray);
+  --accent: var(--turquoise-700);
+  --accent-secondary: var(--icterine-700);
 }
 
 /* ════ THEME TRANSITION ════ */
@@ -56,6 +122,12 @@ html.theme-transition *,
 html.theme-transition *::before,
 html.theme-transition *::after {
   transition: background-color 0.4s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+/* ════ ACCESSIBILITY ════ */
+:focus-visible {
+  outline: 2px solid var(--turquoise);
+  outline-offset: 3px;
 }
 
 /* ════ BASE RESET ════ */
@@ -71,6 +143,8 @@ body {
   background: var(--bg);
   color: var(--text);
   line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
   display: grid;
   grid-template-columns: 260px 1fr;
