@@ -39,7 +39,7 @@ Plans:
 - [ ] 01-02-PLAN.md — Sidebar navigation, theme toggle, responsive mobile layout, compatibility matrix, deploy workflow
 
 ### Phase 1.1: Design System (INSERTED)
-**Goal**: A polished visual design system is defined with mockups approved, establishing the look and feel for all site pages, content layers, and interactive elements
+**Goal**: The Props team design system is applied to the site with all design tokens, themed layouts, and a reusable component library -- visually approved before content phases begin
 **Depends on**: Phase 1
 **Requirements**: DSGN-01, DSGN-02, DSGN-03, DSGN-04, DSGN-05, DSGN-06, DSGN-07
 **Success Criteria** (what must be TRUE):
@@ -48,11 +48,11 @@ Plans:
   3. Content layer UI (tabs/accordions for concept/howto/reference/decision-tree) is designed and approved
   4. Interactive element designs (decision wizard, search results, code blocks, copy feedback) are mocked up
   5. Reusable component library (cards, callouts, tables, badges, nav items) is implemented in CSS
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 1.1-01: TBD
-- [ ] 1.1-02: TBD
+- [ ] 1.1-01-PLAN.md — Props design tokens (colors, typography, spacing, shadows, transitions), dark/light themes, core layout styles (sidebar, typography, code blocks, tables, lists, mobile responsive)
+- [ ] 1.1-02-PLAN.md — Component library (buttons, badges, cards, callouts, tabs, eyebrow labels), interactive elements, design showcase page, visual approval checkpoint
 
 ### Phase 2: Knowledge Base
 **Goal**: All existing content from index.html and ama.html is extracted into structured markdown knowledge files that serve as the single source of truth
