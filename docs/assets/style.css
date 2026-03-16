@@ -763,6 +763,106 @@ article tbody tr:hover td {
 .tab-panel { display: none; }
 .tab-panel.active { display: block; }
 
+/* ════ DECISION WIZARD ════ */
+.wizard-container {
+  padding: var(--space-4) 0;
+  min-height: 300px;
+}
+
+.wizard-question {
+  font-family: var(--font-serif);
+  font-size: var(--text-h3);
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: var(--space-4);
+}
+
+.wizard-option {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--text-dim);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+
+.wizard-option:hover {
+  border-left-color: var(--turquoise);
+  background: var(--surface2);
+}
+
+.wizard-result {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+  margin-bottom: var(--space-4);
+}
+
+.wizard-result-title {
+  font-family: var(--font-serif);
+  font-size: var(--text-h2);
+  font-weight: 700;
+  color: var(--turquoise);
+  margin-bottom: var(--space-3);
+}
+
+.wizard-result p {
+  color: var(--text-dim);
+  margin-bottom: var(--space-4);
+}
+
+.wizard-result-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  background: var(--turquoise);
+  color: var(--oxford-blue);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background var(--transition-fast);
+}
+
+.wizard-result-link:hover {
+  background: var(--turquoise-700);
+}
+
+.wizard-back {
+  display: inline-block;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  padding: var(--space-2) 0;
+  margin-bottom: var(--space-3);
+  transition: color var(--transition-fast);
+}
+
+.wizard-back:hover {
+  color: var(--accent);
+}
+
+.wizard-progress {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  margin-bottom: var(--space-3);
+}
+
 /* ════ RESPONSIVE: TABLET (max-width: 870px) ════ */
 @media (max-width: 870px) {
   body {

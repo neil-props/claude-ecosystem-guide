@@ -178,6 +178,36 @@ function generateNav(pages, currentSlug, basePath) {
     nav += '</div>\n';
   }
 
+  // Decision Tools section
+  const toolsPages = pages
+    .filter(p => p.meta.section === 'tools')
+    .sort((a, b) => (a.meta.order || 0) - (b.meta.order || 0));
+
+  if (toolsPages.length > 0) {
+    nav += '<div class="nav-section">\n';
+    nav += '  <div class="nav-section-title">Decision Tools</div>\n';
+    for (const page of toolsPages) {
+      const activeClass = page.slug === currentSlug ? ' active' : '';
+      nav += `  <a href="${basePath}topics/${page.slug}.html" class="nav-link${activeClass}">${page.meta.title}</a>\n`;
+    }
+    nav += '</div>\n';
+  }
+
+  // Recipes section
+  const guidesPages = pages
+    .filter(p => p.meta.section === 'guides')
+    .sort((a, b) => (a.meta.order || 0) - (b.meta.order || 0));
+
+  if (guidesPages.length > 0) {
+    nav += '<div class="nav-section">\n';
+    nav += '  <div class="nav-section-title">Recipes</div>\n';
+    for (const page of guidesPages) {
+      const activeClass = page.slug === currentSlug ? ' active' : '';
+      nav += `  <a href="${basePath}topics/${page.slug}.html" class="nav-link${activeClass}">${page.meta.title}</a>\n`;
+    }
+    nav += '</div>\n';
+  }
+
   return nav;
 }
 
