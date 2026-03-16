@@ -95,26 +95,43 @@ No, Interactive Apps are currently available only in Claude Chat (claude.ai web 
 
 ## How-To Guides
 
-> [!INFO]
-> Step-by-step guides for Connectors are coming in Phase 4.
+Interactive Apps and Connectors are managed through the **Claude Chat web interface** (claude.ai), not through CLI configuration. To enable a connector:
 
-Planned guides:
-- Connecting Figma, Slack, and Asana in Claude Chat -- _coming soon_
-- Using Interactive Apps for design review workflows -- _coming soon_
-- Choosing between Connectors and MCP servers -- _coming soon_
+1. Go to **Settings > Connectors** in Claude Chat (or visit claude.ai/settings/connectors)
+2. Find the connector you want (Figma, Slack, Asana, etc.)
+3. Click **Connect** and authorize the service
+
+No CLI setup or config files are needed -- Connectors are one-click integrations.
+
+**Looking for tool server setup in Claude Code?** Connectors are the managed equivalent of MCP servers. For adding tool servers to Claude Code via CLI or `.mcp.json`, see the [MCP How-To guides](mcp.html).
+
+<!-- end howto -->
 
   </div>
   <div class="tab-panel" data-tab-panel="reference">
 
 ## Technical Reference
 
-> [!INFO]
-> Detailed reference specs for Connectors are coming in Phase 4.
+Connectors are configured through the Claude Chat UI and do not have a CLI config schema. They are pre-built, hosted MCP integrations managed by Anthropic.
 
-Planned references:
-- Available connectors catalog and capabilities -- _coming soon_
-- MCP Apps extension protocol details -- _coming soon_
-- Connector configuration options -- _coming soon_
+### Available Interactive Apps
+
+Interactive Apps render embedded UI within Claude Chat conversations:
+
+| App | Category | Capability |
+|-----|----------|-----------|
+| Figma | Design | View and edit designs inline |
+| Canva | Design | Create and edit visual content |
+| Slack | Communication | Read and send messages |
+| Asana | Project Management | Manage tasks and projects |
+| Box | File Management | Browse and manage files |
+| Clay | CRM | CRM and prospecting |
+
+### Standard Connectors
+
+50+ additional connectors provide tool access without embedded UI, including Google Drive, Notion, Confluence, Jira, Linear, HubSpot, Salesforce, and more. These are enabled the same way -- through **Settings > Connectors** in Claude Chat.
+
+For CLI-based tool server configuration in Claude Code, see the [MCP Reference](mcp.html).
 
   </div>
 </div>

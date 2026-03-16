@@ -103,26 +103,51 @@ Create a Skill at `.claude/skills/deploy/SKILL.md` and check it into your repo. 
 
 ## How-To Guides
 
-> [!INFO]
-> Step-by-step guides for Commands are coming in Phase 4.
+Custom slash commands are now created using **Skills**, which offer auto-invocation, model overrides, tool restrictions, and cross-interface portability. The legacy `.claude/commands/` directory still works but is not recommended for new work.
 
-Planned guides:
-- Creating custom slash commands with Skills -- _coming soon_
-- Migrating legacy commands to Skills -- _coming soon_
-- Using built-in commands for effective session management -- _coming soon_
+For creating custom slash commands, see the [Skills How-To guide](skills.html), which covers the recommended approach using Skills with frontmatter.
+
+For built-in commands like `/compact`, `/model`, `/memory`, and `/clear`, see the Concept tab on this page for a complete list.
+
+<!-- end howto -->
 
   </div>
   <div class="tab-panel" data-tab-panel="reference">
 
 ## Technical Reference
 
-> [!INFO]
-> Detailed reference specs for Commands are coming in Phase 4.
+### Legacy Commands Directory
 
-Planned references:
-- Complete built-in command reference -- _coming soon_
-- Keyboard shortcuts and keybinding configuration -- _coming soon_
-- Skill-to-command resolution order -- _coming soon_
+The original custom commands system uses markdown files in `.claude/commands/`:
+
+| Property | Value |
+|----------|-------|
+| Directory | `.claude/commands/` (project) or `~/.claude/commands/` (user) |
+| File format | Markdown (`.md`) |
+| Invocation | `/command-name` (filename without extension) |
+| Subdirectories | Supported -- `/subdir/command-name` |
+| Arguments | `$ARGUMENTS` placeholder replaced with user input |
+
+**Example:** `.claude/commands/review.md` becomes the `/review` slash command.
+
+### Recommended: Skills
+
+For new custom commands, use Skills instead. Skills provide all the same functionality plus:
+
+- Auto-invocation based on task context (no need to type `/`)
+- Model and tool overrides via frontmatter
+- Cross-interface portability (Claude Code, Chat, and Cowork)
+- Supporting files alongside the SKILL.md
+
+See the [Skills Reference](skills.html) for the complete SKILL.md frontmatter spec and file format.
+
+### Resolution Order
+
+When a `/name` is invoked, Claude resolves it in this order:
+
+1. **Skill** (inline context) -- `.claude/skills/name/SKILL.md`
+2. **Agent** (separate context) -- `.claude/agents/name.md`
+3. **Legacy Command** (explicit `/` only) -- `.claude/commands/name.md`
 
   </div>
 </div>
