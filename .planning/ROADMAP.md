@@ -142,6 +142,6 @@ Phases execute in numeric order: 1 → 1.1 → 2 → 3 → 4 → 5 → 6
 | 1.1. Design System | 2/2 | Complete | 2026-03-15 |
 | 2. Knowledge Base | 2/2 | Complete    | 2026-03-16 |
 | 3. Conceptual Content | 2/2 | Complete | 2026-03-16 |
-| 4. Guides and Reference | 0/3 | Not started | - |
+| 4. Guides and Reference | 2/3 | In Progress|  |
 | 5. Decision Guidance and Recipes | 0/2 | Not started | - |
 | 6. Agent | 0/2 | Not started | - |

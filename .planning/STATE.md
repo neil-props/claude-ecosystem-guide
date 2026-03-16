@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: in-progress
-stopped_at: Completed 04-01-PLAN.md
-last_updated: "2026-03-16T12:23:00Z"
-last_activity: 2026-03-16 -- Completed 04-01 MCP How-To Guides and Reference
+status: executing
+stopped_at: Completed 04-03-PLAN.md
+last_updated: "2026-03-16T12:33:12.738Z"
+last_activity: 2026-03-16 -- Completed 04-03 Projects/Memory/Settings Guides and Reference
 progress:
   total_phases: 7
   completed_phases: 4
   total_plans: 11
-  completed_plans: 9
+  completed_plans: 10
   percent: 82
 ---
 
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-03-14)
 ## Current Position
 
 Phase: 4 of 6 (Guides and Reference)
-Plan: 1 of 3 in current phase
+Plan: 3 of 3 in current phase
 Status: In Progress
-Last activity: 2026-03-16 -- Completed 04-01 MCP How-To Guides and Reference
+Last activity: 2026-03-16 -- Completed 04-03 Projects/Memory/Settings Guides and Reference
 
 Progress: [████████░░] 82%
 
@@ -59,6 +59,7 @@ Progress: [████████░░] 82%
 | Phase 03-conceptual-content P01 | 6min | 2 tasks | 10 files |
 | Phase 03-conceptual-content P02 | 9min | 2 tasks | 10 files |
 | Phase 04-guides-and-reference P01 | 5min | 2 tasks | 3 files |
+| Phase 04-guides-and-reference P03 | 6min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -102,6 +103,9 @@ Recent decisions affecting current work:
 - [04-01]: HTML comment break before closing div to prevent markdown list from swallowing tab panel boundaries
 - [04-01]: Tab panel extraction regex: howto uses next panel boundary, reference uses triple-div-close pattern
 - [04-01]: Concept tab Configuration section slimmed to overview with pointer to Reference tab for full schema
+- [Phase 04-03]: Settings Concept tab Configuration section slimmed to overview with pointer to Reference tab for full schema
+- [Phase 04-03]: Connectors how-to redirects to MCP page for CLI tool server setup; Commands how-to redirects to Skills
+- [Phase 04-03]: No HTML comment break needed before reference tab closing div (only for howto tab)
 
 ### Pending Todos
 
@@ -115,6 +119,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-16T12:23:00Z
-Stopped at: Completed 04-01-PLAN.md
+Last session: 2026-03-16T12:33:12.736Z
+Stopped at: Completed 04-03-PLAN.md
 Resume file: None

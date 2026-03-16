@@ -52,8 +52,8 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **HOWT-06**: How to create a plugin that bundles skills
 - [ ] **HOWT-07**: How to set up hooks for lifecycle events
 - [ ] **HOWT-08**: How to create a custom agent
-- [ ] **HOWT-09**: How to configure CLAUDE.md for a project
-- [ ] **HOWT-10**: How to use the memory system effectively
+- [x] **HOWT-09**: How to configure CLAUDE.md for a project
+- [x] **HOWT-10**: How to use the memory system effectively
 
 ### Content — Technical Reference
 
@@ -62,9 +62,9 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **REFR-03**: Plugin manifest spec
 - [ ] **REFR-04**: Hook configuration spec (events, patterns, commands)
 - [ ] **REFR-05**: Agent file format spec
-- [ ] **REFR-06**: Settings hierarchy resolution order (full detail)
-- [ ] **REFR-07**: CLAUDE.md file format and loading order
-- [ ] **REFR-08**: Environment variables reference
+- [x] **REFR-06**: Settings hierarchy resolution order (full detail)
+- [x] **REFR-07**: CLAUDE.md file format and loading order
+- [x] **REFR-08**: Environment variables reference
 
 ### Content — Decision Trees
 
@@ -172,16 +172,16 @@ Which phases cover which requirements. Updated during roadmap creation.
 | HOWT-06 | Phase 4: Guides and Reference | Pending |
 | HOWT-07 | Phase 4: Guides and Reference | Pending |
 | HOWT-08 | Phase 4: Guides and Reference | Pending |
-| HOWT-09 | Phase 4: Guides and Reference | Pending |
-| HOWT-10 | Phase 4: Guides and Reference | Pending |
+| HOWT-09 | Phase 4: Guides and Reference | Complete |
+| HOWT-10 | Phase 4: Guides and Reference | Complete |
 | REFR-01 | Phase 4: Guides and Reference | Complete |
 | REFR-02 | Phase 4: Guides and Reference | Pending |
 | REFR-03 | Phase 4: Guides and Reference | Pending |
 | REFR-04 | Phase 4: Guides and Reference | Pending |
 | REFR-05 | Phase 4: Guides and Reference | Pending |
-| REFR-06 | Phase 4: Guides and Reference | Pending |
-| REFR-07 | Phase 4: Guides and Reference | Pending |
-| REFR-08 | Phase 4: Guides and Reference | Pending |
+| REFR-06 | Phase 4: Guides and Reference | Complete |
+| REFR-07 | Phase 4: Guides and Reference | Complete |
+| REFR-08 | Phase 4: Guides and Reference | Complete |
 | DECT-01 | Phase 5: Decision Guidance and Recipes | Pending |
 | DECT-02 | Phase 5: Decision Guidance and Recipes | Pending |
 | DECT-03 | Phase 5: Decision Guidance and Recipes | Pending |
