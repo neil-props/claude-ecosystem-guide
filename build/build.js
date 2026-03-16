@@ -108,8 +108,60 @@ function cleanDocs() {
   }
 }
 
+// Load all content pages and parse frontmatter
+async function loadPages() {
+  const files = await glob('*.md', { cwd: CONTENT_DIR });
+  const pages = [];
+
+  for (const file of files) {
+    const filePath = join(CONTENT_DIR, file);
+    const raw = readFileSync(filePath, 'utf-8');
+    const { data: meta } = matter(raw);
+    const slug = meta.slug || file.replace('.md', '');
+    pages.push({ file, filePath, slug, meta });
+  }
+
+  return pages;
+}
+
+// Generate sidebar navigation HTML for a specific page
+function generateNav(pages, currentSlug, basePath) {
+  // Separate pages by section
+  const topicPages = pages
+    .filter(p => p.meta.section === 'topics')
+    .sort((a, b) => (a.meta.order || 0) - (b.meta.order || 0));
+
+  const referencePages = pages
+    .filter(p => p.meta.section === 'reference')
+    .sort((a, b) => (a.meta.order || 0) - (b.meta.order || 0));
+
+  let nav = '';
+
+  // Topics section
+  nav += '<div class="nav-section">\n';
+  nav += '  <div class="nav-section-title">Topics</div>\n';
+  for (const page of topicPages) {
+    const activeClass = page.slug === currentSlug ? ' active' : '';
+    nav += `  <a href="${basePath}topics/${page.slug}.html" class="nav-link${activeClass}">${page.meta.title}</a>\n`;
+  }
+  nav += '</div>\n';
+
+  // Reference section (if any reference pages exist)
+  if (referencePages.length > 0) {
+    nav += '<div class="nav-section">\n';
+    nav += '  <div class="nav-section-title">Reference</div>\n';
+    for (const page of referencePages) {
+      const activeClass = page.slug === currentSlug ? ' active' : '';
+      nav += `  <a href="${basePath}topics/${page.slug}.html" class="nav-link${activeClass}">${page.meta.title}</a>\n`;
+    }
+    nav += '</div>\n';
+  }
+
+  return nav;
+}
+
 // Build a single page
-function buildPage(filePath, basePath) {
+function buildPage(filePath, basePath, navHtml) {
   const raw = readFileSync(filePath, 'utf-8');
   const { data: meta, content } = matter(raw);
   const html = marked.parse(content);
@@ -117,7 +169,7 @@ function buildPage(filePath, basePath) {
   const page = template
     .replace(/\{\{title\}\}/g, meta.title || 'Untitled')
     .replace(/\{\{content\}\}/g, html)
-    .replace(/\{\{nav\}\}/g, '')  // empty nav for now -- Plan 02 adds real nav
+    .replace(/\{\{nav\}\}/g, navHtml)
     .replace(/\{\{basePath\}\}/g, basePath);
 
   return { page, meta };
@@ -134,24 +186,17 @@ async function build() {
   mkdirSync(join(DOCS_DIR, 'topics'), { recursive: true });
   mkdirSync(join(DOCS_DIR, 'assets'), { recursive: true });
 
-  // Copy static assets (they live in docs/assets/ as source of truth)
-  // Assets are already in docs/assets/ -- no copy needed since they're the source
+  // Load all pages for nav generation
+  const pages = await loadPages();
 
-  // Find all content files
-  const files = await glob('*.md', { cwd: CONTENT_DIR });
-
-  if (files.length === 0) {
+  if (pages.length === 0) {
     console.warn('Warning: No content files found in content/');
     return;
   }
 
   let pageCount = 0;
 
-  for (const file of files) {
-    const filePath = join(CONTENT_DIR, file);
-    const { data: meta } = matter(readFileSync(filePath, 'utf-8'));
-    const slug = meta.slug || file.replace('.md', '');
-
+  for (const { file, filePath, slug, meta } of pages) {
     let outputPath;
     let basePath;
 
@@ -163,7 +208,9 @@ async function build() {
       basePath = '../';
     }
 
-    const { page } = buildPage(filePath, basePath);
+    // Generate nav with active state for this specific page
+    const navHtml = generateNav(pages, slug, basePath);
+    const { page } = buildPage(filePath, basePath, navHtml);
     writeFileSync(outputPath, page);
     console.log(`  Built: ${outputPath.replace(ROOT + '/', '')}`);
     pageCount++;

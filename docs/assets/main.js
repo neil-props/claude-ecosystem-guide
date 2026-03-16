@@ -27,6 +27,25 @@ document.addEventListener('DOMContentLoaded', function() {
     themeToggle.addEventListener('click', toggleTheme);
   }
 
+  // ════ MOBILE NAV TOGGLE ════
+  const mobileNavToggle = document.getElementById('mobileNavToggle');
+  const sidebar = document.getElementById('sidebar');
+
+  if (mobileNavToggle && sidebar) {
+    mobileNavToggle.addEventListener('click', function() {
+      sidebar.classList.toggle('sidebar-open');
+      mobileNavToggle.classList.toggle('nav-active');
+    });
+
+    // Close sidebar when a nav link is clicked (mobile)
+    sidebar.addEventListener('click', function(e) {
+      if (e.target.closest('.nav-link')) {
+        sidebar.classList.remove('sidebar-open');
+        mobileNavToggle.classList.remove('nav-active');
+      }
+    });
+  }
+
   // System preference listener
   if (window.matchMedia) {
     window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', function(e) {
