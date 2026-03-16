@@ -12,7 +12,7 @@ This roadmap delivers a comprehensive Claude Code ecosystem reference as two art
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation** - Multi-page site structure, shared layout, build pipeline, and code infrastructure
+- [x] **Phase 1: Foundation** - Multi-page site structure, shared layout, build pipeline, and code infrastructure (completed 2026-03-16)
 - [ ] **Phase 1.1: Design System** - INSERTED - Visual design system, page layouts, component library, and design mockups
 - [ ] **Phase 2: Knowledge Base** - Extract existing content into markdown knowledge files as single source of truth
 - [ ] **Phase 3: Conceptual Content** - Write conceptual overviews for all 10 ecosystem extension points
@@ -138,7 +138,7 @@ Phases execute in numeric order: 1 → 1.1 → 2 → 3 → 4 → 5 → 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/2 | Planning complete | - |
+| 1. Foundation | 0/2 | Complete    | 2026-03-16 |
 | 1.1. Design System | 0/2 | Not started | - |
 | 2. Knowledge Base | 0/2 | Not started | - |
 | 3. Conceptual Content | 0/2 | Not started | - |
