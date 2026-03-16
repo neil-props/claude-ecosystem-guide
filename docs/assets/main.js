@@ -69,8 +69,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     navigator.clipboard.writeText(code.textContent).then(function() {
       btn.textContent = 'Copied!';
+      btn.classList.add('copy-success');
       setTimeout(function() {
         btn.textContent = 'Copy';
+        btn.classList.remove('copy-success');
       }, 2000);
     }).catch(function() {
       // Fallback for environments without clipboard API
