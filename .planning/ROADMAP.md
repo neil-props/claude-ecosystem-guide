@@ -109,11 +109,12 @@ Plans:
   2. Comparison tables clearly show differences between similar features (Skill vs Agent vs Command, MCP vs Plugin, Hook vs Skill)
   3. Each recipe is a complete end-to-end walkthrough of a real-world use case (deployment skill, CRM with MCP, pre-commit hook, custom agent, monorepo settings)
   4. Full-text search finds content across all pages and returns relevant results
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 05-01: TBD
-- [ ] 05-02: TBD
+- [ ] 05-01-PLAN.md — Decision wizard page, comparison tables, per-topic decision guidance enhancements, build system nav extension
+- [ ] 05-02-PLAN.md — Five end-to-end recipe pages (deployment skill, CRM MCP, pre-commit hook, custom agent, monorepo settings)
+- [ ] 05-03-PLAN.md — Pagefind full-text search integration with custom UI, search index generation
 
 ### Phase 6: Agent
 **Goal**: Users can invoke a CLI agent that answers Claude Code ecosystem questions from knowledge files, fetches live docs when needed, and gives contextual recommendations based on their project
@@ -143,5 +144,5 @@ Phases execute in numeric order: 1 → 1.1 → 2 → 3 → 4 → 5 → 6
 | 2. Knowledge Base | 2/2 | Complete    | 2026-03-16 |
 | 3. Conceptual Content | 2/2 | Complete | 2026-03-16 |
 | 4. Guides and Reference | 2/3 | In Progress|  |
-| 5. Decision Guidance and Recipes | 0/2 | Not started | - |
+| 5. Decision Guidance and Recipes | 0/3 | Not started | - |
 | 6. Agent | 0/2 | Not started | - |
