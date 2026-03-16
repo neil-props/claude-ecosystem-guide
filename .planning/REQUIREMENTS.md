@@ -13,10 +13,10 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **SITE-02**: Site has full-text search across all content pages
 - [ ] **SITE-03**: Site supports dark/light theme toggle (preserve existing)
 - [ ] **SITE-04**: Site is responsive on mobile and tablet
-- [ ] **SITE-05**: All sections have deep-linkable anchor URLs
-- [ ] **SITE-06**: Code examples have copy-to-clipboard buttons
-- [ ] **SITE-07**: Code blocks have syntax highlighting (YAML, JSON, bash, markdown)
-- [ ] **SITE-08**: Site loads fast with no framework overhead (static HTML/CSS/JS)
+- [x] **SITE-05**: All sections have deep-linkable anchor URLs
+- [x] **SITE-06**: Code examples have copy-to-clipboard buttons
+- [x] **SITE-07**: Code blocks have syntax highlighting (YAML, JSON, bash, markdown)
+- [x] **SITE-08**: Site loads fast with no framework overhead (static HTML/CSS/JS)
 - [ ] **SITE-09**: Compatibility matrix shows feature availability across Code/Chat/Cowork (preserve existing)
 
 ### Design System
@@ -86,7 +86,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **KNOW-02**: Knowledge files structured as single source of truth (site and agent both consume them)
 - [ ] **KNOW-03**: Content extracted from existing index.html into knowledge files
 - [ ] **KNOW-04**: Content mined from existing ama.html into relevant knowledge files
-- [ ] **KNOW-05**: Build script converts knowledge markdown to site HTML pages
+- [x] **KNOW-05**: Build script converts knowledge markdown to site HTML pages
 
 ### Agent
 
@@ -142,10 +142,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SITE-02 | Phase 5: Decision Guidance and Recipes | Pending |
 | SITE-03 | Phase 1: Foundation | Pending |
 | SITE-04 | Phase 1: Foundation | Pending |
-| SITE-05 | Phase 1: Foundation | Pending |
-| SITE-06 | Phase 1: Foundation | Pending |
-| SITE-07 | Phase 1: Foundation | Pending |
-| SITE-08 | Phase 1: Foundation | Pending |
+| SITE-05 | Phase 1: Foundation | Complete |
+| SITE-06 | Phase 1: Foundation | Complete |
+| SITE-07 | Phase 1: Foundation | Complete |
+| SITE-08 | Phase 1: Foundation | Complete |
 | SITE-09 | Phase 1: Foundation | Pending |
 | DSGN-01 | Phase 1.1: Design System | Pending |
 | DSGN-02 | Phase 1.1: Design System | Pending |
@@ -194,7 +194,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | KNOW-02 | Phase 2: Knowledge Base | Pending |
 | KNOW-03 | Phase 2: Knowledge Base | Pending |
 | KNOW-04 | Phase 2: Knowledge Base | Pending |
-| KNOW-05 | Phase 1: Foundation | Pending |
+| KNOW-05 | Phase 1: Foundation | Complete |
 | AGNT-01 | Phase 6: Agent | Pending |
 | AGNT-02 | Phase 6: Agent | Pending |
 | AGNT-03 | Phase 6: Agent | Pending |
