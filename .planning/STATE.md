@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: completed
-stopped_at: Completed 02-02-PLAN.md
-last_updated: "2026-03-16T03:02:32.642Z"
-last_activity: 2026-03-15 -- Completed 02-02 Knowledge Base Content Extraction (Wave 2)
+status: in-progress
+stopped_at: Completed 03-01-PLAN.md
+last_updated: "2026-03-16T03:34:00Z"
+last_activity: 2026-03-16 -- Completed 03-01 Conceptual Content (Wave 1)
 progress:
   total_phases: 7
   completed_phases: 3
-  total_plans: 6
-  completed_plans: 6
-  percent: 43
+  total_plans: 8
+  completed_plans: 7
+  percent: 88
 ---
 
 # Project State
@@ -21,23 +21,23 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-14)
 
 **Core value:** Anyone working with Claude Code can quickly understand which extension point to use, how to set it up, and how the pieces fit together -- whether reading the site or asking the agent.
-**Current focus:** Phase 2: Knowledge Base
+**Current focus:** Phase 3: Conceptual Content
 
 ## Current Position
 
-Phase: 2 of 6 (Knowledge Base)
-Plan: 2 of 2 in current phase
-Status: Phase Complete
-Last activity: 2026-03-15 -- Completed 02-02 Knowledge Base Content Extraction (Wave 2)
+Phase: 3 of 6 (Conceptual Content)
+Plan: 1 of 2 in current phase
+Status: Plan 1 Complete
+Last activity: 2026-03-16 -- Completed 03-01 Conceptual Content (Wave 1)
 
-Progress: [████░░░░░░] 43%
+Progress: [█████████░] 88%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
+- Total plans completed: 7
 - Average duration: 7min
-- Total execution time: 0.68 hours
+- Total execution time: 0.78 hours
 
 **By Phase:**
 
@@ -46,14 +46,16 @@ Progress: [████░░░░░░] 43%
 | 01-foundation | 2 | 22min | 11min |
 | 1.1-design-system | 2 | 7min | 3.5min |
 | 02-knowledge-base | 2 | 12min | 6min |
+| 03-conceptual-content | 1 | 6min | 6min |
 
 **Recent Trend:**
-- Last 5 plans: 01-02 (8min), 1.1-01 (3min), 1.1-02 (4min), 02-01 (5min), 02-02 (7min)
+- Last 5 plans: 1.1-01 (3min), 1.1-02 (4min), 02-01 (5min), 02-02 (7min), 03-01 (6min)
 - Trend: stable
 
 *Updated after each plan completion*
 | Phase 02-knowledge-base P01 | 5min | 2 tasks | 10 files |
 | Phase 02-knowledge-base P02 | 7min | 1 task | 5 files |
+| Phase 03-conceptual-content P01 | 6min | 2 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -88,6 +90,9 @@ Recent decisions affecting current work:
 - [02-02]: Memory system documented as 4-layer architecture: CLAUDE.md, auto-memory, /memory command, agent memory
 - [02-02]: Settings hierarchy documented with 5-level precedence: Managed > CLI > settings.local.json > settings.json > user
 - [02-02]: Commands page covers transition from legacy commands to Skills as recommended approach
+- [03-01]: Concept tab includes Configuration, Best Practices, and Common Questions sections (not just overview)
+- [03-01]: Related section placed outside tab structure as page-level footer
+- [03-01]: How-To and Reference placeholders list specific HOWT-*/REFR-* requirements from REQUIREMENTS.md
 
 ### Pending Todos
 
@@ -101,6 +106,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-16T02:45:01Z
-Stopped at: Completed 02-02-PLAN.md
+Last session: 2026-03-16T03:34:00Z
+Stopped at: Completed 03-01-PLAN.md
 Resume file: None

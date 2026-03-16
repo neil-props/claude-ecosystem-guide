@@ -31,11 +31,11 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Content — Conceptual Overviews
 
-- [ ] **CONC-01**: MCP overview — what it is, when to use it, transports (stdio, SSE, streamable HTTP)
-- [ ] **CONC-02**: Skills overview — what they are, frontmatter, when to use vs other extension points
-- [ ] **CONC-03**: Plugins overview — what they are, how they bundle skills, distribution
-- [ ] **CONC-04**: Hooks overview — what they are, lifecycle events, use cases
-- [ ] **CONC-05**: Agents overview — custom agents, agent files, when to use
+- [x] **CONC-01**: MCP overview — what it is, when to use it, transports (stdio, SSE, streamable HTTP)
+- [x] **CONC-02**: Skills overview — what they are, frontmatter, when to use vs other extension points
+- [x] **CONC-03**: Plugins overview — what they are, how they bundle skills, distribution
+- [x] **CONC-04**: Hooks overview — what they are, lifecycle events, use cases
+- [x] **CONC-05**: Agents overview — custom agents, agent files, when to use
 - [ ] **CONC-06**: Projects overview — CLAUDE.md hierarchy, project memory
 - [ ] **CONC-07**: Connectors overview — what they are, available connectors
 - [ ] **CONC-08**: Commands overview — slash commands, built-in vs custom
@@ -154,11 +154,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DSGN-05 | Phase 1.1: Design System | Complete |
 | DSGN-06 | Phase 1.1: Design System | Complete |
 | DSGN-07 | Phase 1.1: Design System | Complete |
-| CONC-01 | Phase 3: Conceptual Content | Pending |
-| CONC-02 | Phase 3: Conceptual Content | Pending |
-| CONC-03 | Phase 3: Conceptual Content | Pending |
-| CONC-04 | Phase 3: Conceptual Content | Pending |
-| CONC-05 | Phase 3: Conceptual Content | Pending |
+| CONC-01 | Phase 3: Conceptual Content | Complete |
+| CONC-02 | Phase 3: Conceptual Content | Complete |
+| CONC-03 | Phase 3: Conceptual Content | Complete |
+| CONC-04 | Phase 3: Conceptual Content | Complete |
+| CONC-05 | Phase 3: Conceptual Content | Complete |
 | CONC-06 | Phase 3: Conceptual Content | Pending |
 | CONC-07 | Phase 3: Conceptual Content | Pending |
 | CONC-08 | Phase 3: Conceptual Content | Pending |
