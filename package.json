@@ -1,0 +1,22 @@
+{
+  "name": "claude-ecosystem-guide",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "A comprehensive guide to the Claude Code ecosystem",
+  "scripts": {
+    "build": "node build/build.js",
+    "dev": "npx serve docs",
+    "clean": "rm -rf docs",
+    "test": "node --test tests/test-build.js tests/test-anchors.js tests/test-highlighting.js"
+  },
+  "dependencies": {
+    "glob": "^11.0.0",
+    "gray-matter": "^4.0.3",
+    "highlight.js": "^11.11.0",
+    "marked": "^17.0.0",
+    "marked-highlight": "^2.2.0"
+  },
+  "devDependencies": {
+    "serve": "^14.2.0"
+  }
+}
