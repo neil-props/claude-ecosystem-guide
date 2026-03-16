@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: completed
-stopped_at: Completed 03-02-PLAN.md
-last_updated: "2026-03-16T03:43:18.300Z"
-last_activity: 2026-03-16 -- Completed 03-02 Conceptual Content (Wave 2)
+status: in-progress
+stopped_at: Completed 04-01-PLAN.md
+last_updated: "2026-03-16T12:23:00Z"
+last_activity: 2026-03-16 -- Completed 04-01 MCP How-To Guides and Reference
 progress:
   total_phases: 7
   completed_phases: 4
-  total_plans: 8
-  completed_plans: 8
-  percent: 100
+  total_plans: 11
+  completed_plans: 9
+  percent: 82
 ---
 
 # Project State
@@ -21,23 +21,23 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-14)
 
 **Core value:** Anyone working with Claude Code can quickly understand which extension point to use, how to set it up, and how the pieces fit together -- whether reading the site or asking the agent.
-**Current focus:** Phase 3: Conceptual Content
+**Current focus:** Phase 4: Guides and Reference
 
 ## Current Position
 
-Phase: 3 of 6 (Conceptual Content)
-Plan: 2 of 2 in current phase
-Status: Phase Complete
-Last activity: 2026-03-16 -- Completed 03-02 Conceptual Content (Wave 2)
+Phase: 4 of 6 (Guides and Reference)
+Plan: 1 of 3 in current phase
+Status: In Progress
+Last activity: 2026-03-16 -- Completed 04-01 MCP How-To Guides and Reference
 
-Progress: [██████████] 100%
+Progress: [████████░░] 82%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 8
+- Total plans completed: 9
 - Average duration: 7min
-- Total execution time: 0.93 hours
+- Total execution time: 1.01 hours
 
 **By Phase:**
 
@@ -47,9 +47,10 @@ Progress: [██████████] 100%
 | 1.1-design-system | 2 | 7min | 3.5min |
 | 02-knowledge-base | 2 | 12min | 6min |
 | 03-conceptual-content | 2 | 15min | 7.5min |
+| 04-guides-and-reference | 1 | 5min | 5min |
 
 **Recent Trend:**
-- Last 5 plans: 1.1-02 (4min), 02-01 (5min), 02-02 (7min), 03-01 (6min), 03-02 (9min)
+- Last 5 plans: 02-01 (5min), 02-02 (7min), 03-01 (6min), 03-02 (9min), 04-01 (5min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -57,6 +58,7 @@ Progress: [██████████] 100%
 | Phase 02-knowledge-base P02 | 7min | 1 task | 5 files |
 | Phase 03-conceptual-content P01 | 6min | 2 tasks | 10 files |
 | Phase 03-conceptual-content P02 | 9min | 2 tasks | 10 files |
+| Phase 04-guides-and-reference P01 | 5min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -97,6 +99,9 @@ Recent decisions affecting current work:
 - [03-02]: Related section placed outside tab structure as page-level footer (consistent with Plan 01)
 - [03-02]: Configuration sections kept in Concept tab for now, will move to Reference in Phase 4
 - [03-02]: When to Use section added as new h2 in each Concept tab for decision guidance
+- [04-01]: HTML comment break before closing div to prevent markdown list from swallowing tab panel boundaries
+- [04-01]: Tab panel extraction regex: howto uses next panel boundary, reference uses triple-div-close pattern
+- [04-01]: Concept tab Configuration section slimmed to overview with pointer to Reference tab for full schema
 
 ### Pending Todos
 
@@ -110,6 +115,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-16T03:37:56Z
-Stopped at: Completed 03-02-PLAN.md
+Last session: 2026-03-16T12:23:00Z
+Stopped at: Completed 04-01-PLAN.md
 Resume file: None

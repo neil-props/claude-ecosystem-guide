@@ -44,10 +44,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Content — How-To Guides
 
-- [ ] **HOWT-01**: How to set up an MCP server (stdio transport)
-- [ ] **HOWT-02**: How to set up an MCP server (SSE/streamable HTTP transport)
-- [ ] **HOWT-03**: How to configure MCP authentication
-- [ ] **HOWT-04**: How to build your own MCP server
+- [x] **HOWT-01**: How to set up an MCP server (stdio transport)
+- [x] **HOWT-02**: How to set up an MCP server (SSE/streamable HTTP transport)
+- [x] **HOWT-03**: How to configure MCP authentication
+- [x] **HOWT-04**: How to build your own MCP server
 - [ ] **HOWT-05**: How to create a skill with correct frontmatter
 - [ ] **HOWT-06**: How to create a plugin that bundles skills
 - [ ] **HOWT-07**: How to set up hooks for lifecycle events
@@ -57,7 +57,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Content — Technical Reference
 
-- [ ] **REFR-01**: MCP config schema (.mcp.json format, all fields)
+- [x] **REFR-01**: MCP config schema (.mcp.json format, all fields)
 - [ ] **REFR-02**: Skill frontmatter spec (all fields, validation rules)
 - [ ] **REFR-03**: Plugin manifest spec
 - [ ] **REFR-04**: Hook configuration spec (events, patterns, commands)
@@ -164,17 +164,17 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CONC-08 | Phase 3: Conceptual Content | Complete |
 | CONC-09 | Phase 3: Conceptual Content | Complete |
 | CONC-10 | Phase 3: Conceptual Content | Complete |
-| HOWT-01 | Phase 4: Guides and Reference | Pending |
-| HOWT-02 | Phase 4: Guides and Reference | Pending |
-| HOWT-03 | Phase 4: Guides and Reference | Pending |
-| HOWT-04 | Phase 4: Guides and Reference | Pending |
+| HOWT-01 | Phase 4: Guides and Reference | Complete |
+| HOWT-02 | Phase 4: Guides and Reference | Complete |
+| HOWT-03 | Phase 4: Guides and Reference | Complete |
+| HOWT-04 | Phase 4: Guides and Reference | Complete |
 | HOWT-05 | Phase 4: Guides and Reference | Pending |
 | HOWT-06 | Phase 4: Guides and Reference | Pending |
 | HOWT-07 | Phase 4: Guides and Reference | Pending |
 | HOWT-08 | Phase 4: Guides and Reference | Pending |
 | HOWT-09 | Phase 4: Guides and Reference | Pending |
 | HOWT-10 | Phase 4: Guides and Reference | Pending |
-| REFR-01 | Phase 4: Guides and Reference | Pending |
+| REFR-01 | Phase 4: Guides and Reference | Complete |
 | REFR-02 | Phase 4: Guides and Reference | Pending |
 | REFR-03 | Phase 4: Guides and Reference | Pending |
 | REFR-04 | Phase 4: Guides and Reference | Pending |
