@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 04-02-PLAN.md
-last_updated: "2026-03-16T12:37:58.267Z"
-last_activity: 2026-03-16 -- Completed 04-03 Projects/Memory/Settings Guides and Reference
+stopped_at: Completed 05-02-PLAN.md
+last_updated: "2026-03-16T15:01:37.225Z"
+last_activity: 2026-03-16 -- Completed 05-02 End-to-End Recipe Pages
 progress:
   total_phases: 7
   completed_phases: 5
-  total_plans: 11
-  completed_plans: 11
-  percent: 82
+  total_plans: 14
+  completed_plans: 12
+  percent: 86
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-14)
 
 **Core value:** Anyone working with Claude Code can quickly understand which extension point to use, how to set it up, and how the pieces fit together -- whether reading the site or asking the agent.
-**Current focus:** Phase 4: Guides and Reference
+**Current focus:** Phase 5: Decision Guidance and Recipes
 
 ## Current Position
 
-Phase: 4 of 6 (Guides and Reference)
-Plan: 3 of 3 in current phase
+Phase: 5 of 6 (Decision Guidance and Recipes)
+Plan: 2 of 3 in current phase
 Status: In Progress
-Last activity: 2026-03-16 -- Completed 04-03 Projects/Memory/Settings Guides and Reference
+Last activity: 2026-03-16 -- Completed 05-02 End-to-End Recipe Pages
 
-Progress: [████████░░] 82%
+Progress: [█████████░] 86%
 
 ## Performance Metrics
 
@@ -61,6 +61,7 @@ Progress: [████████░░] 82%
 | Phase 04-guides-and-reference P01 | 5min | 2 tasks | 3 files |
 | Phase 04-guides-and-reference P03 | 6min | 2 tasks | 5 files |
 | Phase 04-guides-and-reference P02 | 7min | 2 tasks | 4 files |
+| Phase 05-decision-guidance-and-recipes P02 | 4min | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -110,6 +111,7 @@ Recent decisions affecting current work:
 - [Phase 04-02]: Removed HTML break comments from tab panels (caused test regex failures)
 - [Phase 04-02]: Hook config examples updated from flat to nested structure throughout all tabs per official docs
 - [Phase 04-02]: Concept tab config sections slimmed to overview with pointer to Reference tab for complete specs
+- [Phase 05-02]: Recipe pages use section: guides frontmatter (nav grouping handled by Plan 01)
 
 ### Pending Todos
 
@@ -123,6 +125,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-16T12:34:21.972Z
-Stopped at: Completed 04-02-PLAN.md
+Last session: 2026-03-16T15:01:37.222Z
+Stopped at: Completed 05-02-PLAN.md
 Resume file: None

@@ -74,11 +74,11 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Content — Recipes
 
-- [ ] **RECP-01**: Recipe: Build a deployment skill
-- [ ] **RECP-02**: Recipe: Set up a CRM enrichment project with MCP
-- [ ] **RECP-03**: Recipe: Create your first hook (pre-commit linting)
-- [ ] **RECP-04**: Recipe: Build a custom agent for your team
-- [ ] **RECP-05**: Recipe: Configure settings hierarchy for a monorepo
+- [x] **RECP-01**: Recipe: Build a deployment skill
+- [x] **RECP-02**: Recipe: Set up a CRM enrichment project with MCP
+- [x] **RECP-03**: Recipe: Create your first hook (pre-commit linting)
+- [x] **RECP-04**: Recipe: Build a custom agent for your team
+- [x] **RECP-05**: Recipe: Configure settings hierarchy for a monorepo
 
 ### Knowledge Base
 
@@ -185,11 +185,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DECT-01 | Phase 5: Decision Guidance and Recipes | Pending |
 | DECT-02 | Phase 5: Decision Guidance and Recipes | Pending |
 | DECT-03 | Phase 5: Decision Guidance and Recipes | Pending |
-| RECP-01 | Phase 5: Decision Guidance and Recipes | Pending |
-| RECP-02 | Phase 5: Decision Guidance and Recipes | Pending |
-| RECP-03 | Phase 5: Decision Guidance and Recipes | Pending |
-| RECP-04 | Phase 5: Decision Guidance and Recipes | Pending |
-| RECP-05 | Phase 5: Decision Guidance and Recipes | Pending |
+| RECP-01 | Phase 5: Decision Guidance and Recipes | Complete |
+| RECP-02 | Phase 5: Decision Guidance and Recipes | Complete |
+| RECP-03 | Phase 5: Decision Guidance and Recipes | Complete |
+| RECP-04 | Phase 5: Decision Guidance and Recipes | Complete |
+| RECP-05 | Phase 5: Decision Guidance and Recipes | Complete |
 | KNOW-01 | Phase 2: Knowledge Base | Complete |
 | KNOW-02 | Phase 2: Knowledge Base | Complete |
 | KNOW-03 | Phase 2: Knowledge Base | Complete |
