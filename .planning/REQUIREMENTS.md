@@ -90,15 +90,15 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Agent
 
-- [ ] **AGNT-01**: Agent invokable via `claude --agent claude-ecosystem`
-- [ ] **AGNT-02**: Agent answers ecosystem questions from static skill file knowledge
-- [ ] **AGNT-03**: Agent covers all 10 extension points (MCP, Skills, Plugins, Hooks, Agents, Projects, Connectors, Commands, Memory, Settings)
-- [ ] **AGNT-04**: Agent uses hybrid knowledge — static base + live doc fetching via WebFetch/WebSearch
-- [ ] **AGNT-05**: Agent cites sources and points users to relevant doc pages
-- [ ] **AGNT-06**: Agent reads user's local project context (CLAUDE.md, .mcp.json, settings) and gives contextual recommendations
-- [ ] **AGNT-07**: Agent provides guided setup workflows (creating skills, MCP servers, hooks, etc.)
-- [ ] **AGNT-08**: Agent can perform ecosystem health check — audit user's Claude Code setup and flag issues/improvements
-- [ ] **AGNT-09**: Agent handles comparison questions with structured responses ("what's the difference between X and Y?")
+- [x] **AGNT-01**: Agent invokable via `claude --agent claude-ecosystem`
+- [x] **AGNT-02**: Agent answers ecosystem questions from static skill file knowledge
+- [x] **AGNT-03**: Agent covers all 10 extension points (MCP, Skills, Plugins, Hooks, Agents, Projects, Connectors, Commands, Memory, Settings)
+- [x] **AGNT-04**: Agent uses hybrid knowledge — static base + live doc fetching via WebFetch/WebSearch
+- [x] **AGNT-05**: Agent cites sources and points users to relevant doc pages
+- [x] **AGNT-06**: Agent reads user's local project context (CLAUDE.md, .mcp.json, settings) and gives contextual recommendations
+- [x] **AGNT-07**: Agent provides guided setup workflows (creating skills, MCP servers, hooks, etc.)
+- [x] **AGNT-08**: Agent can perform ecosystem health check — audit user's Claude Code setup and flag issues/improvements
+- [x] **AGNT-09**: Agent handles comparison questions with structured responses ("what's the difference between X and Y?")
 
 ## v2 Requirements
 
@@ -195,15 +195,15 @@ Which phases cover which requirements. Updated during roadmap creation.
 | KNOW-03 | Phase 2: Knowledge Base | Complete |
 | KNOW-04 | Phase 2: Knowledge Base | Complete |
 | KNOW-05 | Phase 1: Foundation | Complete |
-| AGNT-01 | Phase 6: Agent | Pending |
-| AGNT-02 | Phase 6: Agent | Pending |
-| AGNT-03 | Phase 6: Agent | Pending |
-| AGNT-04 | Phase 6: Agent | Pending |
-| AGNT-05 | Phase 6: Agent | Pending |
-| AGNT-06 | Phase 6: Agent | Pending |
-| AGNT-07 | Phase 6: Agent | Pending |
-| AGNT-08 | Phase 6: Agent | Pending |
-| AGNT-09 | Phase 6: Agent | Pending |
+| AGNT-01 | Phase 6: Agent | Complete |
+| AGNT-02 | Phase 6: Agent | Complete |
+| AGNT-03 | Phase 6: Agent | Complete |
+| AGNT-04 | Phase 6: Agent | Complete |
+| AGNT-05 | Phase 6: Agent | Complete |
+| AGNT-06 | Phase 6: Agent | Complete |
+| AGNT-07 | Phase 6: Agent | Complete |
+| AGNT-08 | Phase 6: Agent | Complete |
+| AGNT-09 | Phase 6: Agent | Complete |
 
 **Coverage:**
 - v1 requirements: 66 total
