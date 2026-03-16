@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Ecosystem Guide - Claude Ecosystem Guide</title>
+  <script>
+    // Prevent flash of wrong theme - runs before CSS/body render
+    (function() {
+      var stored = localStorage.getItem('claude-guide-theme');
+      if (stored) {
+        document.documentElement.setAttribute('data-theme', stored);
+      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="content">
+    <article>
+      <h1 id="claude-ecosystem-guide">Claude Ecosystem Guide<a class="anchor" href="#claude-ecosystem-guide">#</a></h1>
+<p>Welcome to the comprehensive guide to the Claude Code ecosystem. This site covers all the extension points and configuration options available in Claude Code, helping you understand which tools to use and how to set them up.</p>
+<h2 id="extension-points">Extension Points<a class="anchor" href="#extension-points">#</a></h2>
+<p>Explore the 10 core extension points that make Claude Code customizable:</p>
+<ul>
+<li><a href="topics/mcp.html">MCP Servers and Connectors</a> - Connect Claude to external tools and data sources</li>
+<li><a href="topics/skills.html">Skills</a> - Teach Claude reusable patterns and capabilities</li>
+<li><a href="topics/plugins.html">Plugins</a> - Extend Claude Code with third-party integrations</li>
+<li><a href="topics/hooks.html">Hooks</a> - Run scripts at key lifecycle events</li>
+<li><a href="topics/agents.html">Agents</a> - Create specialized AI workflows</li>
+<li><a href="topics/projects.html">Projects and CLAUDE.md</a> - Configure project-level behavior</li>
+<li><a href="topics/connectors.html">Connectors</a> - Connect Claude to external services</li>
+<li><a href="topics/commands.html">Commands</a> - Define reusable prompt shortcuts</li>
+<li><a href="topics/memory.html">Memory</a> - Manage Claude&#39;s persistent context</li>
+<li><a href="topics/settings.html">Settings</a> - Control Claude Code configuration at every level</li>
+</ul>
+<h2 id="quick-start">Quick Start<a class="anchor" href="#quick-start">#</a></h2>
+<p>Here is an example <code>.mcp.json</code> configuration that connects Claude to a filesystem server:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">json</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-json">&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;mcpServers&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;filesystem&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;command&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;npx&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;args&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;-y&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;@modelcontextprotocol/server-filesystem&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;/path/to/dir&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;env&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;</code></pre>
+</div>
+<h2 id="about-this-guide">About This Guide<a class="anchor" href="#about-this-guide">#</a></h2>
+<p>This guide is built from markdown source files and generates static HTML with syntax highlighting and copy-to-clipboard code blocks. No frameworks, no client-side rendering -- just fast, accessible HTML.</p>
+
+    </article>
+  </main>
+  <script src="assets/main.js"></script>
+</body>
+</html>

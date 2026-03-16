@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memory - Claude Ecosystem Guide</title>
+  <script>
+    // Prevent flash of wrong theme - runs before CSS/body render
+    (function() {
+      var stored = localStorage.getItem('claude-guide-theme');
+      if (stored) {
+        document.documentElement.setAttribute('data-theme', stored);
+      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="content">
+    <article>
+      <h1 id="memory">Memory<a class="anchor" href="#memory">#</a></h1>
+<h2 id="overview">Overview<a class="anchor" href="#overview">#</a></h2>
+<p>Memory allows Claude Code to retain information across conversations. When Claude learns something important about your project or preferences, it can store that knowledge for future sessions. Memory operates at multiple levels -- project memory, user memory, and session memory -- each with different persistence and scope.</p>
+<p>Memory helps Claude avoid asking the same questions repeatedly and maintain context about long-running projects.</p>
+<h2 id="quick-example">Quick Example<a class="anchor" href="#quick-example">#</a></h2>
+<p>Claude stores memories in structured files. You can view and manage them:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-bash">&lt;span class=<span class="hljs-string">&quot;hljs-comment&quot;</span>&gt;# View current project memories&lt;/span&gt;
+claude memory list --scope project
+
+&lt;span class=<span class="hljs-string">&quot;hljs-comment&quot;</span>&gt;# Add a manual memory&lt;/span&gt;
+claude memory add &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;This project uses pnpm, not npm&amp;quot;&lt;/span&gt;
+
+&lt;span class=<span class="hljs-string">&quot;hljs-comment&quot;</span>&gt;# Clear outdated memories&lt;/span&gt;
+claude memory clear --before 2024-01-01</code></pre>
+</div>
+<h2 id="coming-soon">Coming Soon<a class="anchor" href="#coming-soon">#</a></h2>
+<p>Full content including memory types, storage format, privacy controls, and memory management best practices will be added in Phases 2-4.</p>
+
+    </article>
+  </main>
+  <script src="../assets/main.js"></script>
+</body>
+</html>

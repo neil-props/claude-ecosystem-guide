@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skills - Claude Ecosystem Guide</title>
+  <script>
+    // Prevent flash of wrong theme - runs before CSS/body render
+    (function() {
+      var stored = localStorage.getItem('claude-guide-theme');
+      if (stored) {
+        document.documentElement.setAttribute('data-theme', stored);
+      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="content">
+    <article>
+      <h1 id="skills">Skills<a class="anchor" href="#skills">#</a></h1>
+<h2 id="overview">Overview<a class="anchor" href="#overview">#</a></h2>
+<p>Skills are structured knowledge files that teach Claude how to perform specific tasks within a domain. Each skill contains rules, examples, and patterns that Claude loads contextually when relevant to the current task. Skills live in <code>.claude/skills/</code> directories and use markdown with YAML frontmatter.</p>
+<p>Skills are the recommended approach when you want Claude to follow specific patterns repeatedly across multiple conversations.</p>
+<h2 id="quick-example">Quick Example<a class="anchor" href="#quick-example">#</a></h2>
+<p>Create a skill file at <code>.claude/skills/api-patterns/SKILL.md</code>:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">yaml</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-yaml"><span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-meta&quot;&gt;---&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;name:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;API&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Patterns&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;description:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;REST&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;API&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;conventions&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;for&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;this&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;project&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;globs:&lt;/span&gt;</span> [<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;&amp;quot;src/api/**/*.ts&amp;quot;&lt;/span&gt;</span>, <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;&amp;quot;src/routes/**/*.ts&amp;quot;&lt;/span&gt;</span>]
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-meta&quot;&gt;---</span>
+<span class="hljs-string">&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-comment&quot;&gt;#</span> <span class="hljs-string">API</span> <span class="hljs-string">Patterns&lt;/span&gt;</span>
+
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-comment&quot;&gt;##</span> <span class="hljs-string">Rules&lt;/span&gt;</span>
+
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-bullet&quot;&gt;-&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;All&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;endpoints&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;return&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;JSON&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;with&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;`{&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;data,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;error,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;meta&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;}`&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;envelope&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-bullet&quot;&gt;-&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Use&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;zod&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;for&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;request&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;validation&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-bullet&quot;&gt;-&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Include&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;rate&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;limiting&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;on&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;all&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;public&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;endpoints&lt;/span&gt;</span></code></pre>
+</div>
+<h2 id="coming-soon">Coming Soon<a class="anchor" href="#coming-soon">#</a></h2>
+<p>Full content including skill file format, loading behavior, rule organization, and skill vs agent comparison will be added in Phases 2-4.</p>
+
+    </article>
+  </main>
+  <script src="../assets/main.js"></script>
+</body>
+</html>

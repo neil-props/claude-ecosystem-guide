@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agents - Claude Ecosystem Guide</title>
+  <script>
+    // Prevent flash of wrong theme - runs before CSS/body render
+    (function() {
+      var stored = localStorage.getItem('claude-guide-theme');
+      if (stored) {
+        document.documentElement.setAttribute('data-theme', stored);
+      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="content">
+    <article>
+      <h1 id="agents">Agents<a class="anchor" href="#agents">#</a></h1>
+<h2 id="overview">Overview<a class="anchor" href="#overview">#</a></h2>
+<p>Agents are specialized Claude Code configurations that combine custom instructions, specific tool access, and defined workflows into reusable AI assistants. An agent can be a code reviewer, a documentation writer, a test generator, or any other focused role. Agents are defined as markdown files and invoked via the CLI.</p>
+<p>Agents are the right choice when you need Claude to take on a specific persona with constrained capabilities and clear objectives.</p>
+<h2 id="quick-example">Quick Example<a class="anchor" href="#quick-example">#</a></h2>
+<p>Create an agent file at <code>.claude/agents/reviewer.md</code>:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">markdown</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-markdown"><span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span># Code Reviewer Agent<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+
+You are a code reviewer. Review the provided code changes for:
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Security vulnerabilities
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Performance issues
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Code style violations
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Missing error handling
+
+Use the Read tool to examine files. Never modify code directly.
+Output your review as a structured markdown report.</code></pre>
+</div>
+<p>Then invoke it:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-bash">claude --agent reviewer &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Review the changes <span class="hljs-keyword">in</span> src/auth/&amp;quot;&lt;/span&gt;</code></pre>
+</div>
+<h2 id="coming-soon">Coming Soon<a class="anchor" href="#coming-soon">#</a></h2>
+<p>Full content including agent file format, tool restrictions, prompt engineering patterns, and agent vs skill comparison will be added in Phases 2-4.</p>
+
+    </article>
+  </main>
+  <script src="../assets/main.js"></script>
+</body>
+</html>
