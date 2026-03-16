@@ -9,15 +9,24 @@ section: topics
 
 # MCP Servers and Connectors
 
+<div class="tabs">
+  <div class="tab-group">
+    <button class="tab-btn active" data-tab="concept">Concept</button>
+    <button class="tab-btn" data-tab="howto">How-To</button>
+    <button class="tab-btn" data-tab="reference">Reference</button>
+  </div>
+  <div class="tab-panel active" data-tab-panel="concept">
+
 ## Overview
 
 The Model Context Protocol (MCP) is an open standard based on JSON-RPC 2.0 that connects Claude to external tools, APIs, and data sources. Think of it as the "USB-C of AI" -- a universal connector that works across Claude Code, Claude Chat, and Claude Cowork.
 
-MCP was created by Anthropic, donated to the Linux Foundation's Agentic AI Foundation (AAIF) in December 2025, and is co-founded with Block and OpenAI, with backing from Google, Microsoft, and AWS. It is vendor-neutral: the same MCP server works with Claude, ChatGPT, Gemini, and other AI clients.
+MCP was created by Anthropic, donated to the Linux Foundation's Agentic AI Foundation (AAIF) in December 2025, and is co-founded with Block and OpenAI, with backing from Google, Microsoft, and AWS. It is vendor-neutral: the same MCP server works with Claude, ChatGPT, Gemini, and other AI clients. The protocol has reached 97M+ monthly SDK downloads.
 
-In Claude Chat, MCP integrations are called **Connectors** -- there are 50+ pre-built, one-click integrations available. In Claude Code, they are configured via CLI or `.mcp.json` config files. The protocol has reached 97M+ monthly SDK downloads.
+In Claude Chat, MCP integrations are called **Connectors** -- there are 50+ pre-built, one-click integrations available. In Claude Code, they are configured via CLI or `.mcp.json` config files.
 
 MCP servers expose three types of capabilities:
+
 - **Tools** -- actions Claude can invoke (query a database, send a message)
 - **Resources** -- data Claude can read (file contents, API responses)
 - **Prompts** -- reusable templates for common interactions
@@ -30,9 +39,11 @@ MCP supports three transport types:
 
 | Transport | Use Case | Details |
 |-----------|----------|---------|
-| **stdio** | Local processes | Server runs as a child process. Most common for dev tools. |
-| **Streamable HTTP** | Remote servers | HTTP-based transport for cloud-hosted servers. |
-| **SSE** | Legacy remote | Server-sent events. Being superseded by streamable HTTP. |
+| **stdio** | Local processes | Server runs as a child process. Most common for dev tools. Fast, no network overhead. |
+| **Streamable HTTP** | Remote servers | HTTP-based transport for cloud-hosted servers. Current recommended standard for remote MCP. |
+| **SSE** | Legacy remote | Server-sent events. Still functional but being superseded by streamable HTTP. Use streamable HTTP for new projects. |
+
+**Streamable HTTP** is the current standard for remote MCP servers. It replaced SSE as the recommended transport and offers better reliability and broader infrastructure compatibility. SSE remains supported for backward compatibility but new remote servers should use streamable HTTP.
 
 The **MCP Apps extension** (Nov 2025, co-developed with OpenAI) enables MCP servers to render interactive UIs via sandboxed HTML iframes inside AI clients.
 
@@ -93,6 +104,23 @@ Popular connectors include Jira, Confluence, Slack, Asana, Linear, Sentry, Inter
 - Bundled within plugins (e.g., Salesforce connector in the Sales plugin)
 - Users control which connectors are active and whether internet access is allowed
 
+## When to Use MCP
+
+**Use MCP when:**
+- You need Claude to interact with external tools, APIs, or data sources
+- You want a standardized, vendor-neutral integration that works across AI clients
+- You need team-shared tool configurations (via `.mcp.json` in your repo)
+- You are building integrations that should work across Claude Code, Chat, and Cowork
+
+**Don't use MCP when:**
+- A simple [Skill](skills.html) with instructions would suffice -- skills are lighter weight and don't require running a server process
+- You only need to teach Claude a process or pattern (use a skill instead)
+- You need deterministic automation at lifecycle events (use [Hooks](hooks.html) instead)
+
+**MCP vs other extension points:**
+- **MCP vs Skills:** MCP provides *tools* (actions and data); Skills provide *instructions* (knowledge and processes). They complement each other -- a skill might instruct Claude on *when* to use an MCP tool.
+- **MCP vs Plugins:** Plugins can *bundle* MCP server configs alongside skills and agents. MCP is the protocol; plugins are the distribution mechanism.
+
 ## Configuration
 
 ### Project-shared `.mcp.json`
@@ -146,7 +174,7 @@ MCP supports OAuth 2.0, custom auth headers, and environment variable expansion 
 - Use Tool Search when MCP tools exceed 10% of context to avoid bloat.
 - For team-shared configs, use `.mcp.json` at the repo root with `${ENV_VAR}` syntax for secrets.
 - Remove unused MCP servers (`claude mcp remove`) to keep context lean.
-- Use HTTP transport for remote servers, stdio for local processes.
+- Use streamable HTTP transport for remote servers, stdio for local processes.
 - ZoomInfo, HubSpot, Salesforce, and 50+ services have pre-built Chat connectors.
 
 ## Common Questions
@@ -158,13 +186,42 @@ MCP is a vendor-neutral open standard that connects AI models to external tools.
 Use the CLI: `claude mcp add my-server -- npx @example/mcp-server`. For team-wide sharing, create a `.mcp.json` at the repo root (checked into git) with `${ENV_VAR}` syntax for secrets. Each developer sets their own tokens locally.
 
 **How do I debug MCP connection issues?**
-Start with `claude mcp list` to check server status. Test the server command manually (`npx @example/mcp-server`) to see errors. Common issues: missing env vars (API tokens), timeout on slow server startup, and using deprecated SSE transport instead of HTTP.
+Start with `claude mcp list` to check server status. Test the server command manually (`npx @example/mcp-server`) to see errors. Common issues: missing env vars (API tokens), timeout on slow server startup, and using deprecated SSE transport instead of streamable HTTP.
 
 **How do I share MCP configurations across my team?**
 Use a project-level `.mcp.json` file checked into git with `${ENV_VAR}` syntax for secrets. Add setup instructions to your project onboarding docs. For org-wide enforcement, use `managed-mcp.json` pushed via MDM.
 
 **How do I build a custom MCP server?**
 Use the TypeScript SDK (`@modelcontextprotocol/sdk`) or any of the SDKs available in Python, Go, Rust, Java, and C#. A minimal server defines tools with JSON schemas and handles tool calls. Test locally with `claude mcp add my-server -- node ./my-server.js`.
+
+  </div>
+  <div class="tab-panel" data-tab-panel="howto">
+
+## How-To Guides
+
+> [!INFO]
+> Step-by-step guides for MCP are coming in Phase 4.
+
+Planned guides:
+- How to set up an MCP server (stdio transport) -- _coming soon_
+- How to set up an MCP server (SSE/streamable HTTP transport) -- _coming soon_
+- How to configure MCP authentication -- _coming soon_
+- How to build your own MCP server -- _coming soon_
+
+  </div>
+  <div class="tab-panel" data-tab-panel="reference">
+
+## Technical Reference
+
+> [!INFO]
+> Detailed reference specs for MCP are coming in Phase 4.
+
+Planned references:
+- MCP config schema (.mcp.json format, all fields) -- _coming soon_
+- Environment variables reference -- _coming soon_
+
+  </div>
+</div>
 
 ## Related
 

@@ -9,6 +9,14 @@ section: topics
 
 # Plugins
 
+<div class="tabs">
+  <div class="tab-group">
+    <button class="tab-btn active" data-tab="concept">Concept</button>
+    <button class="tab-btn" data-tab="howto">How-To</button>
+    <button class="tab-btn" data-tab="reference">Reference</button>
+  </div>
+  <div class="tab-panel active" data-tab-panel="concept">
+
 ## Overview
 
 Plugins are the **distribution unit** of the Claude ecosystem. They package skills, MCP server configurations, subagent definitions, hooks, slash commands, LSP servers, and default settings into installable bundles. Think of it this way: skills are individual recipes; plugins are complete cookbooks.
@@ -30,10 +38,19 @@ A plugin bundles multiple extension types into a single installable package:
 | LSP servers (.lsp.json) | Code intelligence integration |
 | Settings (settings.json) | Default permission and environment settings |
 
+### Distribution Methods
+
+Plugins can be distributed through several channels:
+
+- **Anthropic & Partners marketplace** -- official and partner plugins, curated and maintained
+- **Organization private marketplaces** -- enterprise-internal distribution for proprietary workflows
+- **GitHub repositories** -- install via `/plugin install github:org/my-plugin` for open-source sharing
+- **Open source** -- `github.com/anthropics/knowledge-work-plugins` is the official collection
+
 ### In Claude Code
 
 ```bash
-# Install a plugin
+# Install a plugin from GitHub
 /plugin install <github-url-or-name>
 
 # Test a local plugin during development
@@ -68,26 +85,43 @@ Cowork is the primary home for plugins:
 
 Partner plugins include LSEG, S&P Global, FactSet, Morningstar, and PitchBook for financial services.
 
+## When to Use Plugins
+
+**Use Plugins when:**
+- You have multiple related skills, hooks, MCP configs, and agents that belong together as a coherent workflow
+- You need to distribute capabilities across multiple repositories or teams
+- You want namespace isolation to avoid command collisions between different bundles
+- You are building for Claude Cowork (plugins are the primary extension mechanism there)
+
+**Don't use Plugins when:**
+- You have a single skill or process to share -- just share the individual `SKILL.md` file via git
+- You only need to add one MCP server -- configure it directly in `.mcp.json`
+- You need something Chat-specific -- Chat uses Skills and Connectors directly, not plugins
+
+**Plugins vs other extension points:**
+- **Plugins vs Skills:** A plugin *contains* skills. Use a standalone skill when you have one focused instruction set. Use a plugin when you have a bundle of related skills, agents, hooks, and configs that should be installed together.
+- **Plugins vs MCP:** Plugins can *include* MCP server configurations. MCP is the protocol; plugins are the packaging mechanism.
+
 ## Configuration
 
 ### Plugin Anatomy
 
 ```
 my-plugin/
-├── .claude-plugin/
-│   └── plugin.json       <- Manifest (name, version, description, author, license)
-├── skills/
-│   ├── deploy/
-│   │   └── SKILL.md      <- Invoked as /my-plugin:deploy
-│   └── review/
-│       └── SKILL.md      <- Invoked as /my-plugin:review
-├── agents/
-│   └── qa-bot.md          <- Custom subagent definition
-├── hooks/
-│   └── hooks.json         <- Event-driven automation
-├── .mcp.json              <- Bundled MCP server configs
-├── .lsp.json              <- Code intelligence servers
-└── settings.json          <- Default permission + env settings
+.claude-plugin/
+    plugin.json       <- Manifest (name, version, description, author, license)
+skills/
+    deploy/
+        SKILL.md      <- Invoked as /my-plugin:deploy
+    review/
+        SKILL.md      <- Invoked as /my-plugin:review
+agents/
+    qa-bot.md          <- Custom subagent definition
+hooks/
+    hooks.json         <- Event-driven automation
+.mcp.json              <- Bundled MCP server configs
+.lsp.json              <- Code intelligence servers
+settings.json          <- Default permission + env settings
 ```
 
 ### Minimal plugin.json Manifest
@@ -102,14 +136,6 @@ my-plugin/
   "agents": ["agents/qa-bot.md"]
 }
 ```
-
-### Distribution
-
-Plugins can be distributed through:
-- **Anthropic & Partners marketplace** -- official and partner plugins
-- **Organization private marketplaces** -- enterprise-internal distribution
-- **GitHub repositories** -- install via `/plugin install github:org/my-plugin`
-- **Open source** -- `github.com/anthropics/knowledge-work-plugins`
 
 ## Best Practices
 
@@ -130,6 +156,31 @@ Create a directory with a `.claude-plugin/plugin.json` manifest, add `skills/`, 
 
 **Where do plugins work?**
 Plugins work in Claude Cowork (primary home, 15+ official plugins) and Claude Code (dev-focused plugins). They are not directly available in Claude Chat -- Chat uses Skills and Connectors individually.
+
+  </div>
+  <div class="tab-panel" data-tab-panel="howto">
+
+## How-To Guides
+
+> [!INFO]
+> Step-by-step guides for Plugins are coming in Phase 4.
+
+Planned guides:
+- How to create a plugin that bundles skills -- _coming soon_
+
+  </div>
+  <div class="tab-panel" data-tab-panel="reference">
+
+## Technical Reference
+
+> [!INFO]
+> Detailed reference specs for Plugins are coming in Phase 4.
+
+Planned references:
+- Plugin manifest spec (plugin.json format, all fields) -- _coming soon_
+
+  </div>
+</div>
 
 ## Related
 

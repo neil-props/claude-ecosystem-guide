@@ -9,9 +9,17 @@ section: topics
 
 # Skills
 
+<div class="tabs">
+  <div class="tab-group">
+    <button class="tab-btn active" data-tab="concept">Concept</button>
+    <button class="tab-btn" data-tab="howto">How-To</button>
+    <button class="tab-btn" data-tab="reference">Reference</button>
+  </div>
+  <div class="tab-panel active" data-tab-panel="concept">
+
 ## Overview
 
-Skills are the **universal primitive** of the Claude ecosystem. A skill is a folder with a `SKILL.md` file containing YAML frontmatter and markdown instructions that teach Claude specific processes. The same skill works in Claude Code, Claude Chat, and Claude Cowork without modification.
+Skills are the **universal primitive** of the Claude ecosystem. A skill is a markdown file (`SKILL.md`) with YAML frontmatter that teaches Claude a specific process, pattern, or domain expertise. Think of skills as reusable instruction sets -- they tell Claude *what* to do and *how* to do it, and the same skill works across Claude Code, Claude Chat, and Claude Cowork without modification.
 
 Skills launched on October 16, 2025, simultaneously across all surfaces, and became an open standard published at [agentskills.io](https://agentskills.io) in December 2025. Partner organizations including Atlassian, Canva, Cloudflare, Figma, Notion, Ramp, and Sentry publish skills through the partner directory.
 
@@ -21,16 +29,29 @@ Skills use **progressive disclosure** -- Claude reads skill descriptions (metada
 
 ## How It Works
 
-A skill is just a folder:
+A skill is just a folder with a `SKILL.md` file:
 
 ```
 my-skill/
-├── SKILL.md       <- Instructions + YAML frontmatter
-├── template.xlsx  <- Supporting files (optional)
-├── examples/      <- Reference examples (optional)
-└── scripts/
-    └── validate.sh <- Helper scripts (optional)
+SKILL.md       <- Instructions + YAML frontmatter
+template.xlsx  <- Supporting files (optional)
+examples/      <- Reference examples (optional)
+scripts/
+    validate.sh <- Helper scripts (optional)
 ```
+
+The YAML frontmatter controls how the skill behaves. The 10 frontmatter fields define the skill's identity, permissions, and execution context:
+
+- **`name`** -- Display name and `/slash` command identifier
+- **`description`** -- The most important field. Controls when Claude auto-invokes the skill via progressive disclosure. Write a clear, specific description that matches the tasks you want the skill to handle.
+- **`allowed-tools`** -- Restricts which tools the skill can use. No permission prompts for listed tools.
+- **`model`** -- Override the model used (e.g., `haiku` for cheap/fast tasks, `opus` for complex reasoning).
+- **`context: fork`** -- Run the skill in an isolated subagent context, giving it behavior similar to an agent.
+- **`hooks`** -- Attach lifecycle hooks scoped to this skill only.
+- **`argument-hint`** -- Autocomplete hint shown in the `/` menu.
+- **`user-invocable`** -- Whether the skill appears in the `/` menu.
+- **`disable-model-invocation`** -- Prevent auto-invocation (require explicit `/` command).
+- **`agent`** -- Subagent type when used with `context: fork`.
 
 The resolution order for how Claude chooses between different extension types:
 1. **Skill** (inline) -- auto-invoked based on description match
@@ -63,63 +84,23 @@ Skills are also invocable via `/skill-name` slash commands.
 - Also available standalone via the **Customize** menu
 - Same SKILL.md format as Chat and Code
 
-## Configuration
+## When to Use Skills
 
-### Skill Frontmatter (10 fields)
+**Use Skills when:**
+- You have a repeatable process or pattern you want Claude to follow consistently
+- You want instructions that auto-invoke based on task context (progressive disclosure)
+- You need a portable, cross-surface capability (Code + Chat + Cowork)
+- You want to share team-specific knowledge via git (`.claude/skills/`)
 
-The YAML frontmatter in `SKILL.md` controls behavior:
+**Don't use Skills when:**
+- You need Claude to interact with external APIs or databases (use [MCP](mcp.html) instead -- MCP provides tools, skills provide instructions)
+- You need deterministic automation that runs without Claude's judgment (use [Hooks](hooks.html) instead -- hooks fire automatically at lifecycle events, skills are on-demand instructions)
+- You need full context isolation with persistent memory (use [Agents](agents.html) instead -- agents get their own context window)
 
-```yaml
----
-name: quarterly-report        # Display name + /slash command
-description: Generate reports  # Auto-discovery trigger (critical)
-argument-hint: <quarter>       # Autocomplete hint
-allowed-tools: Read, Write     # No permission prompts for these
-model: opus                    # sonnet | opus | haiku
-context: fork                  # Run in isolated subagent context
-agent: general-purpose         # Subagent type (with fork)
-user-invocable: true           # Show in / menu
-disable-model-invocation: false # Allow auto-invoke
-hooks:                         # Lifecycle hooks
-  PostToolUse:
-    - matcher: "Edit"
-      command: "npm run lint"
----
-# Instructions follow in markdown...
-```
-
-Key fields:
-- **`description`** -- Most important field. Controls when Claude auto-invokes the skill via progressive disclosure.
-- **`allowed-tools`** -- Restrict which tools the skill can use. No permission prompts for listed tools.
-- **`model`** -- Override the model used for this skill (e.g., use Haiku for cheap/fast tasks).
-- **`context: fork`** -- Run the skill in an isolated subagent context, like an agent.
-- **`hooks`** -- Attach lifecycle hooks scoped to this skill only.
-
-### Creating a Custom Skill
-
-```bash
-mkdir -p .claude/skills/my-skill
-```
-
-Write the SKILL.md:
-
-```markdown
----
-name: deploy-check
-description: Validate deployment readiness for production
-allowed-tools: Read, Bash, Grep
-model: sonnet
----
-
-# Deployment Readiness Check
-
-## Steps
-1. Run the full test suite
-2. Check for TODO/FIXME comments in changed files
-3. Verify no .env files are staged
-4. Check bundle size is within limits
-5. Output a go/no-go summary
-```
+**Skills vs other extension points:**
+- **Skills vs Agents:** Skills are reusable instructions loaded into the main session context. Agents are isolated Claude instances with their own context, memory, and tool restrictions. Use a skill when you want inline guidance; use an agent when you need isolation or multi-step autonomous work. (Skills with `context: fork` bridge the gap.)
+- **Skills vs Hooks:** Skills are on-demand and require Claude's judgment to activate. Hooks are automatic and deterministic -- they fire at lifecycle events regardless of Claude's intent. Skills teach Claude *what to do*; hooks automate *when to react*.
+- **Skills vs Commands:** Skills replace legacy commands. Commands required explicit `/` invocation; skills can auto-invoke via description matching. Migrate existing commands to skills for better discoverability.
 
 ## Best Practices
 
@@ -145,6 +126,33 @@ Skills teach Claude *what* to do (instructions, auto-invoked). Commands are the 
 
 **How do I share Skills across my organization?**
 Three strategies: (1) project-level via git in `.claude/skills/`, (2) bundle into a Plugin for cross-repo distribution, (3) organization-managed via admin provisioning for Team/Enterprise plans.
+
+  </div>
+  <div class="tab-panel" data-tab-panel="howto">
+
+## How-To Guides
+
+> [!INFO]
+> Step-by-step guides for Skills are coming in Phase 4.
+
+Planned guides:
+- How to create a skill with correct frontmatter -- _coming soon_
+- How to configure CLAUDE.md for a project -- _coming soon_
+
+  </div>
+  <div class="tab-panel" data-tab-panel="reference">
+
+## Technical Reference
+
+> [!INFO]
+> Detailed reference specs for Skills are coming in Phase 4.
+
+Planned references:
+- Skill frontmatter spec (all fields, validation rules) -- _coming soon_
+- Environment variables reference -- _coming soon_
+
+  </div>
+</div>
 
 ## Related
 

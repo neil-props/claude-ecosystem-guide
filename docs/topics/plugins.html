@@ -15,37 +15,258 @@
       }
     })();
   </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
-  <aside class="sidebar" id="sidebar"></aside>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="../index.html" class="site-title">Claude Ecosystem</a>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+  <div class="nav-section-title">Topics</div>
+  <a href="../topics/mcp.html" class="nav-link">MCP Servers and Connectors</a>
+  <a href="../topics/skills.html" class="nav-link">Skills</a>
+  <a href="../topics/plugins.html" class="nav-link active">Plugins</a>
+  <a href="../topics/hooks.html" class="nav-link">Hooks</a>
+  <a href="../topics/agents.html" class="nav-link">Agents</a>
+  <a href="../topics/projects.html" class="nav-link">Projects and CLAUDE.md</a>
+  <a href="../topics/connectors.html" class="nav-link">Connectors</a>
+  <a href="../topics/commands.html" class="nav-link">Commands</a>
+  <a href="../topics/memory.html" class="nav-link">Memory</a>
+  <a href="../topics/settings.html" class="nav-link">Settings</a>
+</div>
+<div class="nav-section">
+  <div class="nav-section-title">Reference</div>
+  <a href="../topics/compatibility.html" class="nav-link">Compatibility Matrix</a>
+</div>
+
+    </nav>
+  </aside>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Toggle navigation">
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+  </button>
   <main class="content">
     <article>
       <h1 id="plugins">Plugins<a class="anchor" href="#plugins">#</a></h1>
+<div class="tabs">
+  <div class="tab-group">
+    <button class="tab-btn active" data-tab="concept">Concept</button>
+    <button class="tab-btn" data-tab="howto">How-To</button>
+    <button class="tab-btn" data-tab="reference">Reference</button>
+  </div>
+  <div class="tab-panel active" data-tab-panel="concept">
+
 <h2 id="overview">Overview<a class="anchor" href="#overview">#</a></h2>
-<p>Plugins extend Claude Code&#39;s functionality through third-party integrations. Unlike MCP servers which provide tools Claude can invoke, plugins modify Claude Code&#39;s behavior itself -- adding new commands, UI elements, or workflow integrations. Plugins are distributed as npm packages and configured in project or user settings.</p>
-<p>Plugins are best suited for workflow-level integrations that affect how you interact with Claude Code, rather than what Claude can do.</p>
-<h2 id="quick-example">Quick Example<a class="anchor" href="#quick-example">#</a></h2>
-<p>Install and configure a plugin in your settings:</p>
+<p>Plugins are the <strong>distribution unit</strong> of the Claude ecosystem. They package skills, MCP server configurations, subagent definitions, hooks, slash commands, LSP servers, and default settings into installable bundles. Think of it this way: skills are individual recipes; plugins are complete cookbooks.</p>
+<p>Plugins launched in January 2026 alongside Claude Cowork. In Cowork, there are 15+ official plugins for knowledge work (Sales, Finance, Legal, Data, Marketing, HR, and more). In Claude Code, plugins are developer-focused (code review, testing, CI/CD). Plugins are <strong>not directly available in Claude Chat</strong> -- Chat uses Skills and Connectors individually.</p>
+<p>All official plugins are open source at <code>github.com/anthropics/knowledge-work-plugins</code>, with 85+ skills and 69+ slash commands across the official set.</p>
+<h2 id="how-it-works">How It Works<a class="anchor" href="#how-it-works">#</a></h2>
+<p>A plugin bundles multiple extension types into a single installable package:</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Skills (SKILL.md files)</td>
+<td>Slash commands and auto-invoked instructions</td>
+</tr>
+<tr>
+<td>Subagents</td>
+<td>Custom AI assistants with isolated contexts</td>
+</tr>
+<tr>
+<td>Hooks (hooks.json)</td>
+<td>Event-driven automation</td>
+</tr>
+<tr>
+<td>MCP configs (.mcp.json)</td>
+<td>Bundled connector/server configurations</td>
+</tr>
+<tr>
+<td>LSP servers (.lsp.json)</td>
+<td>Code intelligence integration</td>
+</tr>
+<tr>
+<td>Settings (settings.json)</td>
+<td>Default permission and environment settings</td>
+</tr>
+</tbody></table>
+<h3 id="distribution-methods">Distribution Methods<a class="anchor" href="#distribution-methods">#</a></h3>
+<p>Plugins can be distributed through several channels:</p>
+<ul>
+<li><strong>Anthropic &amp; Partners marketplace</strong> -- official and partner plugins, curated and maintained</li>
+<li><strong>Organization private marketplaces</strong> -- enterprise-internal distribution for proprietary workflows</li>
+<li><strong>GitHub repositories</strong> -- install via <code>/plugin install github:org/my-plugin</code> for open-source sharing</li>
+<li><strong>Open source</strong> -- <code>github.com/anthropics/knowledge-work-plugins</code> is the official collection</li>
+</ul>
+<h3 id="in-claude-code">In Claude Code<a class="anchor" href="#in-claude-code">#</a></h3>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-bash">&lt;span class=<span class="hljs-string">&quot;hljs-comment&quot;</span>&gt;# Install a plugin from GitHub&lt;/span&gt;
+/plugin install &amp;lt;github-url-or-name&amp;gt;
+
+&lt;span class=<span class="hljs-string">&quot;hljs-comment&quot;</span>&gt;# Test a <span class="hljs-built_in">local</span> plugin during development&lt;/span&gt;
+claude --plugin-dir ./my-plugin</code></pre>
+</div>
+<p>Skills within plugins use namespace isolation to avoid collisions: <code>/my-plugin:skill-name</code>.</p>
+<p>The plugin manifest lives at <code>.claude-plugin/plugin.json</code>.</p>
+<h3 id="in-claude-cowork">In Claude Cowork<a class="anchor" href="#in-claude-cowork">#</a></h3>
+<p>Cowork is the primary home for plugins:</p>
+<ol>
+<li>Open the <strong>Customize</strong> menu</li>
+<li>Click <strong>Browse Plugins</strong></li>
+<li>Choose from three tabs: <strong>Anthropic &amp; Partners</strong>, <strong>Your Organization</strong>, <strong>Personal</strong></li>
+<li>Click <strong>Install</strong></li>
+</ol>
+<p><strong>Official plugins (15+):</strong></p>
+<ul>
+<li><strong>Productivity</strong> -- Task management, calendars, workflows</li>
+<li><strong>Enterprise Search</strong> -- Search across email, chat, docs, wikis</li>
+<li><strong>Sales</strong> -- Prospecting, outreach, deal strategy</li>
+<li><strong>Finance</strong> -- Journal entries, reconciliation, variance analysis</li>
+<li><strong>Data</strong> -- SQL, datasets, dashboards, visualizations</li>
+<li><strong>Legal</strong> -- Contract review, NDA triage, compliance</li>
+<li><strong>Marketing</strong> -- Campaign strategy, content creation</li>
+<li><strong>Customer Support</strong> -- Ticket triage, response drafting</li>
+<li><strong>Product Management</strong> -- Roadmaps, specs, prioritization</li>
+<li><strong>HR</strong> -- Recruiting, onboarding, policy</li>
+<li><strong>Plugin Create</strong> -- Build your own plugins interactively</li>
+</ul>
+<p>Partner plugins include LSEG, S&amp;P Global, FactSet, Morningstar, and PitchBook for financial services.</p>
+<h2 id="when-to-use-plugins">When to Use Plugins<a class="anchor" href="#when-to-use-plugins">#</a></h2>
+<p><strong>Use Plugins when:</strong></p>
+<ul>
+<li>You have multiple related skills, hooks, MCP configs, and agents that belong together as a coherent workflow</li>
+<li>You need to distribute capabilities across multiple repositories or teams</li>
+<li>You want namespace isolation to avoid command collisions between different bundles</li>
+<li>You are building for Claude Cowork (plugins are the primary extension mechanism there)</li>
+</ul>
+<p><strong>Don&#39;t use Plugins when:</strong></p>
+<ul>
+<li>You have a single skill or process to share -- just share the individual <code>SKILL.md</code> file via git</li>
+<li>You only need to add one MCP server -- configure it directly in <code>.mcp.json</code></li>
+<li>You need something Chat-specific -- Chat uses Skills and Connectors directly, not plugins</li>
+</ul>
+<p><strong>Plugins vs other extension points:</strong></p>
+<ul>
+<li><strong>Plugins vs Skills:</strong> A plugin <em>contains</em> skills. Use a standalone skill when you have one focused instruction set. Use a plugin when you have a bundle of related skills, agents, hooks, and configs that should be installed together.</li>
+<li><strong>Plugins vs MCP:</strong> Plugins can <em>include</em> MCP server configurations. MCP is the protocol; plugins are the packaging mechanism.</li>
+</ul>
+<h2 id="configuration">Configuration<a class="anchor" href="#configuration">#</a></h2>
+<h3 id="plugin-anatomy">Plugin Anatomy<a class="anchor" href="#plugin-anatomy">#</a></h3>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang"></span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-plaintext">my-plugin/
+.claude-plugin/
+    plugin.json       &amp;lt;- Manifest (name, version, description, author, license)
+skills/
+    deploy/
+        SKILL.md      &amp;lt;- Invoked as /my-plugin:deploy
+    review/
+        SKILL.md      &amp;lt;- Invoked as /my-plugin:review
+agents/
+    qa-bot.md          &amp;lt;- Custom subagent definition
+hooks/
+    hooks.json         &amp;lt;- Event-driven automation
+.mcp.json              &amp;lt;- Bundled MCP server configs
+.lsp.json              &amp;lt;- Code intelligence servers
+settings.json          &amp;lt;- Default permission + env settings</code></pre>
+</div>
+<h3 id="minimal-pluginjson-manifest">Minimal plugin.json Manifest<a class="anchor" href="#minimal-pluginjson-manifest">#</a></h3>
 <div class="code-block">
   <div class="code-header">
     <span class="code-lang">json</span>
     <button class="copy-btn" aria-label="Copy code">Copy</button>
   </div>
   <pre><code class="hljs language-json">&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
-  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;plugins&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
-    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;claude-plugin-jira&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
-      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;enabled&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-literal&quot;</span>&gt;&lt;span class=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;<span class="hljs-literal"><span class="hljs-keyword">true</span></span>&lt;/span&gt;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
-      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;config&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
-        &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;instance&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;your-org.atlassian.net&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
-        &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;project&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;PROJ&amp;quot;&lt;/span&gt;
-      &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
-    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
-  &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;name&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;my-team-plugin&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;version&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;<span class="hljs-number">1.0</span><span class="hljs-number">.0</span>&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;description&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Our team&amp;#x27;s Claude workflows&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;author&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;name&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Your Team&amp;quot;&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;skills&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;skills/deploy&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;skills/review&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;agents&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;agents/qa-bot.md&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;
 &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;</code></pre>
 </div>
-<h2 id="coming-soon">Coming Soon<a class="anchor" href="#coming-soon">#</a></h2>
-<p>Full content including plugin architecture, manifest format, development guide, and plugin vs MCP comparison will be added in Phases 2-4.</p>
+<h2 id="best-practices">Best Practices<a class="anchor" href="#best-practices">#</a></h2>
+<ul>
+<li>Use plugins when you need to distribute a <strong>bundle</strong> of related skills, connectors, and agents across multiple repos or teams</li>
+<li>For a single reusable instruction set, a standalone Skill is simpler</li>
+<li>Use namespace isolation (<code>/my-plugin:skill-name</code>) to avoid command collisions</li>
+<li>In Cowork, use the &quot;Plugin Create&quot; plugin to build new plugins interactively</li>
+<li>Test locally with <code>claude --plugin-dir ./my-plugin</code> before distributing</li>
+<li>Keep plugin manifests (<code>plugin.json</code>) minimal and accurate</li>
+</ul>
+<h2 id="common-questions">Common Questions<a class="anchor" href="#common-questions">#</a></h2>
+<p><strong>What are Plugins and how do they differ from Skills?</strong>
+Skills are individual instruction files for one task. Plugins are installable packages that bundle multiple skills, MCP server configs, subagents, hooks, slash commands, LSP servers, and default settings. Plugins are the distribution unit; skills are the universal primitive.</p>
+<p><strong>How do I build a custom Plugin?</strong>
+Create a directory with a <code>.claude-plugin/plugin.json</code> manifest, add <code>skills/</code>, <code>agents/</code>, <code>hooks/</code> subdirectories as needed, and optionally include <code>.mcp.json</code> and <code>settings.json</code>. Test locally with <code>claude --plugin-dir ./my-plugin</code>, then push to GitHub for distribution.</p>
+<p><strong>Where do plugins work?</strong>
+Plugins work in Claude Cowork (primary home, 15+ official plugins) and Claude Code (dev-focused plugins). They are not directly available in Claude Chat -- Chat uses Skills and Connectors individually.</p>
+  </div>
+  <div class="tab-panel" data-tab-panel="howto">
+
+<h2 id="how-to-guides">How-To Guides<a class="anchor" href="#how-to-guides">#</a></h2>
+<div class="callout callout-info">
+  <div class="callout-title">Info</div>
+  <p>Step-by-step guides for Plugins are coming in Phase 4.</p>
+</div>
+<p>Planned guides:</p>
+<ul>
+<li><p>How to create a plugin that bundles skills -- <em>coming soon</em></p>
+</div>
+<div class="tab-panel" data-tab-panel="reference"></li>
+</ul>
+<h2 id="technical-reference">Technical Reference<a class="anchor" href="#technical-reference">#</a></h2>
+<div class="callout callout-info">
+  <div class="callout-title">Info</div>
+  <p>Detailed reference specs for Plugins are coming in Phase 4.</p>
+</div>
+<p>Planned references:</p>
+<ul>
+<li><p>Plugin manifest spec (plugin.json format, all fields) -- <em>coming soon</em></p>
+</div>
+</div></li>
+</ul>
+<h2 id="related">Related<a class="anchor" href="#related">#</a></h2>
+<ul>
+<li><a href="skills.html">Skills</a> -- The individual instruction sets that plugins bundle together</li>
+<li><a href="mcp.html">MCP</a> -- Plugins can include MCP server configurations</li>
+<li><a href="hooks.html">Hooks</a> -- Plugins can include event-driven automation hooks</li>
+<li><a href="agents.html">Agents</a> -- Plugins can include custom subagent definitions</li>
+</ul>
 
     </article>
   </main>

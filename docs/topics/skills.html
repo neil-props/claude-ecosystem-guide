@@ -15,39 +15,205 @@
       }
     })();
   </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
-  <aside class="sidebar" id="sidebar"></aside>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="../index.html" class="site-title">Claude Ecosystem</a>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+  <div class="nav-section-title">Topics</div>
+  <a href="../topics/mcp.html" class="nav-link">MCP Servers and Connectors</a>
+  <a href="../topics/skills.html" class="nav-link active">Skills</a>
+  <a href="../topics/plugins.html" class="nav-link">Plugins</a>
+  <a href="../topics/hooks.html" class="nav-link">Hooks</a>
+  <a href="../topics/agents.html" class="nav-link">Agents</a>
+  <a href="../topics/projects.html" class="nav-link">Projects and CLAUDE.md</a>
+  <a href="../topics/connectors.html" class="nav-link">Connectors</a>
+  <a href="../topics/commands.html" class="nav-link">Commands</a>
+  <a href="../topics/memory.html" class="nav-link">Memory</a>
+  <a href="../topics/settings.html" class="nav-link">Settings</a>
+</div>
+<div class="nav-section">
+  <div class="nav-section-title">Reference</div>
+  <a href="../topics/compatibility.html" class="nav-link">Compatibility Matrix</a>
+</div>
+
+    </nav>
+  </aside>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Toggle navigation">
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+  </button>
   <main class="content">
     <article>
       <h1 id="skills">Skills<a class="anchor" href="#skills">#</a></h1>
+<div class="tabs">
+  <div class="tab-group">
+    <button class="tab-btn active" data-tab="concept">Concept</button>
+    <button class="tab-btn" data-tab="howto">How-To</button>
+    <button class="tab-btn" data-tab="reference">Reference</button>
+  </div>
+  <div class="tab-panel active" data-tab-panel="concept">
+
 <h2 id="overview">Overview<a class="anchor" href="#overview">#</a></h2>
-<p>Skills are structured knowledge files that teach Claude how to perform specific tasks within a domain. Each skill contains rules, examples, and patterns that Claude loads contextually when relevant to the current task. Skills live in <code>.claude/skills/</code> directories and use markdown with YAML frontmatter.</p>
-<p>Skills are the recommended approach when you want Claude to follow specific patterns repeatedly across multiple conversations.</p>
-<h2 id="quick-example">Quick Example<a class="anchor" href="#quick-example">#</a></h2>
-<p>Create a skill file at <code>.claude/skills/api-patterns/SKILL.md</code>:</p>
+<p>Skills are the <strong>universal primitive</strong> of the Claude ecosystem. A skill is a markdown file (<code>SKILL.md</code>) with YAML frontmatter that teaches Claude a specific process, pattern, or domain expertise. Think of skills as reusable instruction sets -- they tell Claude <em>what</em> to do and <em>how</em> to do it, and the same skill works across Claude Code, Claude Chat, and Claude Cowork without modification.</p>
+<p>Skills launched on October 16, 2025, simultaneously across all surfaces, and became an open standard published at <a href="https://agentskills.io">agentskills.io</a> in December 2025. Partner organizations including Atlassian, Canva, Cloudflare, Figma, Notion, Ramp, and Sentry publish skills through the partner directory.</p>
+<p>Skills use <strong>progressive disclosure</strong> -- Claude reads skill descriptions (metadata) at startup and loads the full skill content only when it determines relevance to the current task. This means skills are auto-invoked based on task context without manual triggering.</p>
+<p><strong>Rule of thumb:</strong> If you do it more than once a day, make it a skill.</p>
+<h2 id="how-it-works">How It Works<a class="anchor" href="#how-it-works">#</a></h2>
+<p>A skill is just a folder with a <code>SKILL.md</code> file:</p>
 <div class="code-block">
   <div class="code-header">
-    <span class="code-lang">yaml</span>
+    <span class="code-lang"></span>
     <button class="copy-btn" aria-label="Copy code">Copy</button>
   </div>
-  <pre><code class="hljs language-yaml"><span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-meta&quot;&gt;---&lt;/span&gt;</span>
-<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;name:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;API&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Patterns&lt;/span&gt;</span>
-<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;description:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;REST&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;API&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;conventions&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;for&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;this&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;project&lt;/span&gt;</span>
-<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;globs:&lt;/span&gt;</span> [<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;&amp;quot;src/api/**/*.ts&amp;quot;&lt;/span&gt;</span>, <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;&amp;quot;src/routes/**/*.ts&amp;quot;&lt;/span&gt;</span>]
-<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-meta&quot;&gt;---</span>
-<span class="hljs-string">&lt;/span&gt;</span>
-<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-comment&quot;&gt;#</span> <span class="hljs-string">API</span> <span class="hljs-string">Patterns&lt;/span&gt;</span>
-
-<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-comment&quot;&gt;##</span> <span class="hljs-string">Rules&lt;/span&gt;</span>
-
-<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-bullet&quot;&gt;-&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;All&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;endpoints&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;return&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;JSON&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;with&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;`{&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;data,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;error,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;meta&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;}`&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;envelope&lt;/span&gt;</span>
-<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-bullet&quot;&gt;-&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Use&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;zod&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;for&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;request&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;validation&lt;/span&gt;</span>
-<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-bullet&quot;&gt;-&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Include&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;rate&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;limiting&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;on&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;all&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;public&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;endpoints&lt;/span&gt;</span></code></pre>
+  <pre><code class="hljs language-plaintext">my-skill/
+SKILL.md       &amp;lt;- Instructions + YAML frontmatter
+template.xlsx  &amp;lt;- Supporting files (optional)
+examples/      &amp;lt;- Reference examples (optional)
+scripts/
+    validate.sh &amp;lt;- Helper scripts (optional)</code></pre>
 </div>
-<h2 id="coming-soon">Coming Soon<a class="anchor" href="#coming-soon">#</a></h2>
-<p>Full content including skill file format, loading behavior, rule organization, and skill vs agent comparison will be added in Phases 2-4.</p>
+<p>The YAML frontmatter controls how the skill behaves. The 10 frontmatter fields define the skill&#39;s identity, permissions, and execution context:</p>
+<ul>
+<li><strong><code>name</code></strong> -- Display name and <code>/slash</code> command identifier</li>
+<li><strong><code>description</code></strong> -- The most important field. Controls when Claude auto-invokes the skill via progressive disclosure. Write a clear, specific description that matches the tasks you want the skill to handle.</li>
+<li><strong><code>allowed-tools</code></strong> -- Restricts which tools the skill can use. No permission prompts for listed tools.</li>
+<li><strong><code>model</code></strong> -- Override the model used (e.g., <code>haiku</code> for cheap/fast tasks, <code>opus</code> for complex reasoning).</li>
+<li><strong><code>context: fork</code></strong> -- Run the skill in an isolated subagent context, giving it behavior similar to an agent.</li>
+<li><strong><code>hooks</code></strong> -- Attach lifecycle hooks scoped to this skill only.</li>
+<li><strong><code>argument-hint</code></strong> -- Autocomplete hint shown in the <code>/</code> menu.</li>
+<li><strong><code>user-invocable</code></strong> -- Whether the skill appears in the <code>/</code> menu.</li>
+<li><strong><code>disable-model-invocation</code></strong> -- Prevent auto-invocation (require explicit <code>/</code> command).</li>
+<li><strong><code>agent</code></strong> -- Subagent type when used with <code>context: fork</code>.</li>
+</ul>
+<p>The resolution order for how Claude chooses between different extension types:</p>
+<ol>
+<li><strong>Skill</strong> (inline) -- auto-invoked based on description match</li>
+<li><strong>Agent</strong> (separate context) -- for isolated multi-step work</li>
+<li><strong>Command</strong> (explicit <code>/</code> only) -- legacy, user-initiated</li>
+</ol>
+<h3 id="in-claude-code">In Claude Code<a class="anchor" href="#in-claude-code">#</a></h3>
+<p>Skills live in the <code>.claude/skills/</code> directory:</p>
+<ul>
+<li><strong>Project skills:</strong> <code>.claude/skills/my-skill/SKILL.md</code> (shared via git)</li>
+<li><strong>Personal skills:</strong> <code>~/.claude/skills/my-skill/SKILL.md</code> (your own)</li>
+</ul>
+<p>Skills are also invocable via <code>/skill-name</code> slash commands.</p>
+<p><strong>Discovery priority order:</strong> Enterprise &gt; Personal &gt; Project &gt; Plugin.</p>
+<p><strong>Character budget:</strong> 15,000 characters by default. Override with the <code>SLASH_COMMAND_TOOL_CHAR_BUDGET</code> environment variable.</p>
+<h3 id="in-claude-chat">In Claude Chat<a class="anchor" href="#in-claude-chat">#</a></h3>
+<ul>
+<li>Toggle skills on/off in <strong>Settings &gt; Capabilities &gt; Skills</strong></li>
+<li><strong>Built-in skills:</strong> Excel spreadsheet generation (with formulas), PowerPoint presentations, Word documents, fillable PDFs, algorithmic art</li>
+<li>Create custom skills using the built-in &quot;skill-creator&quot; skill in conversation</li>
+<li><strong>Org-managed skills</strong> for Team/Enterprise plans (Dec 2025 update)</li>
+</ul>
+<h3 id="in-claude-cowork">In Claude Cowork<a class="anchor" href="#in-claude-cowork">#</a></h3>
+<ul>
+<li>Skills bundled inside plugins</li>
+<li>Also available standalone via the <strong>Customize</strong> menu</li>
+<li>Same SKILL.md format as Chat and Code</li>
+</ul>
+<h2 id="when-to-use-skills">When to Use Skills<a class="anchor" href="#when-to-use-skills">#</a></h2>
+<p><strong>Use Skills when:</strong></p>
+<ul>
+<li>You have a repeatable process or pattern you want Claude to follow consistently</li>
+<li>You want instructions that auto-invoke based on task context (progressive disclosure)</li>
+<li>You need a portable, cross-surface capability (Code + Chat + Cowork)</li>
+<li>You want to share team-specific knowledge via git (<code>.claude/skills/</code>)</li>
+</ul>
+<p><strong>Don&#39;t use Skills when:</strong></p>
+<ul>
+<li>You need Claude to interact with external APIs or databases (use <a href="mcp.html">MCP</a> instead -- MCP provides tools, skills provide instructions)</li>
+<li>You need deterministic automation that runs without Claude&#39;s judgment (use <a href="hooks.html">Hooks</a> instead -- hooks fire automatically at lifecycle events, skills are on-demand instructions)</li>
+<li>You need full context isolation with persistent memory (use <a href="agents.html">Agents</a> instead -- agents get their own context window)</li>
+</ul>
+<p><strong>Skills vs other extension points:</strong></p>
+<ul>
+<li><strong>Skills vs Agents:</strong> Skills are reusable instructions loaded into the main session context. Agents are isolated Claude instances with their own context, memory, and tool restrictions. Use a skill when you want inline guidance; use an agent when you need isolation or multi-step autonomous work. (Skills with <code>context: fork</code> bridge the gap.)</li>
+<li><strong>Skills vs Hooks:</strong> Skills are on-demand and require Claude&#39;s judgment to activate. Hooks are automatic and deterministic -- they fire at lifecycle events regardless of Claude&#39;s intent. Skills teach Claude <em>what to do</em>; hooks automate <em>when to react</em>.</li>
+<li><strong>Skills vs Commands:</strong> Skills replace legacy commands. Commands required explicit <code>/</code> invocation; skills can auto-invoke via description matching. Migrate existing commands to skills for better discoverability.</li>
+</ul>
+<h2 id="best-practices">Best Practices<a class="anchor" href="#best-practices">#</a></h2>
+<ul>
+<li><strong>Skills are the universal primitive</strong> -- same SKILL.md works in Code, Chat, and Cowork</li>
+<li>Write clear, specific <code>description</code> fields -- they control when auto-invocation triggers</li>
+<li>Keep skill instructions focused on one task or process</li>
+<li>Use <code>allowed-tools</code> to scope permissions down to what the skill needs</li>
+<li>Use <code>context: fork</code> for skills that do heavy work to avoid polluting the main context</li>
+<li>Full content only loads when relevant -- descriptions are always in context</li>
+<li>For complex patterns, provide examples in the skill folder</li>
+<li>Use <code>model: haiku</code> for lightweight, high-volume skill tasks</li>
+</ul>
+<h2 id="common-questions">Common Questions<a class="anchor" href="#common-questions">#</a></h2>
+<p><strong>What are Skills and how do they work across all Claude interfaces?</strong>
+Skills are portable instruction sets (SKILL.md files) that teach Claude specific processes. The same format works across Code, Chat, and Cowork. They use progressive disclosure -- Claude reads metadata at startup and loads full content only when relevant. Launched Oct 2025, open standard at agentskills.io since Dec 2025.</p>
+<p><strong>How do I create a custom Skill?</strong>
+In Claude Code, create a folder at <code>.claude/skills/my-skill/</code> with a <code>SKILL.md</code> file. The frontmatter defines the name, description, allowed tools, and model. In Claude Chat, use the &quot;skill-creator&quot; skill or upload via Settings &gt; Capabilities &gt; Skills.</p>
+<p><strong>What is the difference between Skills, Commands, and Hooks?</strong>
+Skills teach Claude <em>what</em> to do (instructions, auto-invoked). Commands are the legacy version of Skills (user-invoked only, now merged into the skills system). Hooks automate <em>when</em> to react (event-driven, fire automatically at lifecycle points). Skills are about knowledge; hooks are about automation.</p>
+<p><strong>How do I share Skills across my organization?</strong>
+Three strategies: (1) project-level via git in <code>.claude/skills/</code>, (2) bundle into a Plugin for cross-repo distribution, (3) organization-managed via admin provisioning for Team/Enterprise plans.</p>
+  </div>
+  <div class="tab-panel" data-tab-panel="howto">
+
+<h2 id="how-to-guides">How-To Guides<a class="anchor" href="#how-to-guides">#</a></h2>
+<div class="callout callout-info">
+  <div class="callout-title">Info</div>
+  <p>Step-by-step guides for Skills are coming in Phase 4.</p>
+</div>
+<p>Planned guides:</p>
+<ul>
+<li><p>How to create a skill with correct frontmatter -- <em>coming soon</em></p>
+</li>
+<li><p>How to configure CLAUDE.md for a project -- <em>coming soon</em></p>
+</div>
+<div class="tab-panel" data-tab-panel="reference"></li>
+</ul>
+<h2 id="technical-reference">Technical Reference<a class="anchor" href="#technical-reference">#</a></h2>
+<div class="callout callout-info">
+  <div class="callout-title">Info</div>
+  <p>Detailed reference specs for Skills are coming in Phase 4.</p>
+</div>
+<p>Planned references:</p>
+<ul>
+<li><p>Skill frontmatter spec (all fields, validation rules) -- <em>coming soon</em></p>
+</li>
+<li><p>Environment variables reference -- <em>coming soon</em></p>
+</div>
+</div></li>
+</ul>
+<h2 id="related">Related<a class="anchor" href="#related">#</a></h2>
+<ul>
+<li><a href="plugins.html">Plugins</a> -- Plugins bundle multiple skills into installable packages</li>
+<li><a href="hooks.html">Hooks</a> -- Hooks complement skills by reacting to lifecycle events</li>
+<li><a href="agents.html">Agents</a> -- Agents can preload skills and run them in isolated contexts</li>
+</ul>
 
     </article>
   </main>
