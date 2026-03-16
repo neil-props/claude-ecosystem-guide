@@ -93,12 +93,12 @@ Plans:
   2. Each extension point how-to (skills, plugins, hooks, agents, CLAUDE.md, memory) walks through a real creation/configuration workflow
   3. Technical reference pages document complete config schemas with all fields, types, and validation rules (MCP config, skill frontmatter, plugin manifest, hook config, agent file format, settings hierarchy, CLAUDE.md format, env vars)
   4. Code examples in guides are copy-pasteable and use realistic values (not lorem ipsum)
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 04-01: TBD
-- [ ] 04-02: TBD
-- [ ] 04-03: TBD
+- [ ] 04-01-PLAN.md — Test scaffolds for how-to/reference content validation, MCP how-to guides (stdio, SSE, auth, build-your-own), MCP config schema reference
+- [ ] 04-02-PLAN.md — Skills, Plugins, Hooks, Agents how-to guides and technical reference specs (frontmatter, manifest, hook config, agent format)
+- [ ] 04-03-PLAN.md — Projects (CLAUDE.md), Memory, Settings how-to guides and reference specs (settings hierarchy, CLAUDE.md format, env vars), Connectors/Commands placeholder updates
 
 ### Phase 5: Decision Guidance and Recipes
 **Goal**: Users can determine which extension point to use for their situation and follow end-to-end recipes for common workflows, with full-text search across all content
