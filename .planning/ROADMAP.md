@@ -17,7 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Knowledge Base** - Extract existing content into markdown knowledge files as single source of truth (completed 2026-03-15)
 - [x] **Phase 3: Conceptual Content** - Write conceptual overviews for all 10 ecosystem extension points (completed 2026-03-16)
 - [ ] **Phase 4: Guides and Reference** - Write how-to guides and technical reference specs for all extension points
-- [ ] **Phase 5: Decision Guidance and Recipes** - Decision trees, comparison tables, recipes, and full-text search
+- [x] **Phase 5: Decision Guidance and Recipes** - Decision trees, comparison tables, recipes, and full-text search (completed 2026-03-16)
 - [ ] **Phase 6: Agent** - CLI agent companion with static knowledge, live fetch, and contextual recommendations
 
 ## Phase Details
@@ -144,5 +144,5 @@ Phases execute in numeric order: 1 → 1.1 → 2 → 3 → 4 → 5 → 6
 | 2. Knowledge Base | 2/2 | Complete    | 2026-03-16 |
 | 3. Conceptual Content | 2/2 | Complete | 2026-03-16 |
 | 4. Guides and Reference | 2/3 | In Progress|  |
-| 5. Decision Guidance and Recipes | 2/3 | In Progress|  |
+| 5. Decision Guidance and Recipes | 3/3 | Complete   | 2026-03-16 |
 | 6. Agent | 0/2 | Not started | - |

@@ -10,7 +10,7 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Site Structure
 
 - [x] **SITE-01**: Site has multi-page structure with persistent sidebar navigation
-- [ ] **SITE-02**: Site has full-text search across all content pages
+- [x] **SITE-02**: Site has full-text search across all content pages
 - [x] **SITE-03**: Site supports dark/light theme toggle (preserve existing)
 - [x] **SITE-04**: Site is responsive on mobile and tablet
 - [x] **SITE-05**: All sections have deep-linkable anchor URLs
@@ -139,7 +139,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | SITE-01 | Phase 1: Foundation | Complete |
-| SITE-02 | Phase 5: Decision Guidance and Recipes | Pending |
+| SITE-02 | Phase 5: Decision Guidance and Recipes | Complete |
 | SITE-03 | Phase 1: Foundation | Complete |
 | SITE-04 | Phase 1: Foundation | Complete |
 | SITE-05 | Phase 1: Foundation | Complete |
