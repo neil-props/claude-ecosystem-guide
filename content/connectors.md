@@ -72,6 +72,9 @@ This is an ecosystem-level capability -- the same MCP Apps standard works across
 - **Use raw MCP in Claude Code** when you need more control, custom server configuration, or are working in a terminal-based workflow
 - **Don't use Interactive Apps** for data-heavy integrations (databases, large APIs) -- use standard MCP Connectors or MCP servers instead
 
+> [!TIP]
+> **Consider alternatives:** If you need more control or custom server configuration, consider [MCP](mcp.html) servers directly. If you want to bundle integrations with other capabilities, consider [Plugins](plugins.html). For a detailed comparison, see [MCP vs Plugin vs Connector](comparisons.html).
+
 ## Best Practices
 
 - Use Interactive Apps for tasks that benefit from visual context -- reviewing Figma designs, browsing Slack conversations, managing Asana tasks

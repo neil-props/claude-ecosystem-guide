@@ -99,6 +99,9 @@ Skills are also invocable via `/skill-name` slash commands.
 - **Skills vs Hooks:** Skills are on-demand and require Claude's judgment to activate. Hooks are automatic and deterministic -- they fire at lifecycle events regardless of Claude's intent. Skills teach Claude *what to do*; hooks automate *when to react*.
 - **Skills vs Commands:** Skills replace legacy commands. Commands required explicit `/` invocation; skills can auto-invoke via description matching. Migrate existing commands to skills for better discoverability.
 
+> [!TIP]
+> **Consider alternatives:** If you need autonomous multi-step execution with context isolation, consider [Agents](agents.html). If you just need a quick prompt shortcut, consider [Commands](commands.html). If you need deterministic automation at lifecycle events, consider [Hooks](hooks.html). For a detailed comparison, see [Skill vs Agent vs Command](comparisons.html).
+
 ## Best Practices
 
 - **Skills are the universal primitive** -- same SKILL.md works in Code, Chat, and Cowork

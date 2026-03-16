@@ -91,6 +91,9 @@ Each memory layer serves a different purpose. Here is when to use each:
 - **/memory command** -- Important one-off facts you want Claude to remember: "my API key format is X", "always use tabs not spaces in this project", "the staging server is at deploy.example.com".
 - **Agent memory** -- Specialized knowledge for custom agents that need to accumulate expertise over time. An agent that reviews PRs might learn your team's review standards across sessions.
 
+> [!TIP]
+> **Consider alternatives:** If you need project-wide instructions rather than persistent memory, consider [Projects (CLAUDE.md)](projects.html). If you need to configure behavior settings, consider [Settings](settings.html). Memory is about what Claude remembers; Projects are about what Claude should do.
+
 ### What Persists and What Doesn't
 
 | Item | Survives session restart? | Scope |

@@ -130,6 +130,9 @@ Projects (and CLAUDE.md specifically) should be the first thing you set up for a
 
 In Claude Chat, create separate Projects per workflow domain -- don't overload one project with everything.
 
+> [!TIP]
+> **Consider alternatives:** If you need Claude to remember facts across sessions rather than follow instructions, consider [Memory](memory.html). If you need to configure behavior settings like permissions or model selection, consider [Settings](settings.html). If you need reusable process instructions, consider [Skills](skills.html).
+
 ## Best Practices
 
 - Keep CLAUDE.md files under **200 lines** each for reliable adherence

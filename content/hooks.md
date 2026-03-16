@@ -115,6 +115,9 @@ Not available. Cowork does not support hooks.
 - **Hooks vs Skills:** Hooks are deterministic and automatic -- they fire at lifecycle events regardless of what Claude is thinking. Skills are on-demand instructions that Claude loads when relevant. Use hooks for "always do X when Y happens"; use skills for "here's how to do Z when asked."
 - **Hooks vs Agents:** Hooks are lightweight, single-action automations. Agents are full isolated contexts for multi-step work. You can use an `agent` type hook for complex validation, but that's the exception.
 
+> [!TIP]
+> **Consider alternatives:** If you want to teach Claude a process rather than enforce rules, consider [Skills](skills.html). If you need complex multi-step validation with context isolation, consider [Agents](agents.html). For a detailed comparison, see [Hook vs Skill](comparisons.html).
+
 ## Configuration
 
 ### Basic Hook Setup

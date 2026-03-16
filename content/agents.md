@@ -80,6 +80,9 @@ This architecture is automatic -- users describe an outcome and step away. Cowor
 - **Agents vs Skills:** Agents get their own isolated context window, can have persistent memory, their own MCP servers, and can be invoked via CLI with `--agent`. Skills are instructions loaded into the main session, auto-invoked by description matching. Use an agent for autonomous multi-step work; use a skill for inline guidance. (Skills with `context: fork` bridge the gap by running in a separate context.)
 - **Agents vs Direct Prompting:** Agents provide reproducible, shareable workflows. Instead of typing the same complex prompt repeatedly, define it once as an agent file and invoke it with `claude --agent my-agent`. Team members get the same behavior.
 
+> [!TIP]
+> **Consider alternatives:** If you just need inline guidance without context isolation, consider [Skills](skills.html). If you need deterministic automation at lifecycle events, consider [Hooks](hooks.html). For a detailed comparison, see [Skill vs Agent vs Command](comparisons.html).
+
 ## Configuration
 
 ### Agent File Format

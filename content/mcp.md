@@ -121,6 +121,9 @@ Popular connectors include Jira, Confluence, Slack, Asana, Linear, Sentry, Inter
 - **MCP vs Skills:** MCP provides *tools* (actions and data); Skills provide *instructions* (knowledge and processes). They complement each other -- a skill might instruct Claude on *when* to use an MCP tool.
 - **MCP vs Plugins:** Plugins can *bundle* MCP server configs alongside skills and agents. MCP is the protocol; plugins are the distribution mechanism.
 
+> [!TIP]
+> **Consider alternatives:** If you just need to teach Claude a process (no external tools), consider [Skills](skills.html). If you want a pre-built one-click integration instead of configuring a server, consider [Connectors](connectors.html). For a detailed comparison, see [MCP vs Plugin vs Connector](comparisons.html).
+
 ## Configuration
 
 MCP servers are configured via `.mcp.json` (project and user scope) and `managed-mcp.json` (enterprise). Use `${ENV_VAR}` syntax for secrets so each developer uses their own tokens.

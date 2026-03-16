@@ -78,6 +78,9 @@ Cowork supports slash commands bundled within plugins. The 11+ official plugins 
 - **Legacy commands:** Only if you already have a `.claude/commands/` setup and don't need the extra features of Skills
 - **If you do something more than once a day:** Make it a Skill (and it automatically becomes a slash command)
 
+> [!TIP]
+> **Consider alternatives:** For custom reusable instructions, consider [Skills](skills.html) instead of legacy commands -- Skills offer auto-invocation, cross-surface portability, and tool restrictions. For complex workflows, consider [Agents](agents.html). For a detailed comparison, see [Skill vs Agent vs Command](comparisons.html).
+
 ## Best Practices
 
 - **Use Skills instead of legacy Commands** -- Skills offer auto-invocation, model overrides, tool restrictions, and cross-interface portability

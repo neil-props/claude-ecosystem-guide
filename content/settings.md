@@ -106,6 +106,9 @@ Choose the right settings level for your use case:
 - **settings.json** (project, shared) -- Team-wide project settings: approved tool permissions, shared MCP server configs, linting hooks. Check this into git.
 - **User settings** (~/.claude/settings.json) -- Global personal defaults that apply across all projects: your default model, commonly used tool permissions, personal MCP servers.
 
+> [!TIP]
+> **Consider alternatives:** If you need to give Claude project-wide instructions (not just behavior settings), consider [Projects (CLAUDE.md)](projects.html). If you need deterministic automation triggered by settings, consider [Hooks](hooks.html). Settings configure *how* Claude behaves; Projects tell Claude *what* to do.
+
 ## Configuration
 
 Settings files use standard JSON. Check `.claude/settings.json` into git for team-shared config, and use `.claude/settings.local.json` for personal overrides (gitignored automatically).

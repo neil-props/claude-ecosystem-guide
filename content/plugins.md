@@ -102,6 +102,9 @@ Partner plugins include LSEG, S&P Global, FactSet, Morningstar, and PitchBook fo
 - **Plugins vs Skills:** A plugin *contains* skills. Use a standalone skill when you have one focused instruction set. Use a plugin when you have a bundle of related skills, agents, hooks, and configs that should be installed together.
 - **Plugins vs MCP:** Plugins can *include* MCP server configurations. MCP is the protocol; plugins are the packaging mechanism.
 
+> [!TIP]
+> **Consider alternatives:** If you only have a single skill or process to share, just use a standalone [Skill](skills.html). If you only need one MCP server, configure it directly in `.mcp.json` instead of bundling a [Plugin](plugins.html). For a detailed comparison, see [MCP vs Plugin vs Connector](comparisons.html).
+
 ## Configuration
 
 ### Plugin Anatomy
