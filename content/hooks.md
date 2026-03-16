@@ -119,7 +119,7 @@ Not available. Cowork does not support hooks.
 
 ### Basic Hook Setup
 
-Add hooks to your settings file:
+Add hooks to your settings file. Hooks use a **nested structure** where each event contains an array of matcher groups, and each matcher group contains a `hooks` array of handlers:
 
 ```json
 {
@@ -127,21 +127,33 @@ Add hooks to your settings file:
     "PostToolUse": [
       {
         "matcher": "Edit|Write",
-        "type": "command",
-        "command": "npx eslint --fix $CLAUDE_FILE_PATH"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npx eslint --fix $CLAUDE_FILE_PATH"
+          }
+        ]
       }
     ],
     "PreToolUse": [
       {
         "matcher": "Bash",
-        "type": "command",
-        "command": "echo 'Bash command about to run: $CLAUDE_TOOL_INPUT'"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'Bash command about to run: $CLAUDE_TOOL_INPUT'"
+          }
+        ]
       }
     ],
     "SessionStart": [
       {
-        "type": "command",
-        "command": "echo 'Session started at $(date)' >> ~/.claude/session.log"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'Session started at $(date)' >> ~/.claude/session.log"
+          }
+        ]
       }
     ]
   }
@@ -154,11 +166,19 @@ Prevent direct commits to the main branch:
 
 ```json
 {
-  "PreToolUse": [{
-    "matcher": "Bash",
-    "type": "command",
-    "command": "if echo $CLAUDE_TOOL_INPUT | grep -q 'git commit.*main'; then echo 'Blocked: no direct commits to main' >&2; exit 2; fi"
-  }]
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if echo $CLAUDE_TOOL_INPUT | grep -q 'git commit.*main'; then echo 'Blocked: no direct commits to main' >&2; exit 2; fi"
+          }
+        ]
+      }
+    ]
+  }
 }
 ```
 
@@ -168,13 +188,21 @@ Notify Slack when a session starts:
 
 ```json
 {
-  "SessionStart": [{
-    "type": "http",
-    "url": "https://hooks.slack.com/services/YOUR/WEBHOOK/URL",
-    "headers": { "Content-Type": "application/json" },
-    "body": "{ \"text\": \"Claude Code session started by $USER\" }",
-    "async": true
-  }]
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "http",
+            "url": "https://hooks.slack.com/services/YOUR/WEBHOOK/URL",
+            "headers": { "Content-Type": "application/json" },
+            "body": "{ \"text\": \"Claude Code session started by $USER\" }",
+            "async": true
+          }
+        ]
+      }
+    ]
+  }
 }
 ```
 
@@ -182,11 +210,19 @@ Notify Slack when a session starts:
 
 ```json
 {
-  "PostToolUse": [{
-    "type": "command",
-    "command": "echo '{\"tool\":\"$CLAUDE_TOOL_NAME\",\"time\":\"$(date -u +%FT%TZ)\",\"session\":\"$CLAUDE_SESSION_ID\"}' >> /var/log/claude-audit.jsonl",
-    "async": true
-  }]
+  "hooks": {
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"tool\":\"$CLAUDE_TOOL_NAME\",\"time\":\"'$(date -u +%FT%TZ)'\",\"session\":\"$CLAUDE_SESSION_ID\"}' >> /var/log/claude-audit.jsonl",
+            "async": true
+          }
+        ]
+      }
+    ]
+  }
 }
 ```
 
@@ -194,11 +230,19 @@ Notify Slack when a session starts:
 
 ```json
 {
-  "PreToolUse": [{
-    "matcher": "Read|Edit",
-    "type": "command",
-    "command": "if echo $CLAUDE_TOOL_INPUT | grep -qE '\\.(env|pem|key)$'; then echo 'Blocked: sensitive file' >&2; exit 2; fi"
-  }]
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if echo $CLAUDE_TOOL_INPUT | grep -qE '\\.(env|pem|key)$'; then echo 'Blocked: sensitive file' >&2; exit 2; fi"
+          }
+        ]
+      }
+    ]
+  }
 }
 ```
 
@@ -212,9 +256,13 @@ name: deploy-check
 hooks:
   PostToolUse:
     - matcher: "Edit"
-      command: "npm run lint"
+      hooks:
+        - type: command
+          command: "npm run lint"
 ---
 ```
+
+For the complete hook configuration specification with all 24 events, 4 handler types, matcher syntax, and exit code behavior, see the **Reference** tab.
 
 ## Best Practices
 
@@ -241,25 +289,398 @@ Auto-formatting after edits (PostToolUse + prettier), audit logging for complian
   </div>
   <div class="tab-panel" data-tab-panel="howto">
 
-## How-To Guides
+## How to Set Up Hooks for Lifecycle Events
 
-> [!INFO]
-> Step-by-step guides for Hooks are coming in Phase 4.
+Add deterministic automation that fires at key points in a Claude Code session -- lint after edits, block dangerous operations, or notify external services.
 
-Planned guides:
-- How to set up hooks for lifecycle events -- _coming soon_
+### Prerequisites
+
+- Claude Code installed and working (`claude --version`)
+- Access to settings.json (project-level at `.claude/settings.json` or user-level at `~/.claude/settings.json`)
+- For this example: ESLint installed in your project (`npm install --save-dev eslint`)
+
+### Step 1: Open Your Settings File
+
+Hooks are configured in settings.json. Choose the right scope:
+
+- **Project-level** (shared via git): `.claude/settings.json`
+- **User-level** (personal, all projects): `~/.claude/settings.json`
+
+Create the file if it does not exist:
+
+```bash
+mkdir -p .claude
+touch .claude/settings.json
+echo '{}' > .claude/settings.json
+```
+
+### Step 2: Add a PreToolUse Hook for File Linting
+
+Add a hook that runs ESLint on files before Claude uses the Edit or Write tools. This catches lint errors before they are introduced:
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npx eslint --fix $CLAUDE_FILE_PATH",
+            "timeout": 600
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+**Key points about the structure:**
+- Each event (e.g., `PreToolUse`) contains an array of **matcher groups**
+- Each matcher group has a `matcher` regex and a `hooks` array of handlers
+- The `matcher` field scopes the hook to specific tools (here, Edit or Write)
+- The `timeout` is in seconds (default varies by hook type)
+
+### Step 3: Add a Notification Hook
+
+Add a second hook that sends a Slack notification when Claude sends a notification event:
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npx eslint --fix $CLAUDE_FILE_PATH",
+            "timeout": 600
+          }
+        ]
+      }
+    ],
+    "NotificationSend": [
+      {
+        "hooks": [
+          {
+            "type": "http",
+            "url": "https://hooks.slack.com/services/YOUR/WEBHOOK/URL",
+            "headers": { "Content-Type": "application/json" },
+            "body": "{ \"text\": \"Claude Code notification: $CLAUDE_NOTIFICATION\" }",
+            "async": true
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+The `async: true` flag makes the HTTP call non-blocking so it does not slow down your session.
+
+### Step 4: Test the Hook
+
+Start a Claude Code session and trigger the event. For the ESLint hook, ask Claude to edit a JavaScript file:
+
+```
+> Fix the bug in src/utils.js
+```
+
+When Claude uses the Edit tool, the PreToolUse hook fires first. If ESLint finds and fixes issues, the file is linted before Claude's edit is applied.
+
+### Verify It Works
+
+- The hook fires when Claude uses the Edit or Write tools on JavaScript files
+- ESLint output appears in the hook execution log
+- For the notification hook, check your Slack channel for incoming messages
+- Use `exit 2` in a command hook to test blocking behavior -- Claude will see the stderr feedback
+
+### Troubleshooting
+
+- **Hook not firing:** Check the `matcher` regex -- it matches against tool names (e.g., `Edit`, `Write`, `Bash`, `Read`). Without a matcher, hooks fire for every instance of the event.
+- **Exit code 2 blocking unexpectedly:** Exit code 2 means "block this action." The hook's stderr is shown to Claude as feedback. Use exit code 0 to allow, or any other code to proceed with a warning.
+- **Timeout issues:** The default timeout varies. Set an explicit `timeout` value in seconds. Long-running hooks degrade the interactive experience.
+- **Wrong config structure:** Hooks use a nested structure: event > matcher groups > hooks array. A flat structure (matcher and type at the same level) may cause parsing errors.
+- **Environment variables not available:** Hook commands receive `$CLAUDE_FILE_PATH`, `$CLAUDE_TOOL_NAME`, `$CLAUDE_TOOL_INPUT`, `$CLAUDE_SESSION_ID`, and other context variables. Ensure your command references them correctly.
 
   </div>
   <div class="tab-panel" data-tab-panel="reference">
 
-## Technical Reference
+## Hook Configuration Specification
 
-> [!INFO]
-> Detailed reference specs for Hooks are coming in Phase 4.
+### Configuration Location
 
-Planned references:
-- Hook configuration spec (events, patterns, commands) -- _coming soon_
-- Environment variables reference -- _coming soon_
+Hooks are configured in the `hooks` object within settings files:
+
+| Scope | Path | Visibility |
+|-------|------|------------|
+| Project | `.claude/settings.json` | Shared via git, team-wide |
+| User | `~/.claude/settings.json` | Personal, all projects |
+| Managed | Managed settings (admin) | Organization-wide, cannot be overridden |
+| Skill-scoped | Skill frontmatter `hooks:` field | Scoped to one skill only |
+| Agent-scoped | Agent frontmatter `hooks:` field | Scoped to one agent only |
+
+### Complete Schema
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npx eslint --fix $CLAUDE_FILE_PATH",
+            "timeout": 600
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npx prettier --write $CLAUDE_FILE_PATH",
+            "timeout": 300,
+            "async": true
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "http",
+            "url": "https://hooks.slack.com/services/T00/B00/xxx",
+            "headers": { "Content-Type": "application/json" },
+            "body": "{ \"text\": \"Claude session started by $USER\" }",
+            "async": true
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### Event Reference (24 Events)
+
+| Event | Description | Blockable | Matcher Target |
+|-------|-------------|-----------|----------------|
+| `PreToolUse` | Before a tool call executes | Yes | Tool name |
+| `PostToolUse` | After a tool call succeeds | No | Tool name |
+| `PostToolUseFailure` | After a tool call fails | No | Tool name |
+| `Notification` | When a notification event occurs | No | N/A |
+| `NotificationSend` | When a notification is sent | No | N/A |
+| `Stop` | When Claude stops execution | Yes | N/A |
+| `SubagentStop` | When a subagent completes | Yes | N/A |
+| `PreCompact` | Before context compression | No | N/A |
+| `SessionStart` | When a session begins | No | N/A |
+| `SessionEnd` | When a session ends | No | N/A |
+| `SessionPause` | When a session is paused | No | N/A |
+| `SessionResume` | When a session resumes | No | N/A |
+| `UserPromptSubmit` | Before Claude processes user input | Yes | N/A |
+| `PermissionRequest` | When Claude requests permission | Yes | Tool name |
+| `SubagentStart` | When a subagent spawns | No | N/A |
+| `ConfigChange` | When configuration changes | No | N/A |
+| `WorktreeCreate` | When a git worktree is created | No | N/A |
+| `TaskStart` | When a task begins | No | N/A |
+| `TaskComplete` | When a task completes | No | N/A |
+| `TeammateIdle` | When a teammate agent becomes idle | No | N/A |
+| `TaskCompleted` | When a tracked task completes | No | N/A |
+| `InstructionsLoaded` | When instructions finish loading | No | N/A |
+| `Elicitation` | When Claude asks for clarification | No | N/A |
+| `ToolResult` | When a tool returns a result | No | Tool name |
+
+### Handler Types
+
+**Command handler** -- runs a shell command:
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `type` | string | Yes | N/A | Must be `"command"` |
+| `command` | string | Yes | N/A | Shell command to execute. Environment variables are expanded. |
+| `timeout` | number | No | 60 | Timeout in seconds |
+| `async` | boolean | No | `false` | Run in background (non-blocking) |
+
+**HTTP handler** -- sends an HTTP POST request:
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `type` | string | Yes | N/A | Must be `"http"` |
+| `url` | string | Yes | N/A | URL to POST to |
+| `headers` | object | No | `{}` | HTTP headers as key-value pairs |
+| `body` | string | No | `""` | Request body. Environment variables are expanded. |
+| `timeout` | number | No | 30 | Timeout in seconds |
+| `async` | boolean | No | `false` | Run in background (non-blocking) |
+
+**Prompt handler** -- single-turn LLM evaluation:
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `type` | string | Yes | N/A | Must be `"prompt"` |
+| `prompt` | string | Yes | N/A | Prompt text for Claude to evaluate. Environment variables are expanded. |
+| `model` | string | No | inherited | Model to use for evaluation |
+| `timeout` | number | No | 60 | Timeout in seconds |
+
+**Agent handler** -- multi-turn agentic verification:
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `type` | string | Yes | N/A | Must be `"agent"` |
+| `agent` | string | Yes | N/A | Agent name or path to agent file |
+| `prompt` | string | No | `""` | Initial prompt for the agent |
+| `timeout` | number | No | 120 | Timeout in seconds |
+
+### Matcher Syntax
+
+The `matcher` field uses regex patterns to scope hooks to specific tools:
+
+| Pattern | Matches |
+|---------|---------|
+| `"Edit\|Write"` | Edit or Write tools |
+| `"Bash"` | Bash tool only |
+| `"Read\|Edit"` | Read or Edit tools |
+| `".*"` | All tools (same as omitting matcher) |
+
+Without a `matcher`, the hook fires for every instance of the event. Matchers only apply to events that target tools (e.g., PreToolUse, PostToolUse, PermissionRequest).
+
+### Exit Code Behavior
+
+For **command** handlers on blockable events:
+
+| Exit Code | Behavior |
+|-----------|----------|
+| `0` | Allow -- the action proceeds normally |
+| `1` | Error -- logged but action proceeds |
+| `2` | **Block** -- the action is prevented. Stderr is shown to Claude as feedback. |
+| Other | Proceed with warning logged |
+
+### JSON Output Schemas
+
+Command hooks can output JSON to stdout for structured feedback. For blockable events, the JSON schema:
+
+```json
+{
+  "decision": "allow",
+  "reason": "File passes all checks"
+}
+```
+
+Or to block:
+
+```json
+{
+  "decision": "block",
+  "reason": "File contains sensitive data patterns"
+}
+```
+
+### Environment Variables in Hooks
+
+| Variable | Available In | Description |
+|----------|-------------|-------------|
+| `$CLAUDE_FILE_PATH` | PreToolUse, PostToolUse | Path to the file being operated on |
+| `$CLAUDE_TOOL_NAME` | PreToolUse, PostToolUse | Name of the tool being used |
+| `$CLAUDE_TOOL_INPUT` | PreToolUse | Tool input (JSON string) |
+| `$CLAUDE_SESSION_ID` | All events | Current session identifier |
+| `$CLAUDE_NOTIFICATION` | Notification events | Notification message content |
+| `$USER` | All events | Current OS username |
+
+### Examples
+
+**Minimal hook** (auto-format after edits):
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npx prettier --write $CLAUDE_FILE_PATH"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+**Full example** (multiple events, multiple handler types):
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npx eslint $CLAUDE_FILE_PATH",
+            "timeout": 600
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if echo $CLAUDE_TOOL_INPUT | grep -q 'rm -rf'; then echo 'Blocked: destructive command' >&2; exit 2; fi"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npx prettier --write $CLAUDE_FILE_PATH",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "http",
+            "url": "https://hooks.slack.com/services/T00/B00/xxx",
+            "headers": { "Content-Type": "application/json" },
+            "body": "{ \"text\": \"Claude session started by $USER\" }",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"tool\":\"$CLAUDE_TOOL_NAME\",\"time\":\"'$(date -u +%FT%TZ)'\",\"session\":\"$CLAUDE_SESSION_ID\"}' >> /var/log/claude-audit.jsonl",
+            "async": true
+          }
+        ]
+      }
+    ]
+  }
+}
+```
 
   </div>
 </div>
