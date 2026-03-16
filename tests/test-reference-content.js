@@ -14,7 +14,8 @@ describe('Reference tab content checks', () => {
    */
   function getReferencePanel(filename) {
     const html = readFileSync(`docs/topics/${filename}`, 'utf-8');
-    const match = html.match(/data-tab-panel="reference"[^>]*>([\s\S]*?)(?=<div[^>]*data-tab-panel="|<\/div>\s*<\/div>\s*$)/);
+    // Reference is the last tab panel; extract from its opening tag to the closing </div> sequence that ends the tabs container
+    const match = html.match(/data-tab-panel="reference"[^>]*>([\s\S]*?)<\/div>\s*<\/div>\s*<\/div>/);
     assert.ok(match, `${filename} should have a reference tab-panel`);
     return match[1];
   }

@@ -14,7 +14,8 @@ describe('How-To tab content checks', () => {
    */
   function getHowtoPanel(filename) {
     const html = readFileSync(`docs/topics/${filename}`, 'utf-8');
-    const match = html.match(/data-tab-panel="howto"[^>]*>([\s\S]*?)(?=<div[^>]*data-tab-panel="|<\/div>\s*<\/div>\s*$)/);
+    // Howto panel is followed by the reference panel div; extract content between them
+    const match = html.match(/data-tab-panel="howto"[^>]*>([\s\S]*?)<\/div>\s*<div[^>]*data-tab-panel="reference"/);
     assert.ok(match, `${filename} should have a howto tab-panel`);
     return match[1];
   }
