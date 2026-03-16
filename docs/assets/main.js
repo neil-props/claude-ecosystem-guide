@@ -30,20 +30,40 @@ document.addEventListener('DOMContentLoaded', function() {
   // ════ MOBILE NAV TOGGLE ════
   const mobileNavToggle = document.getElementById('mobileNavToggle');
   const sidebar = document.getElementById('sidebar');
+  const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+  function closeMobileNav() {
+    if (sidebar) sidebar.classList.remove('sidebar-open');
+    if (mobileNavToggle) mobileNavToggle.classList.remove('nav-active');
+    if (sidebarOverlay) sidebarOverlay.classList.remove('active');
+  }
+
+  function openMobileNav() {
+    if (sidebar) sidebar.classList.add('sidebar-open');
+    if (mobileNavToggle) mobileNavToggle.classList.add('nav-active');
+    if (sidebarOverlay) sidebarOverlay.classList.add('active');
+  }
 
   if (mobileNavToggle && sidebar) {
     mobileNavToggle.addEventListener('click', function() {
-      sidebar.classList.toggle('sidebar-open');
-      mobileNavToggle.classList.toggle('nav-active');
+      if (sidebar.classList.contains('sidebar-open')) {
+        closeMobileNav();
+      } else {
+        openMobileNav();
+      }
     });
 
     // Close sidebar when a nav link is clicked (mobile)
     sidebar.addEventListener('click', function(e) {
       if (e.target.closest('.nav-link')) {
-        sidebar.classList.remove('sidebar-open');
-        mobileNavToggle.classList.remove('nav-active');
+        closeMobileNav();
       }
     });
+  }
+
+  // Close sidebar when overlay is clicked
+  if (sidebarOverlay) {
+    sidebarOverlay.addEventListener('click', closeMobileNav);
   }
 
   // System preference listener
@@ -81,6 +101,30 @@ document.addEventListener('DOMContentLoaded', function() {
         btn.textContent = 'Copy';
       }, 2000);
     });
+  });
+
+  // ════ TAB SWITCHING ════
+  document.addEventListener('click', function(e) {
+    var tabBtn = e.target.closest('.tab-btn');
+    if (!tabBtn) return;
+
+    var group = tabBtn.closest('.tabs');
+    if (!group) return;
+
+    var tabId = tabBtn.getAttribute('data-tab');
+
+    // Deactivate all tabs in this group
+    group.querySelectorAll('.tab-btn').forEach(function(btn) {
+      btn.classList.remove('active');
+    });
+    group.querySelectorAll('.tab-panel').forEach(function(panel) {
+      panel.classList.remove('active');
+    });
+
+    // Activate selected tab
+    tabBtn.classList.add('active');
+    var panel = group.querySelector('[data-tab-panel="' + tabId + '"]');
+    if (panel) panel.classList.add('active');
   });
 
   // ════ SCROLL TO ANCHOR ════

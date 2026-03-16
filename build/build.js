@@ -67,6 +67,25 @@ renderer.heading = function({ tokens, depth }) {
   return `<h${depth} id="${slug}">${text}<a class="anchor" href="#${slug}">#</a></h${depth}>\n`;
 };
 
+// Custom renderer for callout blockquotes
+renderer.blockquote = function({ tokens }) {
+  // Parse tokens to get raw text content
+  const rawText = tokens.map(t => t.raw || '').join('');
+  const calloutMatch = rawText.match(/^\s*\[!(INFO|WARNING|TIP|DANGER)\]\s*\n?([\s\S]*)/i);
+  if (calloutMatch) {
+    const type = calloutMatch[1].toLowerCase();
+    const label = calloutMatch[1].charAt(0).toUpperCase() + calloutMatch[1].slice(1).toLowerCase();
+    const body = calloutMatch[2].trim();
+    return `<div class="callout callout-${type}">
+  <div class="callout-title">${label}</div>
+  <p>${body}</p>
+</div>\n`;
+  }
+  // Default blockquote rendering
+  const bodyHtml = this.parser.parse(tokens);
+  return `<blockquote>${bodyHtml}</blockquote>\n`;
+};
+
 // Custom renderer for code blocks with copy button
 renderer.code = function({ text, lang }) {
   const language = lang && hljs.getLanguage(lang) ? lang : 'plaintext';
