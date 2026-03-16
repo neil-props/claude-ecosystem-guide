@@ -41,6 +41,10 @@
         </svg>
       </button>
     </div>
+    <div class="search-container" id="searchContainer">
+      <input type="search" id="searchInput" placeholder="Search docs..." aria-label="Search documentation">
+      <div class="search-results" id="searchResults"></div>
+    </div>
     <nav class="sidebar-nav">
       <div class="nav-section">
   <div class="nav-section-title">Topics</div>
@@ -59,6 +63,19 @@
   <div class="nav-section-title">Reference</div>
   <a href="../topics/compatibility.html" class="nav-link">Compatibility Matrix</a>
 </div>
+<div class="nav-section">
+  <div class="nav-section-title">Decision Tools</div>
+  <a href="../topics/decision-wizard.html" class="nav-link">Decision Wizard</a>
+  <a href="../topics/comparisons.html" class="nav-link">Comparisons</a>
+</div>
+<div class="nav-section">
+  <div class="nav-section-title">Recipes</div>
+  <a href="../topics/recipe-deployment-skill.html" class="nav-link">Recipe: Build a Deployment Skill</a>
+  <a href="../topics/recipe-crm-mcp.html" class="nav-link">Recipe: CRM Enrichment with MCP</a>
+  <a href="../topics/recipe-pre-commit-hook.html" class="nav-link">Recipe: Pre-Commit Linting Hook</a>
+  <a href="../topics/recipe-custom-agent.html" class="nav-link">Recipe: Build a Custom Agent</a>
+  <a href="../topics/recipe-monorepo-settings.html" class="nav-link">Recipe: Monorepo Settings Hierarchy</a>
+</div>
 
     </nav>
   </aside>
@@ -68,7 +85,7 @@
     <span class="hamburger-line"></span>
     <span class="hamburger-line"></span>
   </button>
-  <main class="content">
+  <main class="content" data-pagefind-body>
     <article>
       <h1 id="projects-and-claudemd">Projects and CLAUDE.md<a class="anchor" href="#projects-and-claudemd">#</a></h1>
 <div class="tabs">
@@ -208,6 +225,10 @@
 <li><strong>For modular rules:</strong> Use <code>.claude/rules/</code> when different parts of the codebase need different instructions</li>
 </ul>
 <p>In Claude Chat, create separate Projects per workflow domain -- don&#39;t overload one project with everything.</p>
+<div class="callout callout-tip">
+  <div class="callout-title">Tip</div>
+  <p>**Consider alternatives:** If you need Claude to remember facts across sessions rather than follow instructions, consider [Memory](memory.html). If you need to configure behavior settings like permissions or model selection, consider [Settings](settings.html). If you need reusable process instructions, consider [Skills](skills.html).</p>
+</div>
 <h2 id="best-practices">Best Practices<a class="anchor" href="#best-practices">#</a></h2>
 <ul>
 <li>Keep CLAUDE.md files under <strong>200 lines</strong> each for reliable adherence</li>
@@ -231,38 +252,379 @@ Create a Claude Chat Project with system instructions defining the workflow (dec
   </div>
   <div class="tab-panel" data-tab-panel="howto">
 
-<h2 id="how-to-guides">How-To Guides<a class="anchor" href="#how-to-guides">#</a></h2>
-<div class="callout callout-info">
-  <div class="callout-title">Info</div>
-  <p>Step-by-step guides for Projects are coming in Phase 4.</p>
-</div>
-<p>Planned guides:</p>
+<h2 id="how-to-configure-claudemd-for-a-project">How to Configure CLAUDE.md for a Project<a class="anchor" href="#how-to-configure-claudemd-for-a-project">#</a></h2>
+<h3 id="prerequisites">Prerequisites<a class="anchor" href="#prerequisites">#</a></h3>
 <ul>
-<li><p>Setting up CLAUDE.md for a new project -- <em>coming soon</em></p>
-</li>
-<li><p>Configuring path-specific rules with .claude/rules/ -- <em>coming soon</em></p>
-</li>
-<li><p>Structuring CLAUDE.md for monorepos -- <em>coming soon</em></p>
-</li>
-<li><p>Using auto-memory effectively -- <em>coming soon</em></p>
-</div>
-<div class="tab-panel" data-tab-panel="reference"></li>
+<li>Claude Code installed and working (<code>claude --version</code>)</li>
+<li>A project directory (ideally a git repository)</li>
 </ul>
+<h3 id="step-1-create-your-project-claudemd">Step 1: Create Your Project CLAUDE.md<a class="anchor" href="#step-1-create-your-project-claudemd">#</a></h3>
+<p>Create a <code>CLAUDE.md</code> file at your project root with your tech stack, conventions, and key commands:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">markdown</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-markdown"><span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span># My Project<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span>## Tech Stack<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> TypeScript with strict mode
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Next.js 14 with App Router
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> PostgreSQL with Prisma ORM
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Vitest for testing
+
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span>## Conventions<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Use pnpm, not npm or yarn
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Components in src/components/ with PascalCase filenames
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Tests co-located: MyComponent.test.tsx next to MyComponent.tsx
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Use Zod for all runtime validation
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Prefer named exports over default exports
+
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span>## Key Commands<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-code&quot;</span>&gt;</span></span><span class="hljs-code">`pnpm dev`</span><span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> -- start dev server on port 3000
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-code&quot;</span>&gt;</span></span><span class="hljs-code">`pnpm test`</span><span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> -- run vitest
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-code&quot;</span>&gt;</span></span><span class="hljs-code">`pnpm lint`</span><span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> -- run ESLint + Prettier
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-code&quot;</span>&gt;</span></span><span class="hljs-code">`pnpm db:migrate`</span><span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> -- run Prisma migrations
+
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span>## Architecture<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> API routes in src/app/api/
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Shared types in src/types/
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Database models in prisma/schema.prisma</code></pre>
+</div>
+<p>Check this file into git so every team member gets the same Claude behavior.</p>
+<h3 id="step-2-add-directory-specific-rules">Step 2: Add Directory-Specific Rules<a class="anchor" href="#step-2-add-directory-specific-rules">#</a></h3>
+<p>For rules that only apply to certain parts of your codebase, create <code>.claude/rules/*.md</code> files:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-bash">&lt;span class=<span class="hljs-string">&quot;hljs-comment&quot;</span>&gt;# Create the rules directory&lt;/span&gt;
+&lt;span class=<span class="hljs-string">&quot;hljs-built_in&quot;</span>&gt;<span class="hljs-built_in">mkdir</span>&lt;/span&gt; -p .claude/rules</code></pre>
+</div>
+<p>Create <code>.claude/rules/tests.md</code>:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">markdown</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-markdown"><span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span># Testing Rules<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Use describe/it blocks, not test()
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Mock external services with msw
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Never import from src/index.ts in tests -- import directly from the module
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Prefer userEvent over fireEvent in React tests</code></pre>
+</div>
+<p>Create <code>.claude/rules/api.md</code>:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">markdown</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-markdown"><span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span># API Route Rules<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> All endpoints must validate input with Zod
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Return consistent error format: { error: string, code: string }
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Use middleware for auth -- never check auth inline
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Log all errors with structured JSON logging</code></pre>
+</div>
+<p>Rules files are loaded when Claude reads files in the project -- they provide targeted guidance without bloating the main CLAUDE.md.</p>
+<h3 id="step-3-create-personal-overrides-with-claudelocalmd">Step 3: Create Personal Overrides with CLAUDE.local.md<a class="anchor" href="#step-3-create-personal-overrides-with-claudelocalmd">#</a></h3>
+<p>For preferences that are personal (not shared with the team), create <code>CLAUDE.local.md</code> at the project root:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">markdown</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-markdown"><span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span># Personal Preferences<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> I prefer verbose explanations in code comments
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Use vim keybinding references when explaining shortcuts
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> My editor is Neovim -- reference its commands when relevant
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Always show the full file path in code examples</code></pre>
+</div>
+<p><code>CLAUDE.local.md</code> is automatically gitignored -- it will not be committed to the repository.</p>
+<h3 id="step-4-set-up-monorepo-patterns">Step 4: Set Up Monorepo Patterns<a class="anchor" href="#step-4-set-up-monorepo-patterns">#</a></h3>
+<p>For monorepos, create a root CLAUDE.md plus per-package files:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang"></span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-plaintext">my-monorepo/
+  CLAUDE.md                    # Root: shared conventions, monorepo structure
+  packages/
+    api/
+      CLAUDE.md                # API-specific: Express patterns, route conventions
+    web/
+      CLAUDE.md                # Web-specific: React patterns, component library
+    shared/
+      CLAUDE.md                # Shared lib: no side effects, pure functions only</code></pre>
+</div>
+<p>Root <code>CLAUDE.md</code>:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">markdown</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-markdown"><span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span># My Monorepo<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span>## Structure<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> packages/api -- Express REST API
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> packages/web -- Next.js frontend
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> packages/shared -- Shared TypeScript utilities
+
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span>## Global Conventions<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Use pnpm workspaces
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> All packages use TypeScript strict mode
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Shared types go in packages/shared/src/types/</code></pre>
+</div>
+<p>Package-specific <code>packages/api/CLAUDE.md</code>:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">markdown</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-markdown"><span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span># API Package<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Express with async error handling middleware
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Routes in src/routes/, controllers in src/controllers/
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Use Joi for request validation (not Zod -- this package predates the migration)
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Database access only through src/db/ module</code></pre>
+</div>
+<h3 id="step-5-import-shared-instructions">Step 5: Import Shared Instructions<a class="anchor" href="#step-5-import-shared-instructions">#</a></h3>
+<p>Use <code>@import</code> syntax to reference shared instruction files from CLAUDE.md:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">markdown</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-markdown"><span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span># My Project<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+
+@docs/coding-standards.md
+@docs/architecture-decisions.md</code></pre>
+</div>
+<p>This includes the content of those files as additional context, keeping your CLAUDE.md concise while referencing detailed docs.</p>
+<h3 id="verify-it-works">Verify It Works<a class="anchor" href="#verify-it-works">#</a></h3>
+<p>Start a new Claude Code session in your project directory and ask:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang"></span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-plaintext">&amp;gt; What are the project conventions and tech stack?</code></pre>
+</div>
+<p>Claude should reflect the content from your CLAUDE.md. You can also check what is loaded:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang"></span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-plaintext">&amp;gt; What do you know from CLAUDE.md?</code></pre>
+</div>
+<h3 id="troubleshooting">Troubleshooting<a class="anchor" href="#troubleshooting">#</a></h3>
+<ul>
+<li><strong>CLAUDE.md not loading:</strong> Check the filename is exactly <code>CLAUDE.md</code> (case-sensitive). Ensure you are in the correct working directory. Verify the file is not excluded by <code>claudeMdExcludes</code> in your settings.</li>
+<li><strong>Rules not applying:</strong> Ensure <code>.claude/rules/</code> files have the <code>.md</code> extension and are in the correct directory. Rules are loaded when Claude accesses files in the project.</li>
+<li><strong>File too large:</strong> Keep each CLAUDE.md under 200 lines for reliable adherence. If you need more, split into <code>.claude/rules/</code> files or use <code>@import</code> for supplementary docs.</li>
+<li><strong>Conflicting instructions:</strong> When multiple CLAUDE.md files conflict, later-loaded files take precedence. Project-level files override global ones.</li>
+</ul>
+<!-- end howto -->
+
+  </div>
+  <div class="tab-panel" data-tab-panel="reference">
+
 <h2 id="technical-reference">Technical Reference<a class="anchor" href="#technical-reference">#</a></h2>
-<div class="callout callout-info">
-  <div class="callout-title">Info</div>
-  <p>Detailed reference specs for Projects are coming in Phase 4.</p>
+<h3 id="claudemd-file-format">CLAUDE.md File Format<a class="anchor" href="#claudemd-file-format">#</a></h3>
+<p>CLAUDE.md files are plain markdown files. There is no special schema or frontmatter -- Claude reads the raw markdown content as project instructions.</p>
+<p><strong>Recognized file names:</strong></p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Purpose</th>
+<th>Shared via Git?</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>CLAUDE.md</code></td>
+<td>Primary project instructions</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>CLAUDE.local.md</code></td>
+<td>Personal overrides</td>
+<td>No (gitignored)</td>
+</tr>
+<tr>
+<td><code>.claude/CLAUDE.md</code></td>
+<td>Extended project instructions</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>.claude/rules/*.md</code></td>
+<td>Path-specific rules</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>~/.claude/CLAUDE.md</code></td>
+<td>Global personal instructions</td>
+<td>N/A (user home)</td>
+</tr>
+</tbody></table>
+<h3 id="loading-order-and-precedence">Loading Order and Precedence<a class="anchor" href="#loading-order-and-precedence">#</a></h3>
+<p>CLAUDE.md files load in a specific order. Later-loaded content overrides earlier content when instructions conflict.</p>
+<p><strong>Loading direction:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Direction</th>
+<th>Behavior</th>
+<th>When</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>UP</strong></td>
+<td>Walks from current working directory to repo root, loading all CLAUDE.md files found</td>
+<td>At session startup</td>
+</tr>
+<tr>
+<td><strong>DOWN</strong></td>
+<td>Subdirectory CLAUDE.md files load lazily</td>
+<td>When Claude reads files in that directory</td>
+</tr>
+<tr>
+<td><strong>SIBLING</strong></td>
+<td>Never loads</td>
+<td>Directories at the same level are independent</td>
+</tr>
+</tbody></table>
+<p><strong>Full resolution order (lowest to highest priority):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Priority</th>
+<th>Source</th>
+<th>Location</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1 (lowest)</td>
+<td>Global user instructions</td>
+<td><code>~/.claude/CLAUDE.md</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Project root</td>
+<td><code>CLAUDE.md</code> (repo root)</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Project extended</td>
+<td><code>.claude/CLAUDE.md</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Modular rules</td>
+<td><code>.claude/rules/*.md</code></td>
+</tr>
+<tr>
+<td>5 (highest)</td>
+<td>Personal overrides</td>
+<td><code>CLAUDE.local.md</code></td>
+</tr>
+</tbody></table>
+<p>Within each priority level, merge semantics are additive -- all content is loaded. When two sources give conflicting instructions, the higher-priority source wins.</p>
+<h3 id="import-syntax">@import Syntax<a class="anchor" href="#import-syntax">#</a></h3>
+<p>Include content from other files using <code>@path/to/file</code> syntax within a CLAUDE.md file:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">markdown</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-markdown">@docs/coding-standards.md
+@docs/api-conventions.md</code></pre>
 </div>
-<p>Planned references:</p>
 <ul>
-<li><p>CLAUDE.md format and loading behavior -- <em>coming soon</em></p>
-</li>
-<li><p>Path-specific rules configuration -- <em>coming soon</em></p>
-</li>
-<li><p>Auto-memory file format and location -- <em>coming soon</em></p>
-</div>
-</div></li>
+<li>Paths are relative to the CLAUDE.md file location</li>
+<li>Imported files are read and their content is appended to the context</li>
+<li>Circular imports are not followed</li>
 </ul>
+<h3 id="character-limits">Character Limits<a class="anchor" href="#character-limits">#</a></h3>
+<ul>
+<li>Keep individual CLAUDE.md files under <strong>200 lines</strong> (~4,000 characters) for reliable adherence</li>
+<li>Auto-memory loads the first <strong>200 lines</strong> of the memory file</li>
+<li>There is no hard character limit enforced by the system, but longer files reduce instruction-following reliability</li>
+</ul>
+<h3 id="file-location-resolution">File Location Resolution<a class="anchor" href="#file-location-resolution">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>Path</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Global (macOS/Linux)</td>
+<td><code>~/.claude/CLAUDE.md</code></td>
+</tr>
+<tr>
+<td>Global (Windows)</td>
+<td><code>%USERPROFILE%\.claude\CLAUDE.md</code></td>
+</tr>
+<tr>
+<td>Project root</td>
+<td><code>&lt;repo-root&gt;/CLAUDE.md</code></td>
+</tr>
+<tr>
+<td>Project extended</td>
+<td><code>&lt;repo-root&gt;/.claude/CLAUDE.md</code></td>
+</tr>
+<tr>
+<td>Project rules</td>
+<td><code>&lt;repo-root&gt;/.claude/rules/*.md</code></td>
+</tr>
+<tr>
+<td>Personal override</td>
+<td><code>&lt;repo-root&gt;/CLAUDE.local.md</code></td>
+</tr>
+<tr>
+<td>Subdirectory</td>
+<td><code>&lt;subdir&gt;/CLAUDE.md</code> (lazy-loaded)</td>
+</tr>
+</tbody></table>
+<h3 id="examples">Examples<a class="anchor" href="#examples">#</a></h3>
+<p><strong>Minimal CLAUDE.md:</strong></p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">markdown</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-markdown"><span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span># My Project<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> TypeScript with strict mode
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Use pnpm for package management
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Tests in <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-strong&quot;</span>&gt;</span></span><span class="hljs-strong">__tests__</span><span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>/ directories</code></pre>
+</div>
+<p><strong>Monorepo CLAUDE.md (root):</strong></p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">markdown</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-markdown"><span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span># Acme Platform<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span>## Structure<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> apps/web -- Next.js frontend (port 3000)
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> apps/api -- Express backend (port 4000)
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> packages/ui -- Shared component library
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> packages/db -- Prisma database client
+
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span>## Global Rules<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> pnpm workspaces, never install in package root
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> TypeScript strict in all packages
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Shared types in packages/db/src/types/
+
+@docs/deployment-checklist.md</code></pre>
+</div>
+  </div>
+</div>
+
 <h2 id="related">Related<a class="anchor" href="#related">#</a></h2>
 <ul>
 <li><a href="mcp.html">MCP</a> -- Connectors provide tools; Projects provide context and instructions</li>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recipe: Pre-Commit Linting Hook - Claude Ecosystem Guide</title>
+  <script>
+    // Prevent flash of wrong theme - runs before CSS/body render
+    (function() {
+      var stored = localStorage.getItem('claude-guide-theme');
+      if (stored) {
+        document.documentElement.setAttribute('data-theme', stored);
+      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="../index.html" class="site-title">Claude Ecosystem</a>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+    </div>
+    <div class="search-container" id="searchContainer">
+      <input type="search" id="searchInput" placeholder="Search docs..." aria-label="Search documentation">
+      <div class="search-results" id="searchResults"></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+  <div class="nav-section-title">Topics</div>
+  <a href="../topics/mcp.html" class="nav-link">MCP Servers and Connectors</a>
+  <a href="../topics/skills.html" class="nav-link">Skills</a>
+  <a href="../topics/plugins.html" class="nav-link">Plugins</a>
+  <a href="../topics/hooks.html" class="nav-link">Hooks</a>
+  <a href="../topics/agents.html" class="nav-link">Agents</a>
+  <a href="../topics/projects.html" class="nav-link">Projects and CLAUDE.md</a>
+  <a href="../topics/connectors.html" class="nav-link">Connectors</a>
+  <a href="../topics/commands.html" class="nav-link">Commands</a>
+  <a href="../topics/memory.html" class="nav-link">Memory</a>
+  <a href="../topics/settings.html" class="nav-link">Settings</a>
+</div>
+<div class="nav-section">
+  <div class="nav-section-title">Reference</div>
+  <a href="../topics/compatibility.html" class="nav-link">Compatibility Matrix</a>
+</div>
+<div class="nav-section">
+  <div class="nav-section-title">Decision Tools</div>
+  <a href="../topics/decision-wizard.html" class="nav-link">Decision Wizard</a>
+  <a href="../topics/comparisons.html" class="nav-link">Comparisons</a>
+</div>
+<div class="nav-section">
+  <div class="nav-section-title">Recipes</div>
+  <a href="../topics/recipe-deployment-skill.html" class="nav-link">Recipe: Build a Deployment Skill</a>
+  <a href="../topics/recipe-crm-mcp.html" class="nav-link">Recipe: CRM Enrichment with MCP</a>
+  <a href="../topics/recipe-pre-commit-hook.html" class="nav-link active">Recipe: Pre-Commit Linting Hook</a>
+  <a href="../topics/recipe-custom-agent.html" class="nav-link">Recipe: Build a Custom Agent</a>
+  <a href="../topics/recipe-monorepo-settings.html" class="nav-link">Recipe: Monorepo Settings Hierarchy</a>
+</div>
+
+    </nav>
+  </aside>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Toggle navigation">
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+  </button>
+  <main class="content" data-pagefind-body>
+    <article>
+      <h1 id="recipe-pre-commit-linting-hook">Recipe: Pre-Commit Linting Hook<a class="anchor" href="#recipe-pre-commit-linting-hook">#</a></h1>
+<h2 id="what-you-will-build">What You Will Build<a class="anchor" href="#what-you-will-build">#</a></h2>
+<p>A <strong>pre-commit hook</strong> that runs ESLint on staged files before Claude commits code. If linting fails, the commit is blocked and Claude sees the errors -- then automatically fixes them and retries. This creates a quality gate that enforces your coding standards without manual intervention.</p>
+<p>Hooks are event-driven commands that Claude executes at specific points in its workflow. The <code>PreCommit</code> hook fires just before a <code>git commit</code>, giving you a chance to validate changes.</p>
+<h2 id="prerequisites">Prerequisites<a class="anchor" href="#prerequisites">#</a></h2>
+<ul>
+<li>Claude Code installed and working in your project</li>
+<li>ESLint configured in your project (<code>npx eslint --version</code> should work)</li>
+<li>Basic familiarity with <a href="topics/hooks.html">Hooks</a> concepts</li>
+</ul>
+<h2 id="step-1-understand-the-hook-lifecycle">Step 1: Understand the Hook Lifecycle<a class="anchor" href="#step-1-understand-the-hook-lifecycle">#</a></h2>
+<p>When Claude commits code, the following happens:</p>
+<ol>
+<li>Claude stages files with <code>git add</code>.</li>
+<li>The <code>PreCommit</code> hook fires with the list of staged files.</li>
+<li>Your hook command runs (e.g., ESLint) on the matched files.</li>
+<li>If the command exits 0, the commit proceeds.</li>
+<li>If the command exits non-zero, the commit is blocked and Claude receives the error output.</li>
+</ol>
+<p>Claude can then read the linting errors, fix the code, re-stage, and retry the commit -- all automatically.</p>
+<h2 id="step-2-configure-the-hook">Step 2: Configure the Hook<a class="anchor" href="#step-2-configure-the-hook">#</a></h2>
+<p>Add the hook to your project&#39;s <code>.claude/settings.json</code>:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">json</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-json">&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;hooks&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;PreCommit&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+        &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;matcher&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;**<span class="hljs-comment">/*.{js,ts,jsx,tsx}&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;hljs-attr&quot;&gt;&amp;quot;command&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;hljs-string&quot;&gt;&amp;quot;npx eslint --no-warn-ignored ${files}&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;hljs-attr&quot;&gt;&amp;quot;description&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;hljs-string&quot;&gt;&amp;quot;Lint staged JS/TS files before commit&amp;quot;&lt;/span&gt;
+      &lt;span class=&quot;hljs-punctuation&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;hljs-punctuation&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;hljs-punctuation&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;hljs-punctuation&quot;&gt;}&lt;/span&gt;</span></code></pre>
+</div>
+<p>How this works:</p>
+<ul>
+<li><strong>matcher</strong> -- A glob pattern that filters which staged files trigger this hook. Only JS/TS files will be linted.</li>
+<li><strong>command</strong> -- The shell command to run. <code>${files}</code> is replaced with the space-separated list of matched staged files.</li>
+<li><strong>description</strong> -- Shown in Claude&#39;s output so you know which hook is running.</li>
+</ul>
+<p>You can add multiple hooks to the <code>PreCommit</code> array. They run in order, and all must pass for the commit to proceed.</p>
+<h2 id="step-3-test-the-hook">Step 3: Test the Hook<a class="anchor" href="#step-3-test-the-hook">#</a></h2>
+<p>Create a file with a deliberate linting error:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">javascript</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-javascript">&lt;span <span class="hljs-keyword">class</span>=<span class="hljs-string">&quot;hljs-comment&quot;</span>&gt;<span class="hljs-comment">// test-lint-error.js&lt;/span&gt;</span>
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;</span>const<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> unused = <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;</span><span class="hljs-symbol">&amp;quot;</span>this variable is never used<span class="hljs-symbol">&amp;quot;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>;
+
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-variable language_&quot;</span>&gt;</span>console<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>.&lt;span <span class="hljs-keyword">class</span>=<span class="hljs-string">&quot;hljs-title function_&quot;</span>&gt;log&lt;<span class="hljs-regexp">/span&gt;(&lt;span class=&quot;hljs-string&quot;&gt;&amp;quot;hello world&amp;quot;&lt;/</span>span&gt;)</code></pre>
+</div>
+<p>Then ask Claude to commit it:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-bash">claude &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;add test-lint-error.js and commit it with message &amp;#x27;<span class="hljs-built_in">test</span> hook&amp;#x27;&amp;quot;&lt;/span&gt;</code></pre>
+</div>
+<p>You should see:</p>
+<ol>
+<li>Claude stages the file.</li>
+<li>The PreCommit hook fires and runs ESLint.</li>
+<li>ESLint reports the <code>no-unused-vars</code> error.</li>
+<li>The commit is blocked.</li>
+</ol>
+<h2 id="step-4-handle-failures-gracefully">Step 4: Handle Failures Gracefully<a class="anchor" href="#step-4-handle-failures-gracefully">#</a></h2>
+<p>When the hook blocks a commit, Claude does not just stop. It reads the ESLint output and takes action:</p>
+<ol>
+<li>Claude sees the specific errors (line numbers, rule names).</li>
+<li>It edits the file to fix the violations.</li>
+<li>It re-stages the fixed file.</li>
+<li>It retries the commit.</li>
+<li>The hook runs again on the fixed file -- this time it passes.</li>
+</ol>
+<p>This block-then-fix loop is the key value of hooks: Claude enforces your standards <em>and</em> resolves violations in the same workflow.</p>
+<p>If you want the hook to only warn (not block), change the ESLint config to use <code>warn</code> severity instead of <code>error</code> for those rules, or use a command that always exits 0:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">json</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-json">&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;matcher&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;**<span class="hljs-comment">/*.{js,ts}&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;hljs-attr&quot;&gt;&amp;quot;command&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;hljs-string&quot;&gt;&amp;quot;npx eslint --no-warn-ignored ${files} || true&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;hljs-attr&quot;&gt;&amp;quot;description&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;hljs-string&quot;&gt;&amp;quot;Lint staged files (warnings only, never blocks)&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;hljs-punctuation&quot;&gt;}&lt;/span&gt;</span></code></pre>
+</div>
+<h2 id="verify-it-works">Verify It Works<a class="anchor" href="#verify-it-works">#</a></h2>
+<p>Your hook is working correctly when:</p>
+<ul>
+<li>Committing a file with linting errors triggers the hook and blocks the commit.</li>
+<li>Claude&#39;s output shows the hook name and the ESLint errors.</li>
+<li>Claude automatically fixes the errors and retries.</li>
+<li>The second commit attempt succeeds with clean code.</li>
+<li>Committing files that do not match the <code>**/*.{js,ts,jsx,tsx}</code> pattern (e.g., <code>.md</code> files) skips the hook entirely.</li>
+</ul>
+<h2 id="next-steps">Next Steps<a class="anchor" href="#next-steps">#</a></h2>
+<ul>
+<li>Read the <a href="topics/hooks.html">Hooks reference</a> for all event types (<code>PreCommit</code>, <code>PostCommit</code>, <code>PreToolUse</code>, <code>PostToolUse</code>, and more).</li>
+<li>See <a href="topics/settings.html">Settings</a> for where to place hook configuration in the settings hierarchy.</li>
+<li>Add more hooks: format with Prettier on <code>PreCommit</code>, run tests on <code>PostCommit</code>, validate branch names.</li>
+<li>Combine with a <a href="topics/recipe-deployment-skill.html">deployment skill</a> to ensure clean code before deploying.</li>
+</ul>
+
+    </article>
+  </main>
+  <script src="../assets/main.js"></script>
+</body>
+</html>

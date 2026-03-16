@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recipe: Build a Deployment Skill - Claude Ecosystem Guide</title>
+  <script>
+    // Prevent flash of wrong theme - runs before CSS/body render
+    (function() {
+      var stored = localStorage.getItem('claude-guide-theme');
+      if (stored) {
+        document.documentElement.setAttribute('data-theme', stored);
+      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="../index.html" class="site-title">Claude Ecosystem</a>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+    </div>
+    <div class="search-container" id="searchContainer">
+      <input type="search" id="searchInput" placeholder="Search docs..." aria-label="Search documentation">
+      <div class="search-results" id="searchResults"></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+  <div class="nav-section-title">Topics</div>
+  <a href="../topics/mcp.html" class="nav-link">MCP Servers and Connectors</a>
+  <a href="../topics/skills.html" class="nav-link">Skills</a>
+  <a href="../topics/plugins.html" class="nav-link">Plugins</a>
+  <a href="../topics/hooks.html" class="nav-link">Hooks</a>
+  <a href="../topics/agents.html" class="nav-link">Agents</a>
+  <a href="../topics/projects.html" class="nav-link">Projects and CLAUDE.md</a>
+  <a href="../topics/connectors.html" class="nav-link">Connectors</a>
+  <a href="../topics/commands.html" class="nav-link">Commands</a>
+  <a href="../topics/memory.html" class="nav-link">Memory</a>
+  <a href="../topics/settings.html" class="nav-link">Settings</a>
+</div>
+<div class="nav-section">
+  <div class="nav-section-title">Reference</div>
+  <a href="../topics/compatibility.html" class="nav-link">Compatibility Matrix</a>
+</div>
+<div class="nav-section">
+  <div class="nav-section-title">Decision Tools</div>
+  <a href="../topics/decision-wizard.html" class="nav-link">Decision Wizard</a>
+  <a href="../topics/comparisons.html" class="nav-link">Comparisons</a>
+</div>
+<div class="nav-section">
+  <div class="nav-section-title">Recipes</div>
+  <a href="../topics/recipe-deployment-skill.html" class="nav-link active">Recipe: Build a Deployment Skill</a>
+  <a href="../topics/recipe-crm-mcp.html" class="nav-link">Recipe: CRM Enrichment with MCP</a>
+  <a href="../topics/recipe-pre-commit-hook.html" class="nav-link">Recipe: Pre-Commit Linting Hook</a>
+  <a href="../topics/recipe-custom-agent.html" class="nav-link">Recipe: Build a Custom Agent</a>
+  <a href="../topics/recipe-monorepo-settings.html" class="nav-link">Recipe: Monorepo Settings Hierarchy</a>
+</div>
+
+    </nav>
+  </aside>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Toggle navigation">
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+  </button>
+  <main class="content" data-pagefind-body>
+    <article>
+      <h1 id="recipe-build-a-deployment-skill">Recipe: Build a Deployment Skill<a class="anchor" href="#recipe-build-a-deployment-skill">#</a></h1>
+<h2 id="what-you-will-build">What You Will Build<a class="anchor" href="#what-you-will-build">#</a></h2>
+<p>A <strong>deployment skill</strong> that teaches Claude how to deploy your Node.js application to a VPS via SSH. When you say &quot;deploy the app,&quot; Claude will follow a structured checklist -- verifying the working tree is clean, running tests, connecting to your server, pulling the latest code, and restarting the service.</p>
+<p>Skills are reusable instruction sets stored as markdown files. Once created, this skill activates automatically whenever your prompt matches its trigger patterns.</p>
+<h2 id="prerequisites">Prerequisites<a class="anchor" href="#prerequisites">#</a></h2>
+<ul>
+<li>Claude Code installed and working in your project</li>
+<li>A Node.js project with a test suite</li>
+<li>SSH access to a deployment target (VPS, EC2 instance, etc.)</li>
+<li>Basic familiarity with <a href="topics/skills.html">Skills</a> concepts</li>
+</ul>
+<h2 id="step-1-create-the-skill-directory">Step 1: Create the Skill Directory<a class="anchor" href="#step-1-create-the-skill-directory">#</a></h2>
+<p>Every project can have a <code>.claude/skills/</code> directory at its root. Claude discovers skill files automatically at session start.</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-bash">&lt;span class=<span class="hljs-string">&quot;hljs-built_in&quot;</span>&gt;<span class="hljs-built_in">mkdir</span>&lt;/span&gt; -p .claude/skills
+&lt;span class=<span class="hljs-string">&quot;hljs-built_in&quot;</span>&gt;<span class="hljs-built_in">touch</span>&lt;/span&gt; .claude/skills/deploy.md</code></pre>
+</div>
+<p>Your project structure should now look like this:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">plaintext</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-plaintext">my-app/
+  .claude/
+    skills/
+      deploy.md       &amp;lt;-- your new skill file
+  src/
+  package.json</code></pre>
+</div>
+<h2 id="step-2-write-the-frontmatter">Step 2: Write the Frontmatter<a class="anchor" href="#step-2-write-the-frontmatter">#</a></h2>
+<p>Open <code>.claude/skills/deploy.md</code> and add the YAML frontmatter. This metadata tells Claude <em>when</em> to activate the skill and <em>what tools</em> it may use.</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">yaml</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-yaml"><span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-meta&quot;&gt;---&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;name:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;deploy&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;description:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Deploy&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;the&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;application&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;to&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;production&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;via&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;SSH&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;triggers:&lt;/span&gt;</span>
+  <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-bullet&quot;&gt;-&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;deploy&lt;/span&gt;</span>
+  <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-bullet&quot;&gt;-&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;push&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;to&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;production&lt;/span&gt;</span>
+  <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-bullet&quot;&gt;-&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;ship&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;it&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;allowed-tools:&lt;/span&gt;</span>
+  <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-bullet&quot;&gt;-&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Bash&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-meta&quot;&gt;---&lt;/span&gt;</span></code></pre>
+</div>
+<p>Key fields:</p>
+<ul>
+<li><strong>name</strong> -- A short identifier Claude uses internally.</li>
+<li><strong>description</strong> -- Shown when Claude lists available skills. Make it specific.</li>
+<li><strong>triggers</strong> -- Phrases that activate this skill. Claude matches these against your prompt.</li>
+<li><strong>allowed-tools</strong> -- Restricts which tools the skill can use. <code>Bash</code> is required for SSH and shell commands.</li>
+</ul>
+<h2 id="step-3-write-the-skill-body">Step 3: Write the Skill Body<a class="anchor" href="#step-3-write-the-skill-body">#</a></h2>
+<p>Below the frontmatter, write the deployment instructions in plain markdown. Claude follows these steps in order.</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">markdown</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-markdown"><span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span>## Deployment Checklist<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+
+Before deploying, complete every step in order. Stop and report if any step fails.
+
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span>### Pre-flight checks<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>1.<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Run <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-code&quot;</span>&gt;</span></span><span class="hljs-code">`git status`</span><span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> and confirm the working tree is clean (no uncommitted changes).
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>2.<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Run <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-code&quot;</span>&gt;</span></span><span class="hljs-code">`npm test`</span><span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> and confirm all tests pass.
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>3.<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Confirm the current branch is <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-code&quot;</span>&gt;</span></span><span class="hljs-code">`main`</span><span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>.
+
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span>### Deploy<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>4.<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> SSH into the production server:</code></pre>
+</div>
+<p>   ssh <a href="mailto:deploy@your-server.example.com">deploy@your-server.example.com</a></p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang"></span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-plaintext">5. Navigate to the application directory:</code></pre>
+</div>
+<p>   cd /opt/my-app</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang"></span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-plaintext">6. Pull the latest code:</code></pre>
+</div>
+<p>   git pull origin main</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang"></span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-plaintext">7. Install any new dependencies:</code></pre>
+</div>
+<p>   npm ci --production</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang"></span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-plaintext">8. Restart the application service:</code></pre>
+</div>
+<p>   sudo systemctl restart my-app</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang"></span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-plaintext">9. Check the service status:</code></pre>
+</div>
+<p>   sudo systemctl status my-app</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang"></span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-plaintext">
+### Post-deploy verification
+
+10. Curl the health endpoint to confirm the app is responding:
+ ```
+ curl -f http://localhost:3000/health
+ ```
+11. Report the deployment result: which commit was deployed, whether health check passed.</code></pre>
+</div>
+<h2 id="step-4-test-the-skill">Step 4: Test the Skill<a class="anchor" href="#step-4-test-the-skill">#</a></h2>
+<p>Open Claude Code in your project directory and type:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-bash">claude &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;deploy the app&amp;quot;&lt;/span&gt;</code></pre>
+</div>
+<p>Claude will:</p>
+<ol>
+<li>Detect that your prompt matches the <code>deploy</code> skill triggers.</li>
+<li>Load the full skill body.</li>
+<li>Walk through each step, asking for confirmation before destructive operations (like restarting a service).</li>
+</ol>
+<h2 id="verify-it-works">Verify It Works<a class="anchor" href="#verify-it-works">#</a></h2>
+<p>You know the skill is working correctly when:</p>
+<ul>
+<li>Claude mentions it is following the deployment checklist.</li>
+<li>Pre-flight checks run first (git status, tests).</li>
+<li>Claude asks for confirmation before SSHing to the server.</li>
+<li>Each step runs in the order specified.</li>
+<li>Claude reports a summary at the end (commit hash, health check result).</li>
+</ul>
+<p>If Claude does not pick up the skill, verify the file is at <code>.claude/skills/deploy.md</code> and the frontmatter <code>triggers</code> include a phrase matching your prompt.</p>
+<h2 id="next-steps">Next Steps<a class="anchor" href="#next-steps">#</a></h2>
+<ul>
+<li>Read the <a href="topics/skills.html">Skills reference</a> for all available frontmatter fields, including <code>globs</code> for file-pattern activation.</li>
+<li>Explore <a href="topics/agents.html">Agents</a> for more complex multi-step workflows that go beyond a single checklist.</li>
+<li>Add a <a href="topics/hooks.html">pre-commit hook</a> to enforce test-passing before Claude can deploy.</li>
+</ul>
+
+    </article>
+  </main>
+  <script src="../assets/main.js"></script>
+</body>
+</html>

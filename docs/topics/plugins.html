@@ -41,6 +41,10 @@
         </svg>
       </button>
     </div>
+    <div class="search-container" id="searchContainer">
+      <input type="search" id="searchInput" placeholder="Search docs..." aria-label="Search documentation">
+      <div class="search-results" id="searchResults"></div>
+    </div>
     <nav class="sidebar-nav">
       <div class="nav-section">
   <div class="nav-section-title">Topics</div>
@@ -59,6 +63,19 @@
   <div class="nav-section-title">Reference</div>
   <a href="../topics/compatibility.html" class="nav-link">Compatibility Matrix</a>
 </div>
+<div class="nav-section">
+  <div class="nav-section-title">Decision Tools</div>
+  <a href="../topics/decision-wizard.html" class="nav-link">Decision Wizard</a>
+  <a href="../topics/comparisons.html" class="nav-link">Comparisons</a>
+</div>
+<div class="nav-section">
+  <div class="nav-section-title">Recipes</div>
+  <a href="../topics/recipe-deployment-skill.html" class="nav-link">Recipe: Build a Deployment Skill</a>
+  <a href="../topics/recipe-crm-mcp.html" class="nav-link">Recipe: CRM Enrichment with MCP</a>
+  <a href="../topics/recipe-pre-commit-hook.html" class="nav-link">Recipe: Pre-Commit Linting Hook</a>
+  <a href="../topics/recipe-custom-agent.html" class="nav-link">Recipe: Build a Custom Agent</a>
+  <a href="../topics/recipe-monorepo-settings.html" class="nav-link">Recipe: Monorepo Settings Hierarchy</a>
+</div>
 
     </nav>
   </aside>
@@ -68,7 +85,7 @@
     <span class="hamburger-line"></span>
     <span class="hamburger-line"></span>
   </button>
-  <main class="content">
+  <main class="content" data-pagefind-body>
     <article>
       <h1 id="plugins">Plugins<a class="anchor" href="#plugins">#</a></h1>
 <div class="tabs">
@@ -181,6 +198,10 @@ claude --plugin-dir ./my-plugin</code></pre>
 <li><strong>Plugins vs Skills:</strong> A plugin <em>contains</em> skills. Use a standalone skill when you have one focused instruction set. Use a plugin when you have a bundle of related skills, agents, hooks, and configs that should be installed together.</li>
 <li><strong>Plugins vs MCP:</strong> Plugins can <em>include</em> MCP server configurations. MCP is the protocol; plugins are the packaging mechanism.</li>
 </ul>
+<div class="callout callout-tip">
+  <div class="callout-title">Tip</div>
+  <p>**Consider alternatives:** If you only have a single skill or process to share, just use a standalone [Skill](skills.html). If you only need one MCP server, configure it directly in `.mcp.json` instead of bundling a [Plugin](plugins.html). For a detailed comparison, see [MCP vs Plugin vs Connector](comparisons.html).</p>
+</div>
 <h2 id="configuration">Configuration<a class="anchor" href="#configuration">#</a></h2>
 <h3 id="plugin-anatomy">Plugin Anatomy<a class="anchor" href="#plugin-anatomy">#</a></h3>
 <div class="code-block">
@@ -215,10 +236,11 @@ settings.json          &amp;lt;- Default permission + env settings</code></pre>
   &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;version&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;<span class="hljs-number">1.0</span><span class="hljs-number">.0</span>&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
   &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;description&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Our team&amp;#x27;s Claude workflows&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
   &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;author&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;name&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Your Team&amp;quot;&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
-  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;skills&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;skills/deploy&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;skills/review&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
-  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;agents&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;agents/qa-bot.md&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;skills&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;./skills/&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;agents&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;./agents/&amp;quot;&lt;/span&gt;
 &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;</code></pre>
 </div>
+<p>For the complete plugin.json schema with all fields, auto-discovery behavior, and validation rules, see the <strong>Reference</strong> tab.</p>
 <h2 id="best-practices">Best Practices<a class="anchor" href="#best-practices">#</a></h2>
 <ul>
 <li>Use plugins when you need to distribute a <strong>bundle</strong> of related skills, connectors, and agents across multiple repos or teams</li>
@@ -238,28 +260,412 @@ Plugins work in Claude Cowork (primary home, 15+ official plugins) and Claude Co
   </div>
   <div class="tab-panel" data-tab-panel="howto">
 
-<h2 id="how-to-guides">How-To Guides<a class="anchor" href="#how-to-guides">#</a></h2>
-<div class="callout callout-info">
-  <div class="callout-title">Info</div>
-  <p>Step-by-step guides for Plugins are coming in Phase 4.</p>
-</div>
-<p>Planned guides:</p>
+<h2 id="how-to-create-a-plugin-that-bundles-skills">How to Create a Plugin That Bundles Skills<a class="anchor" href="#how-to-create-a-plugin-that-bundles-skills">#</a></h2>
+<p>Build an installable plugin that packages skills, agents, hooks, and MCP configs into a single distributable bundle.</p>
+<h3 id="prerequisites">Prerequisites<a class="anchor" href="#prerequisites">#</a></h3>
 <ul>
-<li><p>How to create a plugin that bundles skills -- <em>coming soon</em></p>
+<li>Claude Code installed and working (<code>claude --version</code>)</li>
+<li>One or more skills or agents you want to bundle</li>
+<li>A directory for your plugin project</li>
+</ul>
+<h3 id="step-1-create-the-plugin-directory-structure">Step 1: Create the Plugin Directory Structure<a class="anchor" href="#step-1-create-the-plugin-directory-structure">#</a></h3>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-bash">&lt;span class=<span class="hljs-string">&quot;hljs-built_in&quot;</span>&gt;<span class="hljs-built_in">mkdir</span>&lt;/span&gt; -p my-deployment-tools/.claude-plugin
+&lt;span class=<span class="hljs-string">&quot;hljs-built_in&quot;</span>&gt;<span class="hljs-built_in">mkdir</span>&lt;/span&gt; -p my-deployment-tools/skills/deploy-check
+&lt;span class=<span class="hljs-string">&quot;hljs-built_in&quot;</span>&gt;<span class="hljs-built_in">mkdir</span>&lt;/span&gt; -p my-deployment-tools/skills/rollback
+&lt;span class=<span class="hljs-string">&quot;hljs-built_in&quot;</span>&gt;<span class="hljs-built_in">mkdir</span>&lt;/span&gt; -p my-deployment-tools/agents
+&lt;span class=<span class="hljs-string">&quot;hljs-built_in&quot;</span>&gt;<span class="hljs-built_in">mkdir</span>&lt;/span&gt; -p my-deployment-tools/hooks</code></pre>
+</div>
+<p>This creates the standard plugin layout. The <code>.claude-plugin/</code> directory holds the manifest; other directories hold the bundled components.</p>
+<h3 id="step-2-write-the-plugin-manifest">Step 2: Write the Plugin Manifest<a class="anchor" href="#step-2-write-the-plugin-manifest">#</a></h3>
+<p>Create <code>.claude-plugin/plugin.json</code>:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">json</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-json">&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;name&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;deployment-tools&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;version&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;<span class="hljs-number">1.0</span><span class="hljs-number">.0</span>&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;description&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Deployment automation tools for our team&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;author&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;name&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Platform Team&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;email&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;platform@company.com&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;url&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;https<span class="hljs-punctuation">:</span><span class="hljs-comment">//github.com/company&amp;quot;&lt;/span&gt;</span>
+  &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;homepage&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;https<span class="hljs-punctuation">:</span><span class="hljs-comment">//docs.company.com/claude-plugins&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;</span>
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;repository&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;https<span class="hljs-punctuation">:</span><span class="hljs-comment">//github.com/company/deployment-tools&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;</span>
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;license&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;MIT&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;keywords&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;deployment&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;ci-cd&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;automation&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;skills&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;./skills/&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;agents&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;./agents/&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;hooks&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;./hooks/hooks.json&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;mcpServers&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;./.mcp.json&amp;quot;&lt;/span&gt;
+&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;</code></pre>
+</div>
+<p>The <code>name</code> field is the only required field. All paths are relative to the plugin root directory.</p>
+<h3 id="step-3-add-skills-to-the-plugin">Step 3: Add Skills to the Plugin<a class="anchor" href="#step-3-add-skills-to-the-plugin">#</a></h3>
+<p>Create <code>skills/deploy-check/SKILL.md</code>:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">yaml</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-yaml"><span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-meta&quot;&gt;---&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;name:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;deploy-check&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;description:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Validates&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;deployment&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;readiness&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;by&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;running&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;tests,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;lint,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;and&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;build&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;checks&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;argument-hint:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;&amp;quot;[environment]&amp;quot;&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;allowed-tools:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Read,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Grep,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Glob,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Bash&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-meta&quot;&gt;---</span>
+<span class="hljs-string">&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-comment&quot;&gt;#</span> <span class="hljs-string">Deploy</span> <span class="hljs-string">Check&lt;/span&gt;</span>
+
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Run&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;deployment&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;readiness&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;checks&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;for&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;the&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;$ARGUMENTS&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;environment:&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-number&quot;&gt;1&lt;/span&gt;&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;.&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Run&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;test&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;suite&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-number&quot;&gt;2&lt;/span&gt;&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;.&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Check&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;lint&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;results&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-number&quot;&gt;3&lt;/span&gt;&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;.&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Verify&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;build&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;succeeds&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-number&quot;&gt;4&lt;/span&gt;&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;.&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Validate&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;environment&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;configuration&lt;/span&gt;</span></code></pre>
+</div>
+<p>Create <code>skills/rollback/SKILL.md</code>:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">yaml</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-yaml"><span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-meta&quot;&gt;---&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;name:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;rollback&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;description:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Guides&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;through&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;a&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;safe&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;rollback&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;to&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;the&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;previous&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;deployment&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;argument-hint:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;&amp;quot;[version]&amp;quot;&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;allowed-tools:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Bash&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-meta&quot;&gt;---</span>
+<span class="hljs-string">&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-comment&quot;&gt;#</span> <span class="hljs-string">Rollback</span> <span class="hljs-string">Guide&lt;/span&gt;</span>
+
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Walk&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;through&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;rolling&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;back&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;to&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;version&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;$ARGUMENTS:&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-number&quot;&gt;1&lt;/span&gt;&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;.&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Verify&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;the&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;target&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;version&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;exists&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-number&quot;&gt;2&lt;/span&gt;&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;.&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Check&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;for&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;database&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;migration&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;conflicts&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-number&quot;&gt;3&lt;/span&gt;&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;.&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Execute&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;the&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;rollback&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;command&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-number&quot;&gt;4&lt;/span&gt;&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;.&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Verify&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;service&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;health&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;after&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;rollback&lt;/span&gt;</span></code></pre>
+</div>
+<p>Skills within plugins are namespaced: <code>/deployment-tools:deploy-check</code> and <code>/deployment-tools:rollback</code>.</p>
+<h3 id="step-4-test-the-plugin-locally">Step 4: Test the Plugin Locally<a class="anchor" href="#step-4-test-the-plugin-locally">#</a></h3>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-bash">claude --plugin-dir ./my-deployment-tools</code></pre>
+</div>
+<p>This loads the plugin for the current session. Verify that:</p>
+<ul>
+<li>The skills appear in the <code>/</code> command list</li>
+<li>You can invoke them with the namespaced prefix</li>
+</ul>
+<h3 id="step-5-distribute-the-plugin">Step 5: Distribute the Plugin<a class="anchor" href="#step-5-distribute-the-plugin">#</a></h3>
+<p><strong>Via GitHub</strong> (recommended for open-source):</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-bash">&lt;span class=<span class="hljs-string">&quot;hljs-built_in&quot;</span>&gt;<span class="hljs-built_in">cd</span>&lt;/span&gt; my-deployment-tools
+git init &amp;amp;&amp;amp; git add . &amp;amp;&amp;amp; git commit -m &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Initial plugin release&amp;quot;&lt;/span&gt;
+git remote add origin https://github.com/company/deployment-tools.git
+git push -u origin main</code></pre>
+</div>
+<p>Team members install with:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-bash">/plugin install github:company/deployment-tools</code></pre>
+</div>
+<p><strong>Via npm:</strong></p>
+<p>Add a <code>package.json</code> alongside your plugin manifest for npm distribution. Team members can install from the npm registry.</p>
+<p><strong>Via direct path</strong> (for local/internal use):</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-bash">claude --plugin-dir /shared/plugins/deployment-tools</code></pre>
+</div>
+<h3 id="verify-it-works">Verify It Works<a class="anchor" href="#verify-it-works">#</a></h3>
+<ul>
+<li><code>claude --plugin-dir ./my-deployment-tools</code> loads without errors</li>
+<li>Plugin skills appear in the <code>/</code> command list with namespace prefix</li>
+<li><code>/deployment-tools:deploy-check staging</code> executes the skill correctly</li>
+<li>Team members can install from GitHub and access the same skills</li>
+</ul>
+<h3 id="troubleshooting">Troubleshooting<a class="anchor" href="#troubleshooting">#</a></h3>
+<ul>
+<li><p><strong>&quot;Invalid plugin manifest&quot; error:</strong> Verify <code>plugin.json</code> is valid JSON and the <code>name</code> field is present. Use <code>cat .claude-plugin/plugin.json | python3 -m json.tool</code> to validate.</p>
+</li>
+<li><p><strong>Skills not loading:</strong> Check that skill paths in the manifest match the actual directory structure. Paths are relative to the plugin root.</p>
+</li>
+<li><p><strong>Namespace collisions:</strong> If you see duplicate command names, ensure your plugin <code>name</code> is unique. Skills within the plugin use the <code>/&lt;plugin-name&gt;:&lt;skill-name&gt;</code> namespace.</p>
+</li>
+<li><p><strong>Plugin not found after install:</strong> Verify the GitHub URL is correct and the repository is accessible. Check <code>claude mcp list</code> for any related configuration.</p>
 </div>
 <div class="tab-panel" data-tab-panel="reference"></li>
 </ul>
-<h2 id="technical-reference">Technical Reference<a class="anchor" href="#technical-reference">#</a></h2>
-<div class="callout callout-info">
-  <div class="callout-title">Info</div>
-  <p>Detailed reference specs for Plugins are coming in Phase 4.</p>
+<h2 id="plugin-manifest-specification">Plugin Manifest Specification<a class="anchor" href="#plugin-manifest-specification">#</a></h2>
+<h3 id="file-location">File Location<a class="anchor" href="#file-location">#</a></h3>
+<p>The plugin manifest lives at <code>.claude-plugin/plugin.json</code> inside the plugin root directory.</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang"></span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-plaintext">my-plugin/
+  .claude-plugin/
+    plugin.json         &amp;lt;- Manifest (required)
+  skills/               &amp;lt;- Skill directories (auto-discovered)
+    deploy-check/
+      SKILL.md
+  agents/               &amp;lt;- Agent files (auto-discovered)
+    reviewer.md
+  hooks/
+    hooks.json          &amp;lt;- Hook configuration
+  .mcp.json             &amp;lt;- Bundled MCP server configs
+  .lsp.json             &amp;lt;- Code intelligence servers
+  settings.json         &amp;lt;- Default permission and environment settings</code></pre>
 </div>
-<p>Planned references:</p>
+<h3 id="complete-schema">Complete Schema<a class="anchor" href="#complete-schema">#</a></h3>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">json</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-json">&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;name&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;deployment-tools&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;version&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;<span class="hljs-number">1.0</span><span class="hljs-number">.0</span>&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;description&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Deployment automation tools for our team&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;author&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;name&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Platform Team&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;email&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;platform@company.com&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;url&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;https<span class="hljs-punctuation">:</span><span class="hljs-comment">//github.com/company&amp;quot;&lt;/span&gt;</span>
+  &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;homepage&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;https<span class="hljs-punctuation">:</span><span class="hljs-comment">//docs.company.com/claude-plugins&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;</span>
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;repository&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;https<span class="hljs-punctuation">:</span><span class="hljs-comment">//github.com/company/deployment-tools&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;</span>
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;license&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;MIT&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;keywords&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;deployment&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;ci-cd&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;automation&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;commands&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;./custom/commands/deploy-status.md&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;agents&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;./agents/&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;skills&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;./skills/&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;hooks&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;./hooks/hooks.json&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;mcpServers&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;./.mcp.json&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;outputStyles&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;./styles/&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;lspServers&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;./.lsp.json&amp;quot;&lt;/span&gt;
+&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;</code></pre>
+</div>
+<h3 id="field-reference">Field Reference<a class="anchor" href="#field-reference">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>name</code></td>
+<td>string</td>
+<td>Yes</td>
+<td>N/A</td>
+<td>Plugin identifier. Used as the namespace prefix for skills (<code>/&lt;name&gt;:&lt;skill&gt;</code>).</td>
+</tr>
+<tr>
+<td><code>version</code></td>
+<td>string</td>
+<td>No</td>
+<td><code>&quot;&quot;</code></td>
+<td>Semantic version string (e.g., <code>&quot;1.0.0&quot;</code>).</td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td>string</td>
+<td>No</td>
+<td><code>&quot;&quot;</code></td>
+<td>Human-readable description of the plugin&#39;s purpose.</td>
+</tr>
+<tr>
+<td><code>author</code></td>
+<td>object</td>
+<td>No</td>
+<td><code>{}</code></td>
+<td>Author information with <code>name</code> (string), <code>email</code> (string), and <code>url</code> (string) subfields.</td>
+</tr>
+<tr>
+<td><code>homepage</code></td>
+<td>string</td>
+<td>No</td>
+<td><code>&quot;&quot;</code></td>
+<td>URL to the plugin&#39;s documentation or homepage.</td>
+</tr>
+<tr>
+<td><code>repository</code></td>
+<td>string</td>
+<td>No</td>
+<td><code>&quot;&quot;</code></td>
+<td>URL to the source code repository.</td>
+</tr>
+<tr>
+<td><code>license</code></td>
+<td>string</td>
+<td>No</td>
+<td><code>&quot;&quot;</code></td>
+<td>SPDX license identifier (e.g., <code>&quot;MIT&quot;</code>, <code>&quot;Apache-2.0&quot;</code>).</td>
+</tr>
+<tr>
+<td><code>keywords</code></td>
+<td>string[]</td>
+<td>No</td>
+<td><code>[]</code></td>
+<td>Tags for discoverability in plugin directories.</td>
+</tr>
+<tr>
+<td><code>commands</code></td>
+<td>string[]</td>
+<td>No</td>
+<td>auto-discover</td>
+<td>Paths to legacy command files. <strong>Deprecated</strong> -- use <code>skills</code> instead.</td>
+</tr>
+<tr>
+<td><code>agents</code></td>
+<td>string</td>
+<td>No</td>
+<td>auto-discover</td>
+<td>Path to agents directory or glob pattern.</td>
+</tr>
+<tr>
+<td><code>skills</code></td>
+<td>string</td>
+<td>No</td>
+<td>auto-discover</td>
+<td>Path to skills directory or glob pattern.</td>
+</tr>
+<tr>
+<td><code>hooks</code></td>
+<td>string</td>
+<td>No</td>
+<td>auto-discover</td>
+<td>Path to hooks configuration file (e.g., <code>hooks.json</code>).</td>
+</tr>
+<tr>
+<td><code>mcpServers</code></td>
+<td>string</td>
+<td>No</td>
+<td>auto-discover</td>
+<td>Path to MCP server configuration file (e.g., <code>.mcp.json</code>).</td>
+</tr>
+<tr>
+<td><code>outputStyles</code></td>
+<td>string</td>
+<td>No</td>
+<td><code>&quot;&quot;</code></td>
+<td>Path to custom output style definitions.</td>
+</tr>
+<tr>
+<td><code>lspServers</code></td>
+<td>string</td>
+<td>No</td>
+<td>auto-discover</td>
+<td>Path to LSP server configuration file (e.g., <code>.lsp.json</code>).</td>
+</tr>
+</tbody></table>
+<h3 id="auto-discovery-behavior">Auto-Discovery Behavior<a class="anchor" href="#auto-discovery-behavior">#</a></h3>
+<p>When fields like <code>skills</code>, <code>agents</code>, <code>hooks</code>, or <code>mcpServers</code> are omitted from the manifest, Claude Code auto-discovers them from conventionally-named directories:</p>
+<table>
+<thead>
+<tr>
+<th>Directory/File</th>
+<th>Auto-discovered as</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>skills/</code></td>
+<td>Skill definitions (each subdirectory with <code>SKILL.md</code>)</td>
+</tr>
+<tr>
+<td><code>agents/</code></td>
+<td>Agent markdown files</td>
+</tr>
+<tr>
+<td><code>hooks/hooks.json</code></td>
+<td>Hook configuration</td>
+</tr>
+<tr>
+<td><code>.mcp.json</code></td>
+<td>MCP server definitions</td>
+</tr>
+<tr>
+<td><code>.lsp.json</code></td>
+<td>LSP server definitions</td>
+</tr>
+<tr>
+<td><code>settings.json</code></td>
+<td>Default settings</td>
+</tr>
+</tbody></table>
+<p>Explicit paths in the manifest override auto-discovery.</p>
+<h3 id="validation-rules">Validation Rules<a class="anchor" href="#validation-rules">#</a></h3>
 <ul>
-<li><p>Plugin manifest spec (plugin.json format, all fields) -- <em>coming soon</em></p>
-</div>
-</div></li>
+<li><code>name</code> is the only strictly required field</li>
+<li>All path fields are relative to the plugin root directory</li>
+<li>Skill directories must contain a <code>SKILL.md</code> file to be recognized</li>
+<li>Agent files must be valid markdown with YAML frontmatter</li>
+<li><code>hooks</code> path must point to a valid JSON file following the hook configuration schema</li>
+<li><code>commands</code> is deprecated -- prefer <code>skills</code> for new plugins</li>
 </ul>
+<h3 id="examples">Examples<a class="anchor" href="#examples">#</a></h3>
+<p><strong>Minimal plugin</strong> (name only, auto-discovery):</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">json</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-json">&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;name&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;my-team-tools&amp;quot;&lt;/span&gt;
+&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;</code></pre>
+</div>
+<p>With auto-discovery, Claude Code finds skills in <code>skills/</code>, agents in <code>agents/</code>, and configs from conventionally-named files.</p>
+<p><strong>Full plugin</strong> (all fields specified):</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">json</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-json">&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;name&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;deployment-tools&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;version&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;<span class="hljs-number">1.0</span><span class="hljs-number">.0</span>&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;description&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Deployment automation tools for our team&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;author&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;name&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Platform Team&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;email&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;platform@company.com&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;url&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;https<span class="hljs-punctuation">:</span><span class="hljs-comment">//github.com/company&amp;quot;&lt;/span&gt;</span>
+  &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;homepage&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;https<span class="hljs-punctuation">:</span><span class="hljs-comment">//docs.company.com/plugins/deployment-tools&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;</span>
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;repository&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;https<span class="hljs-punctuation">:</span><span class="hljs-comment">//github.com/company/deployment-tools&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;</span>
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;license&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;MIT&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;keywords&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;deployment&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;ci-cd&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;automation&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;agents&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;./agents/&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;skills&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;./skills/&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;hooks&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;./hooks/hooks.json&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;mcpServers&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;./.mcp.json&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;lspServers&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;./.lsp.json&amp;quot;&lt;/span&gt;
+&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;</code></pre>
+</div>
+  </div>
+</div>
+
 <h2 id="related">Related<a class="anchor" href="#related">#</a></h2>
 <ul>
 <li><a href="skills.html">Skills</a> -- The individual instruction sets that plugins bundle together</li>

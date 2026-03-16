@@ -1009,6 +1009,9 @@
   <a href="#architecture">Architecture</a>
   <a href="#timeline">Timeline</a>
   <a href="#decide">Which Do I Use?</a>
+  <a href="#personas">By Persona</a>
+  <a href="#bestpractices">Best Practices</a>
+  <a href="#reference">Reference</a>
   <a href="ama.html" style="color:var(--accent)">AMA</a>
   <button class="theme-toggle" id="themeToggle" aria-label="Toggle light/dark theme" title="Toggle theme">
     <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1617,6 +1620,41 @@ my-plugin/
 
     <div class="flow-item" onclick="toggleFlow(this)">
       <div class="flow-q">
+        <span>"Our sales team needs to enrich CRM data from ZoomInfo"</span>
+        <svg class="flow-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+      </div>
+      <div class="flow-a"><div class="flow-a-inner">
+        Create a <strong>Claude Chat Project</strong> with system instructions defining the enrichment workflow (decision tree, conflict rules, logging). Connect <strong>HubSpot + ZoomInfo Connectors</strong>. Upload reference docs (taxonomy mapping, enum keys). Sales team opens the project and says "enrich contacts missing industry." No code, no terminal.<br>
+        <span class="rec rec-project">Project (Chat)</span>
+        <span class="rec rec-mcp">+ Connectors</span>
+      </div></div>
+    </div>
+
+    <div class="flow-item" onclick="toggleFlow(this)">
+      <div class="flow-q">
+        <span>"I want Claude to remember our company context across all conversations"</span>
+        <svg class="flow-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+      </div>
+      <div class="flow-a"><div class="flow-a-inner">
+        In Code: write a <strong>CLAUDE.md</strong> at repo root + use <strong>auto-memory</strong> for cross-session learning. In Chat: create a <strong>Project</strong> with company docs uploaded as knowledge base. In Cowork: set <strong>Global Instructions</strong> in Customize menu. Each surface has its own persistence mechanism &mdash; use the one matching your interface.<br>
+        <span class="rec rec-project">Project / CLAUDE.md / Global Instructions</span>
+      </div></div>
+    </div>
+
+    <div class="flow-item" onclick="toggleFlow(this)">
+      <div class="flow-q">
+        <span>"Different team members need different Claude workflows"</span>
+        <svg class="flow-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+      </div>
+      <div class="flow-a"><div class="flow-a-inner">
+        Build <strong>Skills</strong> &mdash; they're the universal format. The same SKILL.md works in Code (devs), Chat (everyone), and Cowork (ops). Developers build the skill once, then each persona accesses it through their preferred surface. For bundling multiple skills per department, use <strong>Plugins</strong>.<br>
+        <span class="rec rec-skill">Skill (build once)</span>
+        <span class="rec rec-plugin">Plugin (bundle per team)</span>
+      </div></div>
+    </div>
+
+    <div class="flow-item" onclick="toggleFlow(this)">
+      <div class="flow-q">
         <span>"I want to use Figma/Slack inside a Claude conversation"</span>
         <svg class="flow-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
       </div>
@@ -1628,6 +1666,366 @@ my-plugin/
 
   </div>
 </div>
+
+<!-- ════════════════ PERSONA GUIDE ════════════════ -->
+<div class="section" id="personas">
+  <div class="section-header">
+    <h2>Building by Persona</h2>
+    <p>The same outcome requires different tools depending on who's using it. Start with the user, not the technology.</p>
+  </div>
+
+  <div class="persona-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.5rem">
+
+    <div class="arch-box" style="border-left:3px solid var(--chat)">
+      <div class="arch-label" style="color:var(--chat)">Executives &amp; Biz Dev</div>
+      <p style="color:var(--text-dim);font-size:.9rem;margin-bottom:1rem">Non-technical. Need outcomes, not tools. Won't use a terminal.</p>
+      <h5 style="margin-bottom:.5rem">Use This Stack</h5>
+      <ul style="color:var(--text-dim);font-size:.85rem;padding-left:1.25rem">
+        <li><strong>Claude Chat Project</strong> &mdash; persistent context + uploaded reference docs</li>
+        <li><strong>Connectors</strong> (MCP) &mdash; connect HubSpot, ZoomInfo, Salesforce, etc.</li>
+        <li><strong>Skills</strong> &mdash; toggle on in Settings &rarr; Capabilities for structured workflows</li>
+        <li><strong>Interactive Apps</strong> &mdash; Slack, Asana, Figma embedded in conversation</li>
+      </ul>
+      <h5 style="margin:.75rem 0 .5rem">Don't Use</h5>
+      <ul style="color:var(--text-muted);font-size:.85rem;padding-left:1.25rem">
+        <li>Claude Code (requires terminal)</li>
+        <li>Hooks, Subagents, Plugins (developer primitives)</li>
+        <li>CLAUDE.md files (requires git repos)</li>
+      </ul>
+      <div style="margin-top:1rem;padding:.75rem;background:var(--surface2);border-radius:8px;font-size:.82rem;color:var(--text-dim)">
+        <strong>Pattern:</strong> Create a Claude Chat Project with system instructions that define the workflow, upload reference docs (taxonomy maps, templates), connect relevant services via Connectors. User just opens the project and chats.
+      </div>
+    </div>
+
+    <div class="arch-box" style="border-left:3px solid var(--cowork)">
+      <div class="arch-label" style="color:var(--cowork)">Knowledge Workers</div>
+      <p style="color:var(--text-dim);font-size:.9rem;margin-bottom:1rem">Comfortable with apps but not code. Need autonomous file processing &amp; reports.</p>
+      <h5 style="margin-bottom:.5rem">Use This Stack</h5>
+      <ul style="color:var(--text-dim);font-size:.85rem;padding-left:1.25rem">
+        <li><strong>Claude Cowork</strong> &mdash; grant folder access, describe task, step away</li>
+        <li><strong>Plugins</strong> &mdash; one-click install from marketplace (Finance, Sales, Data, etc.)</li>
+        <li><strong>Connectors</strong> &mdash; Google Workspace, DocuSign, Snowflake</li>
+        <li><strong>Scheduled Tasks</strong> &mdash; recurring processing without manual triggers</li>
+      </ul>
+      <h5 style="margin:.75rem 0 .5rem">When to Upgrade to Code</h5>
+      <ul style="color:var(--text-muted);font-size:.85rem;padding-left:1.25rem">
+        <li>Need to modify actual source code</li>
+        <li>Need git integration or CI/CD</li>
+        <li>Batch processing 1000+ files with custom logic</li>
+      </ul>
+      <div style="margin-top:1rem;padding:.75rem;background:var(--surface2);border-radius:8px;font-size:.82rem;color:var(--text-dim)">
+        <strong>Pattern:</strong> Install relevant plugin, point Cowork at a folder, describe the outcome. Cowork's coordinator + sub-agent model handles parallelization automatically.
+      </div>
+    </div>
+
+    <div class="arch-box" style="border-left:3px solid var(--code)">
+      <div class="arch-label" style="color:var(--code)">Developers</div>
+      <p style="color:var(--text-dim);font-size:.9rem;margin-bottom:1rem">Full terminal access. Building the tools, workflows, and integrations others use.</p>
+      <h5 style="margin-bottom:.5rem">Use This Stack</h5>
+      <ul style="color:var(--text-dim);font-size:.85rem;padding-left:1.25rem">
+        <li><strong>Claude Code</strong> &mdash; full CLI with filesystem, git, bash, subagents</li>
+        <li><strong>CLAUDE.md</strong> &mdash; repo conventions auto-loaded every session</li>
+        <li><strong>Custom Skills &amp; Commands</strong> &mdash; <code>.claude/skills/</code> and <code>.claude/commands/</code></li>
+        <li><strong>Hooks</strong> &mdash; auto-lint, auto-test, compliance logging</li>
+        <li><strong>Agent Teams</strong> &mdash; parallel agents in independent contexts</li>
+        <li><strong>MCP Servers</strong> &mdash; connect to databases, APIs, internal tools</li>
+      </ul>
+      <h5 style="margin:.75rem 0 .5rem">Build For Others</h5>
+      <ul style="color:var(--text-muted);font-size:.85rem;padding-left:1.25rem">
+        <li>Build <strong>Projects</strong> (Chat) for biz dev &amp; execs</li>
+        <li>Build <strong>Plugins</strong> (Cowork) for knowledge workers</li>
+        <li>Build <strong>Skills</strong> (universal) for cross-team workflows</li>
+      </ul>
+      <div style="margin-top:1rem;padding:.75rem;background:var(--surface2);border-radius:8px;font-size:.82rem;color:var(--text-dim)">
+        <strong>Pattern:</strong> Developers build the automation and package it for the right surface. A CLI workflow becomes a Chat Project for executives or a Cowork Plugin for ops teams. Skills are the universal format &mdash; build once, deploy anywhere.
+      </div>
+    </div>
+
+  </div>
+
+  <div class="info-box" style="margin-top:2rem">
+    <h5>The Developer-as-Packager Model</h5>
+    <p>The most effective pattern at companies using Claude: <strong>developers build the workflows in Code, then package them as Projects (for Chat) or Plugins (for Cowork) so non-technical teammates can use them.</strong> The same skill logic works everywhere &mdash; the developer's job is choosing the right delivery surface for the audience.</p>
+  </div>
+
+  <div class="arch-box" style="margin-top:2rem;border-left:3px solid var(--accent)">
+    <div class="arch-label" style="color:var(--accent)">Surface Selection Decision Tree</div>
+    <p style="color:var(--text-dim);font-size:.85rem;margin-bottom:1rem">Evaluate three dimensions &mdash; never pick based on persona alone.</p>
+<pre style="font-size:.75rem;line-height:1.6">
+<strong style="color:var(--blue)">Step 1: WHO uses it?</strong> (narrows to 2 options, never decides alone)
+  Non-technical  &rarr; Chat OR Cowork
+  Knowledge worker &rarr; Chat OR Cowork
+  Developer      &rarr; Code (or Chat for quick Q&A)
+
+<strong style="color:var(--green)">Step 2: WHAT is the task?</strong> (picks the surface)
+  Conversational, ad-hoc, back-and-forth?
+    &rarr; <strong>Chat Project</strong>
+    Examples: "look up this contact", quick data questions,
+    brainstorming, document review
+
+  Autonomous, batch, describe-outcome-and-walk-away?
+    &rarr; <strong>Cowork Plugin</strong>
+    Examples: enrich 33K records, process 200 invoices,
+    generate quarterly reports, bulk file operations
+
+  Development, code, git, terminal?
+    &rarr; <strong>Code Skill / Command</strong>
+    Examples: deploy pipeline, run tests, refactor module
+
+<strong style="color:var(--orange)">Step 3: HOW should it be delivered?</strong> (picks the packaging)
+  One-off workflow        &rarr; Project instructions
+  Reusable procedure      &rarr; Skill
+  Multi-skill bundle      &rarr; Plugin
+
+<strong style="color:var(--skill)">Common Mistake:</strong>
+  "Non-technical user" &ne; "Chat Project"
+  A non-technical user doing batch work needs <strong>Cowork</strong>.
+  A non-technical user doing ad-hoc Q&A needs <strong>Chat</strong>.
+  Persona picks the candidates. Task type picks the winner.
+</pre>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ════════════════ BEST PRACTICES ════════════════ -->
+<div class="section" id="bestpractices">
+  <div class="section-header">
+    <h2>Best Practices</h2>
+    <p>Hard-won patterns from the Claude Code creator and power users. Applicable across all surfaces.</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.25rem">
+
+    <div class="arch-box">
+      <div class="arch-label" style="color:var(--green)">Context Management</div>
+      <ul style="color:var(--text-dim);font-size:.85rem;padding-left:1.25rem;line-height:1.7">
+        <li>Keep CLAUDE.md files under <strong>200 lines</strong> each for reliable adherence</li>
+        <li>In Code: use <code>/compact</code> before hitting 50% context window</li>
+        <li>Use <code>/clear</code> when switching tasks &mdash; don't pollute context</li>
+        <li>Long sessions degrade quality &mdash; start fresh rather than push through</li>
+        <li>In Chat: create separate Projects per workflow domain, don't overload one</li>
+        <li>Commit at least once per hour (Code) to create restore points</li>
+      </ul>
+    </div>
+
+    <div class="arch-box">
+      <div class="arch-label" style="color:var(--blue)">Prompting Patterns</div>
+      <ul style="color:var(--text-dim);font-size:.85rem;padding-left:1.25rem;line-height:1.7">
+        <li><strong>Challenge Claude:</strong> "grill me on these changes and don't proceed until I pass your test"</li>
+        <li><strong>Reset mediocre work:</strong> "knowing everything you know now, scrap this and implement the elegant solution"</li>
+        <li><strong>Throw compute at it:</strong> say "use subagents" to parallelize research</li>
+        <li><strong>Start with planning:</strong> always have Claude plan before executing complex work</li>
+        <li>Use a <strong>second Claude session</strong> to review the first one's plan</li>
+        <li>Write detailed specs to reduce ambiguity &mdash; Claude fills gaps with assumptions</li>
+      </ul>
+    </div>
+
+    <div class="arch-box">
+      <div class="arch-label" style="color:var(--orange)">Parallelism</div>
+      <ul style="color:var(--text-dim);font-size:.85rem;padding-left:1.25rem;line-height:1.7">
+        <li><strong>Code:</strong> run 3&ndash;5 Claude Code sessions in terminal tabs simultaneously</li>
+        <li><strong>Chat:</strong> run 5&ndash;10 sessions on claude.ai for research parallelism</li>
+        <li><strong>Agent Teams:</strong> multiple independent agents coordinating via shared task list</li>
+        <li><strong>Worktrees:</strong> isolated git branches for parallel development without conflicts</li>
+        <li>Multiple uncorrelated context windows &gt; one overloaded context window</li>
+        <li>More tokens = better results. Separate contexts make it even better.</li>
+      </ul>
+    </div>
+
+    <div class="arch-box">
+      <div class="arch-label" style="color:var(--skill)">Skills Architecture</div>
+      <ul style="color:var(--text-dim);font-size:.85rem;padding-left:1.25rem;line-height:1.7">
+        <li><strong>If you do it more than once a day, make it a skill</strong></li>
+        <li>Skills are the <strong>universal primitive</strong> &mdash; same SKILL.md works in Code, Chat, and Cowork</li>
+        <li>Skills auto-invoke based on task context (progressive disclosure)</li>
+        <li>Full content only loads when relevant &mdash; descriptions are always in context</li>
+        <li>Character budget: 15,000 chars default. Override with <code>SLASH_COMMAND_TOOL_CHAR_BUDGET</code></li>
+        <li>Resolution order: Skill (inline) &rarr; Agent (separate context) &rarr; Command (explicit <code>/</code> only)</li>
+      </ul>
+    </div>
+
+    <div class="arch-box">
+      <div class="arch-label" style="color:var(--plugin)">Verification</div>
+      <ul style="color:var(--text-dim);font-size:.85rem;padding-left:1.25rem;line-height:1.7">
+        <li><strong>Most important tip:</strong> always give Claude a way to verify its own work</li>
+        <li>In Code: use test suites, lint, type-check after every significant change</li>
+        <li>Use a <strong>separate context window</strong> to review work (one agent builds, another reviews)</li>
+        <li>In Chat: ask Claude to "prove to me this works" or "what could go wrong?"</li>
+        <li>In Cowork: review coordinator's draft before approving &mdash; it shows its work</li>
+        <li>Don't trust long sessions &mdash; quality degrades. Fresh session = fresh eyes.</li>
+      </ul>
+    </div>
+
+    <div class="arch-box">
+      <div class="arch-label" style="color:var(--hook)">MCP Best Practices</div>
+      <ul style="color:var(--text-dim);font-size:.85rem;padding-left:1.25rem;line-height:1.7">
+        <li>Let Claude use <strong>all your tools</strong> via MCP &mdash; Slack, BigQuery, Sentry, CRM, etc.</li>
+        <li>For contacts already enriched via a linked service, read from the link first &mdash; saves API quota</li>
+        <li>In Chat: use <strong>Connectors</strong> (one-click). In Code: use <code>.mcp.json</code></li>
+        <li>ZoomInfo, HubSpot, Salesforce, and 50+ services have pre-built connectors for Chat</li>
+        <li>Three scopes: Project (<code>.mcp.json</code>), User (<code>~/.claude.json</code>), Agent (frontmatter)</li>
+        <li>Use Tool Search (<code>ENABLE_TOOL_SEARCH=auto:N</code>) when MCP tools exceed 10% context</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="info-box" style="margin-top:2rem">
+    <h5>Daily Habits from the Claude Code Creator (Boris Cherny)</h5>
+    <p style="font-size:.85rem;color:var(--text-dim)">
+      Update Claude Code daily. Share a single CLAUDE.md with your team and check it into git. Tag @claude on PRs to update CLAUDE.md. Pre-approve permissions instead of using <code>--dangerously-skip-permissions</code>. Use Opus with thinking for everything important. Use Haiku for fast codebase searches.
+    </p>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ════════════════ TECHNICAL REFERENCE ════════════════ -->
+<div class="section" id="reference">
+  <div class="section-header">
+    <h2>Technical Reference</h2>
+    <p>Frontmatter specs, memory systems, and configuration hierarchy for builders.</p>
+  </div>
+
+  <div class="grid-2">
+
+    <div class="arch-box">
+      <div class="arch-label">Agent vs Command vs Skill</div>
+<pre style="font-size:.72rem;line-height:1.5">
+Dimension         Agent           Command          Skill
+───────────────────────────────────────────────────────────
+Context           Separate        Inline (main)    Inline*
+User-invocable    No /menu        Yes /name        Yes /name
+Auto-invoked      Yes (desc)      Never            Yes (desc)
+Own context       Yes (isolated)  No               No*
+Model override    Yes             Yes              Yes
+Tool restrict     Yes             Yes              Yes
+Hooks             Yes             No               Yes
+Memory            Yes             No               No
+Preload skills    Yes             No               No
+MCP servers       Yes             No               No
+
+* Skills with context:fork get separate context
+
+<strong style="color:var(--green)">When to use:</strong>
+Agent  &rarr; autonomous multi-step, context isolation
+Command &rarr; user-initiated entry point, orchestration
+Skill  &rarr; reusable knowledge, auto-invoke on intent
+</pre>
+    </div>
+
+    <div class="arch-box">
+      <div class="arch-label">Memory System (4 layers)</div>
+<pre style="font-size:.72rem;line-height:1.5">
+System        Who Writes   Who Reads      Scope
+──────────────────────────────────────────────────
+CLAUDE.md     You          Claude + all   Project
+                           agents
+Auto-memory   Claude       Claude only    Per-project
+                           (auto)                   per-user
+/memory cmd   You          Claude only    Per-project
+                                          per-user
+Agent memory  The agent    That agent     Configurable
+              itself       only
+
+<strong style="color:var(--blue)">CLAUDE.md Loading (monorepos):</strong>
+UP   &rarr; walks from cwd to root, loads all
+DOWN &rarr; subdirectory CLAUDE.md loads lazily
+         (only when Claude reads files there)
+SIBLING &rarr; never loads
+
+<strong style="color:var(--orange)">Agent Memory Scopes:</strong>
+user    &rarr; ~/.claude/agent-memory/&lt;name&gt;/
+project &rarr; .claude/agent-memory/&lt;name&gt;/
+local   &rarr; .claude/agent-memory-local/&lt;name&gt;/
+</pre>
+    </div>
+
+  </div>
+
+  <div class="grid-2" style="margin-top:1.25rem">
+
+    <div class="arch-box">
+      <div class="arch-label">Skill Frontmatter (10 fields)</div>
+<pre style="font-size:.72rem;line-height:1.5">
+---
+name: quarterly-report        # display name + /slash
+description: Generate reports  # auto-discovery trigger
+argument-hint: &lt;quarter&gt;      # autocomplete hint
+allowed-tools: Read, Write     # no permission prompts
+model: opus                    # sonnet | opus | haiku
+context: fork                  # isolated subagent
+agent: general-purpose         # subagent type (w/ fork)
+user-invocable: true           # show in / menu
+disable-model-invocation: false
+hooks:                         # lifecycle hooks
+  PostToolUse:
+    - matcher: "Edit"
+      command: "npm run lint"
+---
+# Instructions follow in markdown...
+</pre>
+    </div>
+
+    <div class="arch-box">
+      <div class="arch-label">Settings Hierarchy</div>
+<pre style="font-size:.72rem;line-height:1.5">
+Priority  Location                   Scope
+─────────────────────────────────────────────
+1 (high)  Managed (MDM/Registry)     Organization
+2         CLI arguments              Session
+3         .claude/settings.local.json Project (personal)
+4         .claude/settings.json      Project (shared)
+5 (low)   ~/.claude/settings.json    User
+
+<strong style="color:var(--green)">Key Settings:</strong>
+allow/ask/deny  &rarr; permission rules with wildcards
+                   e.g. Bash(npm run *), Edit(src/**)
+model           &rarr; default model per session
+sandbox         &rarr; filesystem + network isolation
+env             &rarr; 140+ environment variables
+
+<strong style="color:var(--orange)">Key Env Vars:</strong>
+ANTHROPIC_MODEL
+CLAUDE_CODE_EFFORT_LEVEL (Low/Med/High)
+CLAUDE_CODE_SUBAGENT_MODEL
+CLAUDE_AUTOCOMPACT_PCT_OVERRIDE
+MAX_THINKING_TOKENS
+CLAUDE_CODE_MAX_OUTPUT_TOKENS (max 64000)
+</pre>
+    </div>
+
+  </div>
+
+  <div class="arch-box" style="margin-top:1.25rem">
+    <div class="arch-label">Plugin Manifest Reference</div>
+<pre style="font-size:.72rem;line-height:1.5">
+my-plugin/
+├── .claude-plugin/
+│   └── plugin.json       &larr; name, version, description, author, license
+├── skills/
+│   ├── deploy/
+│   │   └── SKILL.md      &larr; invoked as /my-plugin:deploy
+│   └── review/
+│       └── SKILL.md      &larr; invoked as /my-plugin:review
+├── agents/
+│   └── qa-bot.md          &larr; custom subagent definition
+├── hooks/
+│   └── hooks.json         &larr; event-driven automation
+├── .mcp.json              &larr; bundled MCP server configs
+├── .lsp.json              &larr; code intelligence servers
+└── settings.json          &larr; default permission + env settings
+
+<strong style="color:var(--plugin)">Distribution:</strong> Anthropic Marketplace &middot; GitHub repos &middot; Org-private marketplaces
+<strong style="color:var(--skill)">Install:</strong> /plugin install &lt;github-url-or-name&gt;
+<strong style="color:var(--mcp)">Namespace:</strong> /my-plugin:skill-name (avoids collisions)
+</pre>
+  </div>
+
+</div>
+
+<hr class="divider">
 
 <!-- ════════════════ DETAIL OVERLAY ════════════════ -->
 <div class="overlay" id="overlay" onclick="closeModal(event)">
@@ -1666,9 +2064,11 @@ const details = {
       ]},
       { heading: 'In Claude Code', items: [
         '<code>claude mcp add my-server -- npx my-mcp-server</code>',
-        'Scopes: local, project (<code>.mcp.json</code>), user, managed (org-wide)',
-        'Supports OAuth 2.0, custom auth headers, env var expansion',
-        'Tool Search: auto-defers loading when tools exceed 10% context'
+        'Scopes: local, project (<code>.mcp.json</code>), user (<code>~/.claude.json</code>), managed (org-wide)',
+        'Supports OAuth 2.0, custom auth headers, env var expansion (<code>${MY_TOKEN}</code>)',
+        'Tool Search: auto-defers loading when tools exceed 10% context (<code>ENABLE_TOOL_SEARCH=auto:N</code>)',
+        'Subagent-scoped: agents can declare their own MCP servers in frontmatter',
+        'Precedence: Subagent &gt; Project &gt; User &gt; Managed'
       ]},
       { heading: 'In Claude Cowork', items: [
         'Connectors configured in Customize menu',
@@ -1698,7 +2098,11 @@ const details = {
         'Project: <code>.claude/skills/my-skill/SKILL.md</code>',
         'Personal: <code>~/.claude/skills/my-skill/SKILL.md</code>',
         'Also invocable via <code>/skill-name</code> slash command',
-        'Extra features: frontmatter for model override, tool restrictions, subagent context, hooks'
+        'Frontmatter: <code>name</code>, <code>description</code>, <code>allowed-tools</code>, <code>model</code>, <code>context</code>, <code>hooks</code>, and more (10 fields)',
+        '<code>context: fork</code> runs skill in isolated subagent context (like an agent)',
+        'Character budget: 15,000 chars default. Override with <code>SLASH_COMMAND_TOOL_CHAR_BUDGET</code>',
+        'Discovery: Enterprise &gt; Personal &gt; Project &gt; Plugin (priority order)',
+        '<strong>Rule of thumb:</strong> if you do it more than once a day, make it a skill'
       ]},
       { heading: 'In Claude Cowork', items: [
         'Skills bundled inside plugins',
@@ -1755,7 +2159,10 @@ const details = {
         '<code>CLAUDE.local.md</code> for personal overrides (gitignored)',
         '<code>.claude/rules/</code> directory for modular path-specific rules',
         'Import files with <code>@path/to/file</code> syntax',
-        'Load order: Managed &gt; Project &gt; User'
+        'Load order: Managed &gt; Project &gt; User',
+        '<strong>Monorepo loading:</strong> ancestor CLAUDE.md files (UP) load at startup; subdirectory (DOWN) loads lazily when files are accessed; sibling directories never load',
+        '<strong>Target 200 lines max per file</strong> for reliable adherence',
+        '<strong>Auto-memory:</strong> Claude maintains its own per-project-per-user memory at <code>~/.claude/projects/&lt;hash&gt;/memory/</code>'
       ]},
       { heading: 'In Claude Chat (Projects)', items: [
         'Create named projects in sidebar',
@@ -1776,11 +2183,13 @@ const details = {
     desc: 'Specialized AI assistants with their own isolated context, custom prompts, tool restrictions, and models. Claude Code has built-in agents (Explore, Plan) plus custom agent support. Cowork uses a coordinator + sub-agent architecture for parallel work.',
     sections: [
       { heading: 'In Claude Code', items: [
-        'Built-in: <strong>Explore</strong> (fast read-only, Haiku), <strong>Plan</strong> (research), <strong>general-purpose</strong>',
-        'Custom agents: <code>.claude/agents/my-agent.md</code>',
-        'Frontmatter: model, tools, permissions, memory, hooks, skills',
-        'Run in foreground/background, with worktree isolation',
-        '<strong>Agent Teams</strong>: parallel agents with independent contexts and communication'
+        'Built-in: <strong>Explore</strong> (Haiku, read-only), <strong>Plan</strong> (research), <strong>Bash</strong>, <strong>general-purpose</strong>, <strong>claude-code-guide</strong>',
+        'Custom agents: <code>.claude/agents/my-agent.md</code> (14 frontmatter fields)',
+        'Frontmatter: <code>name</code>, <code>description</code>, <code>tools</code>, <code>model</code>, <code>permissionMode</code>, <code>maxTurns</code>, <code>skills</code> (preload), <code>mcpServers</code>, <code>hooks</code>, <code>memory</code>, <code>background</code>, <code>isolation</code>',
+        'Run in foreground/background, with <code>isolation: worktree</code> for git isolation',
+        '<strong>Agent Teams</strong>: parallel agents with independent contexts and shared task coordination (enable with <code>CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1</code>)',
+        '<strong>Memory</strong>: agents can maintain persistent knowledge &mdash; <code>memory: user</code> (cross-project), <code>project</code> (team-shared), <code>local</code> (personal)',
+        'Agents with preloaded <code>skills:</code> get full skill content injected at startup'
       ]},
       { heading: 'In Claude Cowork', items: [
         'Coordinator decomposes tasks into parallel sub-agent jobs',
@@ -1803,19 +2212,21 @@ const details = {
     color: 'var(--hook)',
     desc: 'Deterministic, event-driven automation in Claude Code. Run shell scripts, call HTTP endpoints, invoke Claude prompts, or delegate to subagents at 16+ lifecycle points. Not available in Chat or Cowork.',
     sections: [
-      { heading: 'Hook Events (16+)', items: [
+      { heading: 'Hook Events (19)', items: [
         '<code>SessionStart</code> / <code>SessionEnd</code>',
         '<code>UserPromptSubmit</code> &mdash; before Claude processes input',
         '<code>PreToolUse</code> / <code>PostToolUse</code> / <code>PostToolUseFailure</code>',
         '<code>PermissionRequest</code> &mdash; custom approval logic',
         '<code>SubagentStart</code> / <code>SubagentStop</code>',
-        '<code>PreCompact</code>, <code>ConfigChange</code>, <code>WorktreeCreate</code>, and more'
+        '<code>PreCompact</code>, <code>ConfigChange</code>, <code>WorktreeCreate</code>, <code>TaskStart</code>, <code>TaskComplete</code>, and more'
       ]},
       { heading: 'Hook Types', items: [
-        '<strong>Command:</strong> run a shell script (exit 0 = allow, exit 2 = block)',
-        '<strong>HTTP:</strong> POST to a remote endpoint',
-        '<strong>Prompt:</strong> single-turn LLM evaluation',
-        '<strong>Agent:</strong> multi-turn agentic verification'
+        '<strong>Command:</strong> run a shell script (exit 0 = allow, exit 2 = block). Runs outside the agentic loop &mdash; deterministic.',
+        '<strong>HTTP:</strong> POST to a remote endpoint (webhook pattern)',
+        '<strong>Prompt:</strong> single-turn LLM evaluation (quick check)',
+        '<strong>Agent:</strong> multi-turn agentic verification (thorough review)',
+        'Supports <code>async: true</code> for background, non-blocking hooks',
+        'Regex matchers: <code>"matcher": "Edit|Write"</code> to scope to specific tools'
       ]},
       { heading: 'Configuration', items: [
         '<code>~/.claude/settings.json</code> (user-wide)',

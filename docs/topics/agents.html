@@ -41,6 +41,10 @@
         </svg>
       </button>
     </div>
+    <div class="search-container" id="searchContainer">
+      <input type="search" id="searchInput" placeholder="Search docs..." aria-label="Search documentation">
+      <div class="search-results" id="searchResults"></div>
+    </div>
     <nav class="sidebar-nav">
       <div class="nav-section">
   <div class="nav-section-title">Topics</div>
@@ -59,6 +63,19 @@
   <div class="nav-section-title">Reference</div>
   <a href="../topics/compatibility.html" class="nav-link">Compatibility Matrix</a>
 </div>
+<div class="nav-section">
+  <div class="nav-section-title">Decision Tools</div>
+  <a href="../topics/decision-wizard.html" class="nav-link">Decision Wizard</a>
+  <a href="../topics/comparisons.html" class="nav-link">Comparisons</a>
+</div>
+<div class="nav-section">
+  <div class="nav-section-title">Recipes</div>
+  <a href="../topics/recipe-deployment-skill.html" class="nav-link">Recipe: Build a Deployment Skill</a>
+  <a href="../topics/recipe-crm-mcp.html" class="nav-link">Recipe: CRM Enrichment with MCP</a>
+  <a href="../topics/recipe-pre-commit-hook.html" class="nav-link">Recipe: Pre-Commit Linting Hook</a>
+  <a href="../topics/recipe-custom-agent.html" class="nav-link">Recipe: Build a Custom Agent</a>
+  <a href="../topics/recipe-monorepo-settings.html" class="nav-link">Recipe: Monorepo Settings Hierarchy</a>
+</div>
 
     </nav>
   </aside>
@@ -68,7 +85,7 @@
     <span class="hamburger-line"></span>
     <span class="hamburger-line"></span>
   </button>
-  <main class="content">
+  <main class="content" data-pagefind-body>
     <article>
       <h1 id="agents">Agents<a class="anchor" href="#agents">#</a></h1>
 <div class="tabs">
@@ -140,6 +157,10 @@
 <li><strong>Agents vs Skills:</strong> Agents get their own isolated context window, can have persistent memory, their own MCP servers, and can be invoked via CLI with <code>--agent</code>. Skills are instructions loaded into the main session, auto-invoked by description matching. Use an agent for autonomous multi-step work; use a skill for inline guidance. (Skills with <code>context: fork</code> bridge the gap by running in a separate context.)</li>
 <li><strong>Agents vs Direct Prompting:</strong> Agents provide reproducible, shareable workflows. Instead of typing the same complex prompt repeatedly, define it once as an agent file and invoke it with <code>claude --agent my-agent</code>. Team members get the same behavior.</li>
 </ul>
+<div class="callout callout-tip">
+  <div class="callout-title">Tip</div>
+  <p>**Consider alternatives:** If you just need inline guidance without context isolation, consider [Skills](skills.html). If you need deterministic automation at lifecycle events, consider [Hooks](hooks.html). For a detailed comparison, see [Skill vs Agent vs Command](comparisons.html).</p>
+</div>
 <h2 id="configuration">Configuration<a class="anchor" href="#configuration">#</a></h2>
 <h3 id="agent-file-format">Agent File Format<a class="anchor" href="#agent-file-format">#</a></h3>
 <p>Custom agents in Claude Code use markdown files with YAML frontmatter:</p>
@@ -189,70 +210,46 @@
 <tr>
 <th>Field</th>
 <th>Purpose</th>
-<th>Values</th>
 </tr>
 </thead>
 <tbody><tr>
-<td><code>name</code></td>
-<td>Display name (required)</td>
-<td>Any string</td>
-</tr>
-<tr>
-<td><code>description</code></td>
-<td>Auto-discovery trigger (required)</td>
-<td>Descriptive text</td>
+<td><code>name</code> / <code>description</code></td>
+<td>Identity and auto-discovery trigger</td>
 </tr>
 <tr>
 <td><code>tools</code> / <code>disallowedTools</code></td>
 <td>Control available tools</td>
-<td>Tool name list</td>
 </tr>
 <tr>
 <td><code>model</code></td>
-<td>Override model</td>
-<td><code>opus</code>, <code>sonnet</code>, <code>haiku</code>, or inherit</td>
+<td>Override model (<code>opus</code>, <code>sonnet</code>, <code>haiku</code>)</td>
 </tr>
 <tr>
 <td><code>permissionMode</code></td>
-<td>Permission level</td>
-<td><code>default</code>, <code>acceptEdits</code>, <code>plan</code>, <code>bypassPermissions</code></td>
+<td>Permission level for the agent</td>
 </tr>
 <tr>
 <td><code>maxTurns</code></td>
 <td>Limit agentic loops</td>
-<td>Number</td>
 </tr>
 <tr>
 <td><code>skills</code></td>
 <td>Preload skills into agent context</td>
-<td>Skill name list</td>
 </tr>
 <tr>
 <td><code>mcpServers</code></td>
 <td>Agent-scoped MCP servers</td>
-<td>Server config objects</td>
 </tr>
 <tr>
 <td><code>hooks</code></td>
 <td>Agent-scoped lifecycle hooks</td>
-<td>Hook config objects</td>
 </tr>
 <tr>
 <td><code>memory</code></td>
 <td>Persistent cross-session knowledge</td>
-<td><code>user</code>, <code>project</code>, <code>local</code></td>
-</tr>
-<tr>
-<td><code>background</code></td>
-<td>Run in background</td>
-<td>Boolean</td>
-</tr>
-<tr>
-<td><code>isolation</code></td>
-<td>Git worktree isolation</td>
-<td><code>worktree</code></td>
 </tr>
 </tbody></table>
+<p>For the complete agent file format specification with all 12 fields, types, defaults, and validation rules, see the <strong>Reference</strong> tab.</p>
 <h3 id="agent-memory">Agent Memory<a class="anchor" href="#agent-memory">#</a></h3>
 <p>Agents can maintain persistent knowledge across sessions:</p>
 <table>
@@ -395,30 +392,437 @@ Use an agent when you need context isolation, persistent memory, MCP server acce
   </div>
   <div class="tab-panel" data-tab-panel="howto">
 
-<h2 id="how-to-guides">How-To Guides<a class="anchor" href="#how-to-guides">#</a></h2>
-<div class="callout callout-info">
-  <div class="callout-title">Info</div>
-  <p>Step-by-step guides for Agents are coming in Phase 4.</p>
-</div>
-<p>Planned guides:</p>
+<h2 id="how-to-create-a-custom-agent">How to Create a Custom Agent<a class="anchor" href="#how-to-create-a-custom-agent">#</a></h2>
+<p>Build a specialized agent with its own context, tool restrictions, and optional persistent memory.</p>
+<h3 id="prerequisites">Prerequisites<a class="anchor" href="#prerequisites">#</a></h3>
 <ul>
-<li><p>How to create a custom agent -- <em>coming soon</em></p>
+<li>Claude Code installed and working (<code>claude --version</code>)</li>
+<li>A project with a <code>.claude/</code> directory (or willingness to create one)</li>
+<li>A specific persona or workflow you want to isolate from the main session</li>
+</ul>
+<h3 id="step-1-create-the-agents-directory">Step 1: Create the Agents Directory<a class="anchor" href="#step-1-create-the-agents-directory">#</a></h3>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-bash">&lt;span class=<span class="hljs-string">&quot;hljs-built_in&quot;</span>&gt;<span class="hljs-built_in">mkdir</span>&lt;/span&gt; -p .claude/agents</code></pre>
+</div>
+<p>This creates the project-level agents directory. Agents placed here are shared with your team via git.</p>
+<h3 id="step-2-create-the-agent-file-with-frontmatter">Step 2: Create the Agent File with Frontmatter<a class="anchor" href="#step-2-create-the-agent-file-with-frontmatter">#</a></h3>
+<p>Create a file at <code>.claude/agents/code-reviewer.md</code> with YAML frontmatter defining the agent&#39;s capabilities:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">yaml</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-yaml"><span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-meta&quot;&gt;---&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;name:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;code-reviewer&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;description:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Reviews&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;code&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;changes&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;for&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;quality,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;security,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;and&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;style&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;issues&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;tools:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Read,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Grep,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Glob&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;disallowedTools:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Write,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Edit,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Bash&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;model:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;sonnet&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;permissionMode:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;plan&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;maxTurns:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-number&quot;&gt;20&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-meta&quot;&gt;---&lt;/span&gt;</span></code></pre>
+</div>
+<p><strong>Key fields explained:</strong></p>
+<ul>
+<li><strong><code>tools</code></strong> / <strong><code>disallowedTools</code></strong> -- Control what the agent can and cannot do. This reviewer can read but not modify code.</li>
+<li><strong><code>model</code></strong> -- Override the model. Use <code>opus</code> for complex reasoning, <code>haiku</code> for fast lightweight tasks.</li>
+<li><strong><code>permissionMode</code></strong> -- Controls permission prompts: <code>default</code> (normal prompts), <code>acceptEdits</code> (auto-accept edits), <code>plan</code> (show plan, ask confirmation), <code>bypassPermissions</code> (skip all), <code>dontAsk</code> (deny without asking).</li>
+<li><strong><code>maxTurns</code></strong> -- Limits agentic loops to prevent runaway execution.</li>
+</ul>
+<h3 id="step-3-write-the-agent-instructions">Step 3: Write the Agent Instructions<a class="anchor" href="#step-3-write-the-agent-instructions">#</a></h3>
+<p>Below the frontmatter, add the markdown body that defines the agent&#39;s behavior:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">markdown</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-markdown"><span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span># Code Reviewer<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+
+You are a senior code reviewer. When invoked, examine all changed files for:
+
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span>## Review Checklist<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>1.<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-strong&quot;</span>&gt;</span></span><span class="hljs-strong">**Security vulnerabilities**</span><span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> -- SQL injection, XSS, auth bypass, secrets in code
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>2.<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-strong&quot;</span>&gt;</span></span><span class="hljs-strong">**Performance issues**</span><span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> -- N+1 queries, unnecessary re-renders, memory leaks
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>3.<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-strong&quot;</span>&gt;</span></span><span class="hljs-strong">**Code style**</span><span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> -- Naming conventions, file organization, consistent patterns
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>4.<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-strong&quot;</span>&gt;</span></span><span class="hljs-strong">**Error handling**</span><span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> -- Missing try/catch, unhandled promise rejections, null checks
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>5.<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-strong&quot;</span>&gt;</span></span><span class="hljs-strong">**Test coverage**</span><span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> -- New code paths without tests, edge cases not covered
+
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span>## Output Format<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+
+Provide a structured markdown report:
+
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span>### Critical Issues (must fix)<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span>### Warnings (should fix)<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span>### Suggestions (nice to have)<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+
+Rate overall code quality: A (excellent) through F (needs major rework).</code></pre>
+</div>
+<h3 id="step-4-test-the-agent">Step 4: Test the Agent<a class="anchor" href="#step-4-test-the-agent">#</a></h3>
+<p>Invoke the agent from the command line:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-bash">claude --agent code-reviewer &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Review the changes <span class="hljs-keyword">in</span> src/auth/&amp;quot;&lt;/span&gt;</code></pre>
+</div>
+<p>The agent runs in its own isolated context with only the tools you specified (Read, Grep, Glob). It cannot modify files because Write, Edit, and Bash are disallowed.</p>
+<h3 id="step-5-add-advanced-features">Step 5: Add Advanced Features<a class="anchor" href="#step-5-add-advanced-features">#</a></h3>
+<p>Enhance the agent with skills, MCP servers, hooks, and memory:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">yaml</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-yaml"><span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-meta&quot;&gt;---&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;name:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;code-reviewer&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;description:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Reviews&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;code&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;changes&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;for&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;quality,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;security,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;and&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;style&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;issues&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;tools:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Read,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Grep,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Glob&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;disallowedTools:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Write,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Edit,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Bash&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;model:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;sonnet&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;permissionMode:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;plan&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;maxTurns:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-number&quot;&gt;20&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;skills:&lt;/span&gt;</span>
+  <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-bullet&quot;&gt;-&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;code-standards&lt;/span&gt;</span>
+  <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-bullet&quot;&gt;-&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;security-review&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;mcpServers:&lt;/span&gt;</span>
+  <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-bullet&quot;&gt;-&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;playwright:&lt;/span&gt;</span>
+      <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;type:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;stdio&lt;/span&gt;</span>
+      <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;command:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;npx&lt;/span&gt;</span>
+      <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;args:&lt;/span&gt;</span> [<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;&amp;quot;-y&amp;quot;&lt;/span&gt;</span>, <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;&amp;quot;@playwright/mcp@latest&amp;quot;&lt;/span&gt;</span>]
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;hooks:&lt;/span&gt;</span>
+  <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;PreToolUse:&lt;/span&gt;</span>
+    <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-bullet&quot;&gt;-&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;matcher:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;&amp;quot;Read&amp;quot;&lt;/span&gt;</span>
+      <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;hooks:&lt;/span&gt;</span>
+        <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-bullet&quot;&gt;-&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;type:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;command&lt;/span&gt;</span>
+          <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;command:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;&amp;quot;echo</span> <span class="hljs-string">&amp;#x27;Reviewing:</span> <span class="hljs-string">$CLAUDE_FILE_PATH&amp;#x27;</span> <span class="hljs-string">&amp;gt;&amp;gt;</span> <span class="hljs-string">.claude/review.log&amp;quot;&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;memory:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;project&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-meta&quot;&gt;---&lt;/span&gt;</span></code></pre>
+</div>
+<ul>
+<li><strong><code>skills</code></strong> -- Preloads skill instructions into the agent&#39;s context at startup</li>
+<li><strong><code>mcpServers</code></strong> -- Agent-scoped MCP servers (not shared with main session)</li>
+<li><strong><code>hooks</code></strong> -- Agent-scoped lifecycle hooks</li>
+<li><strong><code>memory: project</code></strong> -- Persistent knowledge stored at <code>.claude/agent-memory/code-reviewer/</code>, shared via git</li>
+</ul>
+<h3 id="step-6-create-a-personal-agent-for-cross-project-use">Step 6: Create a Personal Agent for Cross-Project Use<a class="anchor" href="#step-6-create-a-personal-agent-for-cross-project-use">#</a></h3>
+<p>For agents you want in every project:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-bash">&lt;span class=<span class="hljs-string">&quot;hljs-built_in&quot;</span>&gt;<span class="hljs-built_in">mkdir</span>&lt;/span&gt; -p ~/.claude/agents</code></pre>
+</div>
+<p>Create <code>~/.claude/agents/quick-explore.md</code>:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">yaml</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-yaml"><span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-meta&quot;&gt;---&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;name:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;quick-explore&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;description:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Fast&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;codebase&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;exploration&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;using&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;lightweight&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;model&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;tools:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Read,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Grep,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Glob&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;model:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;haiku&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;maxTurns:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-number&quot;&gt;10&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-meta&quot;&gt;---</span>
+<span class="hljs-string">&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-comment&quot;&gt;#</span> <span class="hljs-string">Quick</span> <span class="hljs-string">Explorer&lt;/span&gt;</span>
+
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;You</span> <span class="hljs-string">are</span> <span class="hljs-string">a</span> <span class="hljs-string">fast</span> <span class="hljs-string">codebase</span> <span class="hljs-string">navigator.</span> <span class="hljs-string">When</span> <span class="hljs-string">asked</span> <span class="hljs-string">about</span> <span class="hljs-string">code:&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-number&quot;&gt;1&lt;/span&gt;&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;.&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Search&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;for&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;relevant&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;files&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;using&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Glob&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;and&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Grep&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-number&quot;&gt;2&lt;/span&gt;&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;.&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Read&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;key&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;sections&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-number&quot;&gt;3&lt;/span&gt;&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;.&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Provide&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;a&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;concise&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;summary&lt;/span&gt;</span>
+
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Keep&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;responses&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;brief&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;and&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;focused.&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;You&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;are&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;optimized&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;for&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;speed.&lt;/span&gt;</span></code></pre>
+</div>
+<p>Personal agents have lower priority than project-level agents.</p>
+<h3 id="verify-it-works">Verify It Works<a class="anchor" href="#verify-it-works">#</a></h3>
+<ul>
+<li><code>claude --agent code-reviewer</code> starts the agent in an isolated context</li>
+<li>The agent can only use Read, Grep, and Glob (not Write, Edit, or Bash)</li>
+<li>The agent follows the instructions in the markdown body</li>
+<li>If <code>memory: project</code> is set, a <code>.claude/agent-memory/code-reviewer/</code> directory is created after the first run</li>
+</ul>
+<h3 id="troubleshooting">Troubleshooting<a class="anchor" href="#troubleshooting">#</a></h3>
+<ul>
+<li><p><strong>Agent not found:</strong> Verify the file is at <code>.claude/agents/code-reviewer.md</code> (not nested in a subdirectory). The filename (minus <code>.md</code>) is the agent identifier.</p>
+</li>
+<li><p><strong>Permission mode issues:</strong> <code>bypassPermissions</code> skips all safety prompts -- use cautiously. <code>plan</code> mode shows a plan before execution, which is safer for review agents.</p>
+</li>
+<li><p><strong>Tools not restricted:</strong> Ensure <code>disallowedTools</code> lists the exact tool names: <code>Write</code>, <code>Edit</code>, <code>Bash</code>, <code>Read</code>, <code>Grep</code>, <code>Glob</code>. Names are case-sensitive.</p>
+</li>
+<li><p><strong>Memory not persisting:</strong> Check that the memory scope matches your intent: <code>project</code> stores at <code>.claude/agent-memory/&lt;name&gt;/</code>, <code>user</code> at <code>~/.claude/agent-memory/&lt;name&gt;/</code>, <code>local</code> at <code>.claude/agent-memory-local/&lt;name&gt;/</code>.</p>
+</li>
+<li><p><strong>Agent running too long:</strong> Set <code>maxTurns</code> to limit the number of agentic loops. Start with 10-20 for review tasks, higher for complex multi-step work.</p>
 </div>
 <div class="tab-panel" data-tab-panel="reference"></li>
 </ul>
-<h2 id="technical-reference">Technical Reference<a class="anchor" href="#technical-reference">#</a></h2>
-<div class="callout callout-info">
-  <div class="callout-title">Info</div>
-  <p>Detailed reference specs for Agents are coming in Phase 4.</p>
+<h2 id="agent-file-format-specification">Agent File Format Specification<a class="anchor" href="#agent-file-format-specification">#</a></h2>
+<h3 id="file-location">File Location<a class="anchor" href="#file-location">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>Path</th>
+<th>Visibility</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Project</td>
+<td><code>.claude/agents/*.md</code></td>
+<td>Shared via git, team-wide</td>
+</tr>
+<tr>
+<td>Personal</td>
+<td><code>~/.claude/agents/*.md</code></td>
+<td>Your own, all projects</td>
+</tr>
+<tr>
+<td>Plugin</td>
+<td><code>&lt;plugin&gt;/agents/*.md</code></td>
+<td>Via plugin installation</td>
+</tr>
+</tbody></table>
+<p><strong>Resolution priority:</strong> Project &gt; Personal &gt; Plugin. If multiple agents share a name, the highest-priority scope wins.</p>
+<h3 id="complete-frontmatter-example">Complete Frontmatter Example<a class="anchor" href="#complete-frontmatter-example">#</a></h3>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">yaml</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-yaml"><span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-meta&quot;&gt;---&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;name:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;code-reviewer&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;description:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Reviews&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;code&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;changes&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;for&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;quality,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;security,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;and&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;style&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;issues&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;tools:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Read,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Grep,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Glob&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;disallowedTools:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Write,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Edit,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Bash&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;model:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;sonnet&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;permissionMode:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;plan&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;maxTurns:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-number&quot;&gt;20&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;skills:&lt;/span&gt;</span>
+  <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-bullet&quot;&gt;-&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;code-standards&lt;/span&gt;</span>
+  <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-bullet&quot;&gt;-&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;security-review&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;mcpServers:&lt;/span&gt;</span>
+  <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-bullet&quot;&gt;-&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;playwright:&lt;/span&gt;</span>
+      <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;type:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;stdio&lt;/span&gt;</span>
+      <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;command:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;npx&lt;/span&gt;</span>
+      <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;args:&lt;/span&gt;</span> [<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;&amp;quot;-y&amp;quot;&lt;/span&gt;</span>, <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;&amp;quot;@playwright/mcp@latest&amp;quot;&lt;/span&gt;</span>]
+  <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-bullet&quot;&gt;-&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;github&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;hooks:&lt;/span&gt;</span>
+  <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;PreToolUse:&lt;/span&gt;</span>
+    <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-bullet&quot;&gt;-&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;matcher:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;&amp;quot;Bash&amp;quot;&lt;/span&gt;</span>
+      <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;hooks:&lt;/span&gt;</span>
+        <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-bullet&quot;&gt;-&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;type:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;command&lt;/span&gt;</span>
+          <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;command:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;&amp;quot;./scripts/validate-command.sh&amp;quot;&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;memory:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;project&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;background:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-literal&quot;&gt;false&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;isolation:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;worktree&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-meta&quot;&gt;---&lt;/span&gt;</span></code></pre>
 </div>
-<p>Planned references:</p>
-<ul>
-<li><p>Agent file format spec (all fields, validation rules) -- <em>coming soon</em></p>
-</li>
-<li><p>Environment variables reference -- <em>coming soon</em></p>
+<h3 id="field-reference">Field Reference<a class="anchor" href="#field-reference">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>name</code></td>
+<td>string</td>
+<td>Yes</td>
+<td>filename</td>
+<td>Display name. Defaults to the filename (minus <code>.md</code>) if omitted.</td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td>string</td>
+<td>Yes</td>
+<td><code>&quot;&quot;</code></td>
+<td>Describes the agent&#39;s purpose. Used for auto-discovery when spawning subagents.</td>
+</tr>
+<tr>
+<td><code>tools</code></td>
+<td>string list</td>
+<td>No</td>
+<td>all tools</td>
+<td>Comma-separated list of allowed tools. If set, only these tools are available.</td>
+</tr>
+<tr>
+<td><code>disallowedTools</code></td>
+<td>string list</td>
+<td>No</td>
+<td>none</td>
+<td>Comma-separated list of denied tools. Cannot overlap with <code>tools</code>.</td>
+</tr>
+<tr>
+<td><code>model</code></td>
+<td>string</td>
+<td>No</td>
+<td>inherited</td>
+<td>Model override: <code>haiku</code>, <code>sonnet</code>, <code>opus</code>, or a specific model ID.</td>
+</tr>
+<tr>
+<td><code>permissionMode</code></td>
+<td>enum</td>
+<td>No</td>
+<td><code>default</code></td>
+<td><code>default</code> (normal prompts), <code>acceptEdits</code> (auto-accept file edits), <code>dontAsk</code> (deny without asking), <code>bypassPermissions</code> (skip all), <code>plan</code> (show plan first).</td>
+</tr>
+<tr>
+<td><code>maxTurns</code></td>
+<td>number</td>
+<td>No</td>
+<td>unlimited</td>
+<td>Maximum number of agentic turns before the agent stops.</td>
+</tr>
+<tr>
+<td><code>skills</code></td>
+<td>string list</td>
+<td>No</td>
+<td>none</td>
+<td>Skills to preload into the agent&#39;s context at startup.</td>
+</tr>
+<tr>
+<td><code>mcpServers</code></td>
+<td>array</td>
+<td>No</td>
+<td>none</td>
+<td>Agent-scoped MCP servers. Each entry is an object with server config or a string referencing a named server.</td>
+</tr>
+<tr>
+<td><code>hooks</code></td>
+<td>object</td>
+<td>No</td>
+<td>none</td>
+<td>Agent-scoped lifecycle hooks. Uses the same nested hook schema as settings.json.</td>
+</tr>
+<tr>
+<td><code>memory</code></td>
+<td>enum</td>
+<td>No</td>
+<td>none</td>
+<td>Persistent memory scope: <code>project</code> (<code>.claude/agent-memory/&lt;name&gt;/</code>), <code>user</code> (<code>~/.claude/agent-memory/&lt;name&gt;/</code>), or <code>local</code> (<code>.claude/agent-memory-local/&lt;name&gt;/</code>).</td>
+</tr>
+<tr>
+<td><code>background</code></td>
+<td>boolean</td>
+<td>No</td>
+<td><code>false</code></td>
+<td>Run the agent in the background.</td>
+</tr>
+<tr>
+<td><code>isolation</code></td>
+<td>enum</td>
+<td>No</td>
+<td><code>none</code></td>
+<td><code>worktree</code> creates an isolated git worktree for the agent. <code>none</code> shares the working directory.</td>
+</tr>
+</tbody></table>
+<h3 id="file-resolution-priority">File Resolution Priority<a class="anchor" href="#file-resolution-priority">#</a></h3>
+<p>When Claude resolves an agent by name:</p>
+<ol>
+<li><strong>Project agents</strong> (<code>.claude/agents/*.md</code>) -- highest priority</li>
+<li><strong>Personal agents</strong> (<code>~/.claude/agents/*.md</code>)</li>
+<li><strong>Plugin agents</strong> (<code>&lt;plugin&gt;/agents/*.md</code>) -- lowest priority</li>
+<li><strong>Built-in agents</strong> (Explore, Plan, Bash, etc.)</li>
+</ol>
+<h3 id="memory-scopes">Memory Scopes<a class="anchor" href="#memory-scopes">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>Storage Path</th>
+<th>Visibility</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>project</code></td>
+<td><code>.claude/agent-memory/&lt;name&gt;/</code></td>
+<td>Team-shared via git</td>
+<td>Shared knowledge base for the team</td>
+</tr>
+<tr>
+<td><code>user</code></td>
+<td><code>~/.claude/agent-memory/&lt;name&gt;/</code></td>
+<td>Personal, cross-project</td>
+<td>Personal agent knowledge</td>
+</tr>
+<tr>
+<td><code>local</code></td>
+<td><code>.claude/agent-memory-local/&lt;name&gt;/</code></td>
+<td>Personal, per-project</td>
+<td>Project-specific personal notes</td>
+</tr>
+</tbody></table>
+<p>Memory is written by the agent during execution and loaded automatically at the start of each session. The agent manages its own memory files (typically markdown).</p>
+<h3 id="examples">Examples<a class="anchor" href="#examples">#</a></h3>
+<p><strong>Minimal agent</strong> (name and description only):</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">yaml</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-yaml"><span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-meta&quot;&gt;---&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;name:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;quick-review&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;description:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Quick&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;code&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;review&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;for&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;pull&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;requests&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-meta&quot;&gt;---</span>
+<span class="hljs-string">&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Review&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;the&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;current&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;changes.&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Focus&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;on&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;bugs&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;and&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;security&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;issues.&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Provide&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;a&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;brief&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;summary&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;with&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;severity&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;ratings.&lt;/span&gt;</span></code></pre>
 </div>
-</div></li>
-</ul>
+<p><strong>Full agent</strong> (all 12 fields):</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">yaml</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-yaml"><span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-meta&quot;&gt;---&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;name:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;code-reviewer&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;description:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Reviews&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;code&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;changes&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;for&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;quality,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;security,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;and&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;style&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;issues&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;tools:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Read,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Grep,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Glob&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;disallowedTools:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Write,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Edit,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Bash&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;model:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;sonnet&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;permissionMode:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;plan&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;maxTurns:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-number&quot;&gt;20&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;skills:&lt;/span&gt;</span>
+  <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-bullet&quot;&gt;-&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;code-standards&lt;/span&gt;</span>
+  <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-bullet&quot;&gt;-&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;security-review&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;mcpServers:&lt;/span&gt;</span>
+  <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-bullet&quot;&gt;-&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;playwright:&lt;/span&gt;</span>
+      <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;type:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;stdio&lt;/span&gt;</span>
+      <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;command:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;npx&lt;/span&gt;</span>
+      <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;args:&lt;/span&gt;</span> [<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;&amp;quot;-y&amp;quot;&lt;/span&gt;</span>, <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;&amp;quot;@playwright/mcp@latest&amp;quot;&lt;/span&gt;</span>]
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;hooks:&lt;/span&gt;</span>
+  <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;PreToolUse:&lt;/span&gt;</span>
+    <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-bullet&quot;&gt;-&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;matcher:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;&amp;quot;Read&amp;quot;&lt;/span&gt;</span>
+      <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;hooks:&lt;/span&gt;</span>
+        <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-bullet&quot;&gt;-&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;type:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;command&lt;/span&gt;</span>
+          <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;command:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;&amp;quot;echo</span> <span class="hljs-string">&amp;#x27;Reviewing:</span> <span class="hljs-string">$CLAUDE_FILE_PATH&amp;#x27;&amp;quot;&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;memory:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;project&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;background:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-literal&quot;&gt;false&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;isolation:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;worktree&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-meta&quot;&gt;---</span>
+<span class="hljs-string">&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-comment&quot;&gt;#</span> <span class="hljs-string">Code</span> <span class="hljs-string">Reviewer&lt;/span&gt;</span>
+
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;You&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;are&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;a&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;senior&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;code&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;reviewer.&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Examine&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;all&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;changed&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;files&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;for&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;security&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;vulnerabilities,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;performance&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;issues,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;style&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;violations,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;and&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;missing&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;tests.&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Output&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;a&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;structured&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;markdown&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;report&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;with&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;severity&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;levels.&lt;/span&gt;</span></code></pre>
+</div>
+  </div>
+</div>
+
 <h2 id="related">Related<a class="anchor" href="#related">#</a></h2>
 <ul>
 <li><a href="skills.html">Skills</a> -- Skills provide reusable instructions; agents provide isolated execution contexts</li>

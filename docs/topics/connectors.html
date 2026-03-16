@@ -41,6 +41,10 @@
         </svg>
       </button>
     </div>
+    <div class="search-container" id="searchContainer">
+      <input type="search" id="searchInput" placeholder="Search docs..." aria-label="Search documentation">
+      <div class="search-results" id="searchResults"></div>
+    </div>
     <nav class="sidebar-nav">
       <div class="nav-section">
   <div class="nav-section-title">Topics</div>
@@ -59,6 +63,19 @@
   <div class="nav-section-title">Reference</div>
   <a href="../topics/compatibility.html" class="nav-link">Compatibility Matrix</a>
 </div>
+<div class="nav-section">
+  <div class="nav-section-title">Decision Tools</div>
+  <a href="../topics/decision-wizard.html" class="nav-link">Decision Wizard</a>
+  <a href="../topics/comparisons.html" class="nav-link">Comparisons</a>
+</div>
+<div class="nav-section">
+  <div class="nav-section-title">Recipes</div>
+  <a href="../topics/recipe-deployment-skill.html" class="nav-link">Recipe: Build a Deployment Skill</a>
+  <a href="../topics/recipe-crm-mcp.html" class="nav-link">Recipe: CRM Enrichment with MCP</a>
+  <a href="../topics/recipe-pre-commit-hook.html" class="nav-link">Recipe: Pre-Commit Linting Hook</a>
+  <a href="../topics/recipe-custom-agent.html" class="nav-link">Recipe: Build a Custom Agent</a>
+  <a href="../topics/recipe-monorepo-settings.html" class="nav-link">Recipe: Monorepo Settings Hierarchy</a>
+</div>
 
     </nav>
   </aside>
@@ -68,7 +85,7 @@
     <span class="hamburger-line"></span>
     <span class="hamburger-line"></span>
   </button>
-  <main class="content">
+  <main class="content" data-pagefind-body>
     <article>
       <h1 id="interactive-apps">Interactive Apps<a class="anchor" href="#interactive-apps">#</a></h1>
 <div class="tabs">
@@ -148,6 +165,10 @@
 <li><strong>Use raw MCP in Claude Code</strong> when you need more control, custom server configuration, or are working in a terminal-based workflow</li>
 <li><strong>Don&#39;t use Interactive Apps</strong> for data-heavy integrations (databases, large APIs) -- use standard MCP Connectors or MCP servers instead</li>
 </ul>
+<div class="callout callout-tip">
+  <div class="callout-title">Tip</div>
+  <p>**Consider alternatives:** If you need more control or custom server configuration, consider [MCP](mcp.html) servers directly. If you want to bundle integrations with other capabilities, consider [Plugins](plugins.html). For a detailed comparison, see [MCP vs Plugin vs Connector](comparisons.html).</p>
+</div>
 <h2 id="best-practices">Best Practices<a class="anchor" href="#best-practices">#</a></h2>
 <ul>
 <li>Use Interactive Apps for tasks that benefit from visual context -- reviewing Figma designs, browsing Slack conversations, managing Asana tasks</li>
@@ -166,35 +187,68 @@ No, Interactive Apps are currently available only in Claude Chat (claude.ai web 
   <div class="tab-panel" data-tab-panel="howto">
 
 <h2 id="how-to-guides">How-To Guides<a class="anchor" href="#how-to-guides">#</a></h2>
-<div class="callout callout-info">
-  <div class="callout-title">Info</div>
-  <p>Step-by-step guides for Connectors are coming in Phase 4.</p>
-</div>
-<p>Planned guides:</p>
-<ul>
-<li><p>Connecting Figma, Slack, and Asana in Claude Chat -- <em>coming soon</em></p>
-</li>
-<li><p>Using Interactive Apps for design review workflows -- <em>coming soon</em></p>
-</li>
-<li><p>Choosing between Connectors and MCP servers -- <em>coming soon</em></p>
-</div>
-<div class="tab-panel" data-tab-panel="reference"></li>
-</ul>
+<p>Interactive Apps and Connectors are managed through the <strong>Claude Chat web interface</strong> (claude.ai), not through CLI configuration. To enable a connector:</p>
+<ol>
+<li>Go to <strong>Settings &gt; Connectors</strong> in Claude Chat (or visit claude.ai/settings/connectors)</li>
+<li>Find the connector you want (Figma, Slack, Asana, etc.)</li>
+<li>Click <strong>Connect</strong> and authorize the service</li>
+</ol>
+<p>No CLI setup or config files are needed -- Connectors are one-click integrations.</p>
+<p><strong>Looking for tool server setup in Claude Code?</strong> Connectors are the managed equivalent of MCP servers. For adding tool servers to Claude Code via CLI or <code>.mcp.json</code>, see the <a href="mcp.html">MCP How-To guides</a>.</p>
+<!-- end howto -->
+
+  </div>
+  <div class="tab-panel" data-tab-panel="reference">
+
 <h2 id="technical-reference">Technical Reference<a class="anchor" href="#technical-reference">#</a></h2>
-<div class="callout callout-info">
-  <div class="callout-title">Info</div>
-  <p>Detailed reference specs for Connectors are coming in Phase 4.</p>
+<p>Connectors are configured through the Claude Chat UI and do not have a CLI config schema. They are pre-built, hosted MCP integrations managed by Anthropic.</p>
+<h3 id="available-interactive-apps">Available Interactive Apps<a class="anchor" href="#available-interactive-apps">#</a></h3>
+<p>Interactive Apps render embedded UI within Claude Chat conversations:</p>
+<table>
+<thead>
+<tr>
+<th>App</th>
+<th>Category</th>
+<th>Capability</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Figma</td>
+<td>Design</td>
+<td>View and edit designs inline</td>
+</tr>
+<tr>
+<td>Canva</td>
+<td>Design</td>
+<td>Create and edit visual content</td>
+</tr>
+<tr>
+<td>Slack</td>
+<td>Communication</td>
+<td>Read and send messages</td>
+</tr>
+<tr>
+<td>Asana</td>
+<td>Project Management</td>
+<td>Manage tasks and projects</td>
+</tr>
+<tr>
+<td>Box</td>
+<td>File Management</td>
+<td>Browse and manage files</td>
+</tr>
+<tr>
+<td>Clay</td>
+<td>CRM</td>
+<td>CRM and prospecting</td>
+</tr>
+</tbody></table>
+<h3 id="standard-connectors">Standard Connectors<a class="anchor" href="#standard-connectors">#</a></h3>
+<p>50+ additional connectors provide tool access without embedded UI, including Google Drive, Notion, Confluence, Jira, Linear, HubSpot, Salesforce, and more. These are enabled the same way -- through <strong>Settings &gt; Connectors</strong> in Claude Chat.</p>
+<p>For CLI-based tool server configuration in Claude Code, see the <a href="mcp.html">MCP Reference</a>.</p>
+  </div>
 </div>
-<p>Planned references:</p>
-<ul>
-<li><p>Available connectors catalog and capabilities -- <em>coming soon</em></p>
-</li>
-<li><p>MCP Apps extension protocol details -- <em>coming soon</em></p>
-</li>
-<li><p>Connector configuration options -- <em>coming soon</em></p>
-</div>
-</div></li>
-</ul>
+
 <h2 id="related">Related<a class="anchor" href="#related">#</a></h2>
 <ul>
 <li><a href="mcp.html">MCP</a> -- The protocol layer that powers both Connectors and Interactive Apps</li>

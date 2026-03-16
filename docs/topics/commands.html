@@ -41,6 +41,10 @@
         </svg>
       </button>
     </div>
+    <div class="search-container" id="searchContainer">
+      <input type="search" id="searchInput" placeholder="Search docs..." aria-label="Search documentation">
+      <div class="search-results" id="searchResults"></div>
+    </div>
     <nav class="sidebar-nav">
       <div class="nav-section">
   <div class="nav-section-title">Topics</div>
@@ -59,6 +63,19 @@
   <div class="nav-section-title">Reference</div>
   <a href="../topics/compatibility.html" class="nav-link">Compatibility Matrix</a>
 </div>
+<div class="nav-section">
+  <div class="nav-section-title">Decision Tools</div>
+  <a href="../topics/decision-wizard.html" class="nav-link">Decision Wizard</a>
+  <a href="../topics/comparisons.html" class="nav-link">Comparisons</a>
+</div>
+<div class="nav-section">
+  <div class="nav-section-title">Recipes</div>
+  <a href="../topics/recipe-deployment-skill.html" class="nav-link">Recipe: Build a Deployment Skill</a>
+  <a href="../topics/recipe-crm-mcp.html" class="nav-link">Recipe: CRM Enrichment with MCP</a>
+  <a href="../topics/recipe-pre-commit-hook.html" class="nav-link">Recipe: Pre-Commit Linting Hook</a>
+  <a href="../topics/recipe-custom-agent.html" class="nav-link">Recipe: Build a Custom Agent</a>
+  <a href="../topics/recipe-monorepo-settings.html" class="nav-link">Recipe: Monorepo Settings Hierarchy</a>
+</div>
 
     </nav>
   </aside>
@@ -68,7 +85,7 @@
     <span class="hamburger-line"></span>
     <span class="hamburger-line"></span>
   </button>
-  <main class="content">
+  <main class="content" data-pagefind-body>
     <article>
       <h1 id="commands-and-slash-commands">Commands and Slash Commands<a class="anchor" href="#commands-and-slash-commands">#</a></h1>
 <div class="tabs">
@@ -185,6 +202,10 @@
 <li><strong>Legacy commands:</strong> Only if you already have a <code>.claude/commands/</code> setup and don&#39;t need the extra features of Skills</li>
 <li><strong>If you do something more than once a day:</strong> Make it a Skill (and it automatically becomes a slash command)</li>
 </ul>
+<div class="callout callout-tip">
+  <div class="callout-title">Tip</div>
+  <p>**Consider alternatives:** For custom reusable instructions, consider [Skills](skills.html) instead of legacy commands -- Skills offer auto-invocation, cross-surface portability, and tool restrictions. For complex workflows, consider [Agents](agents.html). For a detailed comparison, see [Skill vs Agent vs Command](comparisons.html).</p>
+</div>
 <h2 id="best-practices">Best Practices<a class="anchor" href="#best-practices">#</a></h2>
 <ul>
 <li><strong>Use Skills instead of legacy Commands</strong> -- Skills offer auto-invocation, model overrides, tool restrictions, and cross-interface portability</li>
@@ -205,35 +226,65 @@ Create a Skill at <code>.claude/skills/deploy/SKILL.md</code> and check it into 
   <div class="tab-panel" data-tab-panel="howto">
 
 <h2 id="how-to-guides">How-To Guides<a class="anchor" href="#how-to-guides">#</a></h2>
-<div class="callout callout-info">
-  <div class="callout-title">Info</div>
-  <p>Step-by-step guides for Commands are coming in Phase 4.</p>
-</div>
-<p>Planned guides:</p>
-<ul>
-<li><p>Creating custom slash commands with Skills -- <em>coming soon</em></p>
-</li>
-<li><p>Migrating legacy commands to Skills -- <em>coming soon</em></p>
-</li>
-<li><p>Using built-in commands for effective session management -- <em>coming soon</em></p>
-</div>
-<div class="tab-panel" data-tab-panel="reference"></li>
-</ul>
+<p>Custom slash commands are now created using <strong>Skills</strong>, which offer auto-invocation, model overrides, tool restrictions, and cross-interface portability. The legacy <code>.claude/commands/</code> directory still works but is not recommended for new work.</p>
+<p>For creating custom slash commands, see the <a href="skills.html">Skills How-To guide</a>, which covers the recommended approach using Skills with frontmatter.</p>
+<p>For built-in commands like <code>/compact</code>, <code>/model</code>, <code>/memory</code>, and <code>/clear</code>, see the Concept tab on this page for a complete list.</p>
+<!-- end howto -->
+
+  </div>
+  <div class="tab-panel" data-tab-panel="reference">
+
 <h2 id="technical-reference">Technical Reference<a class="anchor" href="#technical-reference">#</a></h2>
-<div class="callout callout-info">
-  <div class="callout-title">Info</div>
-  <p>Detailed reference specs for Commands are coming in Phase 4.</p>
-</div>
-<p>Planned references:</p>
+<h3 id="legacy-commands-directory">Legacy Commands Directory<a class="anchor" href="#legacy-commands-directory">#</a></h3>
+<p>The original custom commands system uses markdown files in <code>.claude/commands/</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Directory</td>
+<td><code>.claude/commands/</code> (project) or <code>~/.claude/commands/</code> (user)</td>
+</tr>
+<tr>
+<td>File format</td>
+<td>Markdown (<code>.md</code>)</td>
+</tr>
+<tr>
+<td>Invocation</td>
+<td><code>/command-name</code> (filename without extension)</td>
+</tr>
+<tr>
+<td>Subdirectories</td>
+<td>Supported -- <code>/subdir/command-name</code></td>
+</tr>
+<tr>
+<td>Arguments</td>
+<td><code>$ARGUMENTS</code> placeholder replaced with user input</td>
+</tr>
+</tbody></table>
+<p><strong>Example:</strong> <code>.claude/commands/review.md</code> becomes the <code>/review</code> slash command.</p>
+<h3 id="recommended-skills">Recommended: Skills<a class="anchor" href="#recommended-skills">#</a></h3>
+<p>For new custom commands, use Skills instead. Skills provide all the same functionality plus:</p>
 <ul>
-<li><p>Complete built-in command reference -- <em>coming soon</em></p>
-</li>
-<li><p>Keyboard shortcuts and keybinding configuration -- <em>coming soon</em></p>
-</li>
-<li><p>Skill-to-command resolution order -- <em>coming soon</em></p>
-</div>
-</div></li>
+<li>Auto-invocation based on task context (no need to type <code>/</code>)</li>
+<li>Model and tool overrides via frontmatter</li>
+<li>Cross-interface portability (Claude Code, Chat, and Cowork)</li>
+<li>Supporting files alongside the SKILL.md</li>
 </ul>
+<p>See the <a href="skills.html">Skills Reference</a> for the complete SKILL.md frontmatter spec and file format.</p>
+<h3 id="resolution-order">Resolution Order<a class="anchor" href="#resolution-order">#</a></h3>
+<p>When a <code>/name</code> is invoked, Claude resolves it in this order:</p>
+<ol>
+<li><strong>Skill</strong> (inline context) -- <code>.claude/skills/name/SKILL.md</code></li>
+<li><strong>Agent</strong> (separate context) -- <code>.claude/agents/name.md</code></li>
+<li><strong>Legacy Command</strong> (explicit <code>/</code> only) -- <code>.claude/commands/name.md</code></li>
+</ol>
+  </div>
+</div>
+
 <h2 id="related">Related<a class="anchor" href="#related">#</a></h2>
 <ul>
 <li><a href="skills.html">Skills</a> -- Skills are the recommended replacement for custom commands</li>

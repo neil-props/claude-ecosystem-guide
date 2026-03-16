@@ -41,6 +41,10 @@
         </svg>
       </button>
     </div>
+    <div class="search-container" id="searchContainer">
+      <input type="search" id="searchInput" placeholder="Search docs..." aria-label="Search documentation">
+      <div class="search-results" id="searchResults"></div>
+    </div>
     <nav class="sidebar-nav">
       <div class="nav-section">
   <div class="nav-section-title">Topics</div>
@@ -59,6 +63,19 @@
   <div class="nav-section-title">Reference</div>
   <a href="../topics/compatibility.html" class="nav-link">Compatibility Matrix</a>
 </div>
+<div class="nav-section">
+  <div class="nav-section-title">Decision Tools</div>
+  <a href="../topics/decision-wizard.html" class="nav-link">Decision Wizard</a>
+  <a href="../topics/comparisons.html" class="nav-link">Comparisons</a>
+</div>
+<div class="nav-section">
+  <div class="nav-section-title">Recipes</div>
+  <a href="../topics/recipe-deployment-skill.html" class="nav-link">Recipe: Build a Deployment Skill</a>
+  <a href="../topics/recipe-crm-mcp.html" class="nav-link">Recipe: CRM Enrichment with MCP</a>
+  <a href="../topics/recipe-pre-commit-hook.html" class="nav-link">Recipe: Pre-Commit Linting Hook</a>
+  <a href="../topics/recipe-custom-agent.html" class="nav-link">Recipe: Build a Custom Agent</a>
+  <a href="../topics/recipe-monorepo-settings.html" class="nav-link">Recipe: Monorepo Settings Hierarchy</a>
+</div>
 
     </nav>
   </aside>
@@ -68,7 +85,7 @@
     <span class="hamburger-line"></span>
     <span class="hamburger-line"></span>
   </button>
-  <main class="content">
+  <main class="content" data-pagefind-body>
     <article>
       <h1 id="mcp-servers-and-connectors">MCP Servers and Connectors<a class="anchor" href="#mcp-servers-and-connectors">#</a></h1>
 <div class="tabs">
@@ -212,9 +229,13 @@ claude mcp remove my-db   &lt;span class=<span class="hljs-string">&quot;hljs-co
 <li><strong>MCP vs Skills:</strong> MCP provides <em>tools</em> (actions and data); Skills provide <em>instructions</em> (knowledge and processes). They complement each other -- a skill might instruct Claude on <em>when</em> to use an MCP tool.</li>
 <li><strong>MCP vs Plugins:</strong> Plugins can <em>bundle</em> MCP server configs alongside skills and agents. MCP is the protocol; plugins are the distribution mechanism.</li>
 </ul>
+<div class="callout callout-tip">
+  <div class="callout-title">Tip</div>
+  <p>**Consider alternatives:** If you just need to teach Claude a process (no external tools), consider [Skills](skills.html). If you want a pre-built one-click integration instead of configuring a server, consider [Connectors](connectors.html). For a detailed comparison, see [MCP vs Plugin vs Connector](comparisons.html).</p>
+</div>
 <h2 id="configuration">Configuration<a class="anchor" href="#configuration">#</a></h2>
-<h3 id="project-shared-mcpjson">Project-shared <code>.mcp.json</code><a class="anchor" href="#project-shared-mcpjson">#</a></h3>
-<p>Check this into git so the whole team shares the same MCP servers:</p>
+<p>MCP servers are configured via <code>.mcp.json</code> (project and user scope) and <code>managed-mcp.json</code> (enterprise). Use <code>${ENV_VAR}</code> syntax for secrets so each developer uses their own tokens.</p>
+<p>Quick example -- a project-shared <code>.mcp.json</code> checked into git:</p>
 <div class="code-block">
   <div class="code-header">
     <span class="code-lang">json</span>
@@ -226,36 +247,12 @@ claude mcp remove my-db   &lt;span class=<span class="hljs-string">&quot;hljs-co
       &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;command&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;npx&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
       &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;args&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;@modelcontextprotocol/server-github&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
       &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;env&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;GITHUB_TOKEN&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;$<span class="hljs-punctuation">{</span>GITHUB_TOKEN<span class="hljs-punctuation">}</span>&amp;quot;&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
-    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
-    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;postgres&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
-      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;command&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;npx&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
-      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;args&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;@modelcontextprotocol/server-postgres&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
-      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;env&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;DATABASE_URL&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;$<span class="hljs-punctuation">{</span>DATABASE_URL<span class="hljs-punctuation">}</span>&amp;quot;&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
     &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
   &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
 &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;</code></pre>
 </div>
-<p>Use <code>${ENV_VAR}</code> syntax for secrets -- each developer sets their own tokens locally.</p>
-<h3 id="organization-wide-enforcement">Organization-wide enforcement<a class="anchor" href="#organization-wide-enforcement">#</a></h3>
-<p>Use <code>managed-mcp.json</code> (pushed via MDM, Chef, Puppet, Ansible):</p>
-<div class="code-block">
-  <div class="code-header">
-    <span class="code-lang">json</span>
-    <button class="copy-btn" aria-label="Copy code">Copy</button>
-  </div>
-  <pre><code class="hljs language-json">&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
-  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;mcpServers&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
-  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;allowedMcpServers&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;
-    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;serverName&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;github&amp;quot;&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
-    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;serverUrl&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;https<span class="hljs-punctuation">:</span><span class="hljs-comment">//*.yourcompany.com/*&amp;quot;&lt;/span&gt; &lt;span class=&quot;hljs-punctuation&quot;&gt;}&lt;/span&gt;</span>
-  &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
-  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;deniedMcpServers&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;
-    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;serverCommand&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;npx untrusted-*&amp;quot;&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
-  &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;
-&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;</code></pre>
-</div>
-<h3 id="authentication">Authentication<a class="anchor" href="#authentication">#</a></h3>
-<p>MCP supports OAuth 2.0, custom auth headers, and environment variable expansion (<code>${MY_TOKEN}</code>). For pre-enriched contacts via linked services, read from the link first to save API quota.</p>
+<p>For organization-wide enforcement, use <code>managed-mcp.json</code> with <code>allowedMcpServers</code> and <code>deniedMcpServers</code> arrays to control which servers are permitted.</p>
+<p>For the complete <code>.mcp.json</code> and <code>managed-mcp.json</code> schemas with all fields, types, and validation rules, see the <strong>Reference</strong> tab.</p>
 <h2 id="best-practices">Best Practices<a class="anchor" href="#best-practices">#</a></h2>
 <ul>
 <li>Let Claude use <strong>all your tools</strong> via MCP -- Slack, BigQuery, Sentry, CRM, etc.</li>
@@ -281,35 +278,637 @@ Use the TypeScript SDK (<code>@modelcontextprotocol/sdk</code>) or any of the SD
   <div class="tab-panel" data-tab-panel="howto">
 
 <h2 id="how-to-guides">How-To Guides<a class="anchor" href="#how-to-guides">#</a></h2>
-<div class="callout callout-info">
-  <div class="callout-title">Info</div>
-  <p>Step-by-step guides for MCP are coming in Phase 4.</p>
-</div>
-<p>Planned guides:</p>
+<h3 id="how-to-set-up-an-mcp-server-stdio">How to Set Up an MCP Server (stdio)<a class="anchor" href="#how-to-set-up-an-mcp-server-stdio">#</a></h3>
+<p>Use stdio transport for local MCP servers that run as child processes. This is the most common setup for development tools.</p>
+<h4 id="prerequisites">Prerequisites<a class="anchor" href="#prerequisites">#</a></h4>
 <ul>
-<li><p>How to set up an MCP server (stdio transport) -- <em>coming soon</em></p>
-</li>
-<li><p>How to set up an MCP server (SSE/streamable HTTP transport) -- <em>coming soon</em></p>
-</li>
-<li><p>How to configure MCP authentication -- <em>coming soon</em></p>
-</li>
-<li><p>How to build your own MCP server -- <em>coming soon</em></p>
-</div>
-<div class="tab-panel" data-tab-panel="reference"></li>
+<li>Claude Code installed and working (<code>claude --version</code>)</li>
+<li>Node.js 18+ installed (for npx-based servers)</li>
+<li>A GitHub personal access token (for this example)</li>
 </ul>
+<h4 id="step-1-add-a-server-via-cli">Step 1: Add a Server via CLI<a class="anchor" href="#step-1-add-a-server-via-cli">#</a></h4>
+<p>Add the GitHub MCP server, which gives Claude access to GitHub tools (search repos, read issues, create PRs):</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-bash">claude mcp add github-server -- npx @modelcontextprotocol/server-github</code></pre>
+</div>
+<p>Claude Code will prompt you to set the required <code>GITHUB_TOKEN</code> environment variable. You can also pass it inline:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-bash">claude mcp add github-server \
+  --&lt;span class=<span class="hljs-string">&quot;hljs-built_in&quot;</span>&gt;<span class="hljs-built_in">env</span>&lt;/span&gt; GITHUB_TOKEN=ghp_your_token_here \
+  -- npx @modelcontextprotocol/server-github</code></pre>
+</div>
+<h4 id="step-2-verify-the-server-is-registered">Step 2: Verify the Server Is Registered<a class="anchor" href="#step-2-verify-the-server-is-registered">#</a></h4>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-bash">claude mcp list</code></pre>
+</div>
+<p>You should see <code>github-server</code> listed with its command and status.</p>
+<h4 id="step-3-share-with-your-team-via-mcpjson">Step 3: Share with Your Team via <code>.mcp.json</code><a class="anchor" href="#step-3-share-with-your-team-via-mcpjson">#</a></h4>
+<p>Create a <code>.mcp.json</code> file at your repository root so every team member gets the same MCP servers automatically:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">json</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-json">&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;mcpServers&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;github&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;command&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;npx&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;args&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;@modelcontextprotocol/server-github&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;env&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+        &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;GITHUB_TOKEN&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;$<span class="hljs-punctuation">{</span>GITHUB_TOKEN<span class="hljs-punctuation">}</span>&amp;quot;&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;</code></pre>
+</div>
+<p>The <code>${GITHUB_TOKEN}</code> syntax means each developer uses their own token from their local environment. Check this file into git -- secrets stay local.</p>
+<h4 id="step-4-test-in-a-claude-code-session">Step 4: Test in a Claude Code Session<a class="anchor" href="#step-4-test-in-a-claude-code-session">#</a></h4>
+<p>Start a Claude Code session and ask Claude to use a GitHub tool:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang"></span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-plaintext">&amp;gt; Find open issues labeled &amp;quot;bug&amp;quot; in our repository</code></pre>
+</div>
+<p>Claude will discover the GitHub MCP tools and use them to search issues.</p>
+<h4 id="verify-it-works">Verify It Works<a class="anchor" href="#verify-it-works">#</a></h4>
+<ul>
+<li><code>claude mcp list</code> shows the server with status &quot;connected&quot; or &quot;available&quot;</li>
+<li>In a Claude Code session, Claude can invoke GitHub tools without errors</li>
+<li>Team members who clone the repo and have <code>GITHUB_TOKEN</code> set can use the same server</li>
+</ul>
+<h4 id="troubleshooting">Troubleshooting<a class="anchor" href="#troubleshooting">#</a></h4>
+<ul>
+<li><strong>Server not appearing:</strong> Run <code>claude mcp list</code> to check registration. If missing, re-add with <code>claude mcp add</code>.</li>
+<li><strong>&quot;Command not found&quot; error:</strong> Ensure Node.js and npx are in your PATH. Try running the command manually: <code>npx @modelcontextprotocol/server-github</code>.</li>
+<li><strong>Environment variables not resolving:</strong> Variables use <code>${VAR}</code> syntax in <code>.mcp.json</code>. Ensure the variable is exported in your shell (<code>export GITHUB_TOKEN=ghp_...</code>).</li>
+<li><strong>Server timing out:</strong> Some servers take a few seconds to start. If Claude reports a timeout, try again -- the server may need to download dependencies on first run.</li>
+</ul>
+<hr>
+<h3 id="how-to-set-up-an-mcp-server-ssestreamable-http">How to Set Up an MCP Server (SSE/Streamable HTTP)<a class="anchor" href="#how-to-set-up-an-mcp-server-ssestreamable-http">#</a></h3>
+<p>Use HTTP transport for remote MCP servers hosted on a URL. Streamable HTTP is the current standard, replacing the older SSE transport.</p>
+<h4 id="prerequisites">Prerequisites<a class="anchor" href="#prerequisites">#</a></h4>
+<ul>
+<li>Claude Code installed and working</li>
+<li>A remote MCP server URL (provided by the server operator)</li>
+<li>An auth token if the server requires authentication</li>
+</ul>
+<h4 id="step-1-add-a-remote-server">Step 1: Add a Remote Server<a class="anchor" href="#step-1-add-a-remote-server">#</a></h4>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-bash">claude mcp add --transport http analytics-server https://mcp.example.com/analytics</code></pre>
+</div>
+<p>The <code>--transport http</code> flag tells Claude Code this is a remote server using streamable HTTP.</p>
+<h4 id="step-2-add-with-authentication-headers">Step 2: Add with Authentication Headers<a class="anchor" href="#step-2-add-with-authentication-headers">#</a></h4>
+<p>If the server requires authentication, pass headers:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-bash">claude mcp add --transport http \
+  --header &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Authorization: Bearer &lt;span class=<span class="hljs-string">&quot;hljs-variable&quot;</span>&gt;<span class="hljs-variable">${ANALYTICS_TOKEN}</span>&lt;/span&gt;&amp;quot;&lt;/span&gt; \
+  analytics-server https://mcp.example.com/analytics</code></pre>
+</div>
+<p>Or in <code>.mcp.json</code> for team sharing:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">json</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-json">&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;mcpServers&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;analytics&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;type&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;http&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;url&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;https<span class="hljs-punctuation">:</span><span class="hljs-comment">//mcp.example.com/analytics&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;</span>
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;headers&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+        &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;Authorization&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Bearer $<span class="hljs-punctuation">{</span>ANALYTICS_TOKEN<span class="hljs-punctuation">}</span>&amp;quot;&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;</code></pre>
+</div>
+<h4 id="step-3-verify-the-connection">Step 3: Verify the Connection<a class="anchor" href="#step-3-verify-the-connection">#</a></h4>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-bash">claude mcp list</code></pre>
+</div>
+<p>Confirm the server appears and Claude can reach the remote URL.</p>
+<h4 id="verify-it-works">Verify It Works<a class="anchor" href="#verify-it-works">#</a></h4>
+<ul>
+<li><code>claude mcp list</code> shows the server with its URL</li>
+<li>In a Claude Code session, Claude can call tools provided by the remote server</li>
+<li>No connection timeout or authentication errors in the output</li>
+</ul>
+<blockquote><p>[!NOTE]
+<strong>Streamable HTTP vs SSE:</strong> Streamable HTTP is the current standard for remote MCP. If you encounter documentation referencing SSE, the same servers generally support streamable HTTP. Use <code>--transport http</code> for new setups.</p>
+</blockquote>
+<hr>
+<h3 id="how-to-configure-mcp-authentication">How to Configure MCP Authentication<a class="anchor" href="#how-to-configure-mcp-authentication">#</a></h3>
+<p>MCP servers often need credentials to access external services. Claude Code supports several authentication methods.</p>
+<h4 id="step-1-environment-variable-expansion-in-mcpjson">Step 1: Environment Variable Expansion in <code>.mcp.json</code><a class="anchor" href="#step-1-environment-variable-expansion-in-mcpjson">#</a></h4>
+<p>The most common approach -- reference environment variables that each developer sets locally:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">json</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-json">&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;mcpServers&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;database&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;command&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;npx&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;args&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;@modelcontextprotocol/server-postgres&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;env&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+        &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;DATABASE_URL&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;$<span class="hljs-punctuation">{</span>DATABASE_URL<span class="hljs-punctuation">}</span>&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+        &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;DB_PASSWORD&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;$<span class="hljs-punctuation">{</span>DB_PASSWORD<span class="hljs-punctuation">}</span>&amp;quot;&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;</code></pre>
+</div>
+<p>Variables use <code>${VAR_NAME}</code> syntax. Claude Code expands them from the developer&#39;s shell environment at server startup.</p>
+<h4 id="step-2-oauth-20-for-supported-servers">Step 2: OAuth 2.0 for Supported Servers<a class="anchor" href="#step-2-oauth-20-for-supported-servers">#</a></h4>
+<p>Some MCP servers support OAuth 2.0 authentication. When you add these servers, Claude Code will initiate the OAuth flow automatically:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-bash">claude mcp add --transport http my-saas https://saas.example.com/mcp</code></pre>
+</div>
+<p>If the server supports OAuth, Claude Code will open a browser window for authorization. The token is stored securely and refreshed automatically.</p>
+<h4 id="step-3-custom-auth-headers-for-http-transport">Step 3: Custom Auth Headers for HTTP Transport<a class="anchor" href="#step-3-custom-auth-headers-for-http-transport">#</a></h4>
+<p>For servers that use API keys or bearer tokens via HTTP headers:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">json</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-json">&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;mcpServers&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;api-service&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;type&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;http&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;url&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;https<span class="hljs-punctuation">:</span><span class="hljs-comment">//api.example.com/mcp&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;</span>
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;headers&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+        &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;Authorization&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Bearer $<span class="hljs-punctuation">{</span>API_KEY<span class="hljs-punctuation">}</span>&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+        &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;X-Custom-Header&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;custom-value&amp;quot;&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;</code></pre>
+</div>
+<h4 id="step-4-managed-mcp-allowlists-enterprise">Step 4: Managed MCP Allowlists (Enterprise)<a class="anchor" href="#step-4-managed-mcp-allowlists-enterprise">#</a></h4>
+<p>Organization admins can control which MCP servers are permitted using <code>managed-mcp.json</code>:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">json</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-json">&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;mcpServers&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;allowedMcpServers&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;serverName&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;github&amp;quot;&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;serverName&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;jira&amp;quot;&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;serverUrl&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;https<span class="hljs-punctuation">:</span><span class="hljs-comment">//*.yourcompany.com/*&amp;quot;&lt;/span&gt; &lt;span class=&quot;hljs-punctuation&quot;&gt;}&lt;/span&gt;</span>
+  &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;deniedMcpServers&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;serverCommand&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;npx untrusted-*&amp;quot;&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;
+&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;</code></pre>
+</div>
+<ul>
+<li><strong><code>allowedMcpServers</code></strong> -- only these servers can be added by users</li>
+<li><strong><code>deniedMcpServers</code></strong> -- these servers are blocked even if a user tries to add them</li>
+<li>Both support <code>serverName</code>, <code>serverUrl</code>, and <code>serverCommand</code> matchers with glob patterns</li>
+</ul>
+<p>This file is deployed via MDM (Jamf, Intune), Chef, Puppet, or Ansible to a system-level location.</p>
+<h4 id="verify-it-works">Verify It Works<a class="anchor" href="#verify-it-works">#</a></h4>
+<ul>
+<li>Servers with env vars: confirm <code>claude mcp list</code> shows the server, then test a tool call in a Claude Code session</li>
+<li>OAuth servers: confirm the browser auth flow completes and the server connects</li>
+<li>Managed allowlists: confirm that allowed servers can be added and denied servers are rejected</li>
+</ul>
+<hr>
+<h3 id="how-to-build-your-own-mcp-server">How to Build Your Own MCP Server<a class="anchor" href="#how-to-build-your-own-mcp-server">#</a></h3>
+<p>Create a custom MCP server to give Claude access to your own tools, APIs, or data sources.</p>
+<h4 id="prerequisites">Prerequisites<a class="anchor" href="#prerequisites">#</a></h4>
+<ul>
+<li>Node.js 18+ installed</li>
+<li>TypeScript recommended (but not required)</li>
+<li>Familiarity with JSON Schema for defining tool inputs</li>
+</ul>
+<h4 id="step-1-install-the-mcp-sdk">Step 1: Install the MCP SDK<a class="anchor" href="#step-1-install-the-mcp-sdk">#</a></h4>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-bash">&lt;span class=<span class="hljs-string">&quot;hljs-built_in&quot;</span>&gt;<span class="hljs-built_in">mkdir</span>&lt;/span&gt; my-mcp-server &amp;amp;&amp;amp; &lt;span class=<span class="hljs-string">&quot;hljs-built_in&quot;</span>&gt;<span class="hljs-built_in">cd</span>&lt;/span&gt; my-mcp-server
+npm init -y
+npm install @modelcontextprotocol/sdk</code></pre>
+</div>
+<h4 id="step-2-create-the-server">Step 2: Create the Server<a class="anchor" href="#step-2-create-the-server">#</a></h4>
+<p>Create <code>server.js</code> with a tool definition. This example creates a weather lookup tool:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">javascript</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-javascript">&lt;span <span class="hljs-keyword">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;<span class="hljs-keyword">import</span>&lt;<span class="hljs-regexp">/span&gt; { &lt;span class=&quot;hljs-title class_&quot;&gt;McpServer&lt;/</span>span&gt; } &lt;span <span class="hljs-keyword">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;<span class="hljs-keyword">from</span>&lt;<span class="hljs-regexp">/span&gt; &lt;span class=&quot;hljs-string&quot;&gt;&amp;quot;@modelcontextprotocol/</span>sdk/server/mcp.<span class="hljs-property">js</span>&amp;quot;&lt;/span&gt;;
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;</span>import<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> { <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-title class_&quot;</span>&gt;</span>StdioServerTransport<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> } &lt;span <span class="hljs-keyword">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;<span class="hljs-keyword">from</span>&lt;<span class="hljs-regexp">/span&gt; &lt;span class=&quot;hljs-string&quot;&gt;&amp;quot;@modelcontextprotocol/</span>sdk/server/stdio.<span class="hljs-property">js</span>&amp;quot;&lt;/span&gt;;
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;</span>import<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> { z } &lt;span <span class="hljs-keyword">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;<span class="hljs-keyword">from</span>&lt;<span class="hljs-regexp">/span&gt; &lt;span class=&quot;hljs-string&quot;&gt;&amp;quot;zod&amp;quot;&lt;/</span>span&gt;;
+
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;</span>const<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> server = <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;</span>new<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-title class_&quot;</span>&gt;</span>McpServer<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>({
+  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;</span>name<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>: <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;</span><span class="hljs-symbol">&amp;quot;</span>weather-server<span class="hljs-symbol">&amp;quot;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>,
+  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;</span>version<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>: <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;</span><span class="hljs-symbol">&amp;quot;</span>1.0.0<span class="hljs-symbol">&amp;quot;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+});
+
+server.&lt;span <span class="hljs-keyword">class</span>=<span class="hljs-string">&quot;hljs-title function_&quot;</span>&gt;tool&lt;/span&gt;(
+  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;</span><span class="hljs-symbol">&amp;quot;</span>get-weather<span class="hljs-symbol">&amp;quot;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>,
+  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;</span><span class="hljs-symbol">&amp;quot;</span>Get current weather for a city<span class="hljs-symbol">&amp;quot;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>,
+  { <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;</span>city<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>: z.&lt;span <span class="hljs-keyword">class</span>=<span class="hljs-string">&quot;hljs-title function_&quot;</span>&gt;string&lt;<span class="hljs-regexp">/span&gt;().&lt;span class=&quot;hljs-title function_&quot;&gt;describe&lt;/</span>span&gt;(<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;</span><span class="hljs-symbol">&amp;quot;</span>City name, e.g. San Francisco<span class="hljs-symbol">&amp;quot;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>) },
+  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-title function_&quot;</span>&gt;</span>async<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> ({ city }) =&amp;gt; {
+    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-comment&quot;</span>&gt;</span>// Replace with a real API call in production<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;</span>const<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> response = <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;</span>await<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-title function_&quot;</span>&gt;</span>fetch<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>(
+      <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;</span>`https://wttr.in/<span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-subst&quot;</span>&gt;</span>${<span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-built_in&quot;</span>&gt;</span>encodeURIComponent<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>(city)}<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>?format=j1`<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+    );
+    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;</span>const<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> data = <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;</span>await<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> response.&lt;span <span class="hljs-keyword">class</span>=<span class="hljs-string">&quot;hljs-title function_&quot;</span>&gt;json&lt;/span&gt;();
+    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;</span>const<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> current = data.&lt;span <span class="hljs-keyword">class</span>=<span class="hljs-string">&quot;hljs-property&quot;</span>&gt;current_condition&lt;<span class="hljs-regexp">/span&gt;[&lt;span class=&quot;hljs-number&quot;&gt;0&lt;/span&gt;];
+    &lt;span class=&quot;hljs-keyword&quot;&gt;return&lt;/</span>span&gt; {
+      <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;</span>content<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>: [{
+        <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;</span>type<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>: <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;</span><span class="hljs-symbol">&amp;quot;</span>text<span class="hljs-symbol">&amp;quot;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>,
+        <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;</span>text<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>: <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;</span>`Weather in <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-subst&quot;</span>&gt;</span>${city}<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>: <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-subst&quot;</span>&gt;</span>${current.temp_F}<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>°F, <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-subst&quot;</span>&gt;</span>${current.weatherDesc[<span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-number&quot;</span>&gt;</span>0<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>].value}<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>`<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+      }]
+    };
+  }
+);
+
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;</span>const<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> transport = <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;</span>new<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-title class_&quot;</span>&gt;</span>StdioServerTransport<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>();
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;</span>await<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> server.&lt;span <span class="hljs-keyword">class</span>=<span class="hljs-string">&quot;hljs-title function_&quot;</span>&gt;connect&lt;/span&gt;(transport);</code></pre>
+</div>
+<blockquote><p>[!NOTE]
+The SDK uses Zod for input validation. Install it with <code>npm install zod</code> if not already present.</p>
+</blockquote>
+<h4 id="step-3-register-the-server-locally">Step 3: Register the Server Locally<a class="anchor" href="#step-3-register-the-server-locally">#</a></h4>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-bash">claude mcp add weather-server -- node /absolute/path/to/my-mcp-server/server.js</code></pre>
+</div>
+<p>Use an absolute path to the server file so it works from any directory.</p>
+<h4 id="step-4-test-in-a-claude-code-session">Step 4: Test in a Claude Code Session<a class="anchor" href="#step-4-test-in-a-claude-code-session">#</a></h4>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang"></span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-plaintext">&amp;gt; What&amp;#x27;s the weather in Tokyo?</code></pre>
+</div>
+<p>Claude will discover the <code>get-weather</code> tool and call your server.</p>
+<h4 id="verify-it-works">Verify It Works<a class="anchor" href="#verify-it-works">#</a></h4>
+<ul>
+<li><code>claude mcp list</code> shows <code>weather-server</code> with status &quot;connected&quot;</li>
+<li>Claude correctly invokes the <code>get-weather</code> tool when asked about weather</li>
+<li>The tool returns formatted results that Claude incorporates into its response</li>
+</ul>
+<h4 id="troubleshooting">Troubleshooting<a class="anchor" href="#troubleshooting">#</a></h4>
+<ul>
+<li><strong>&quot;Cannot find module&quot; error:</strong> Use an absolute path when registering with <code>claude mcp add</code>. Relative paths resolve from Claude Code&#39;s working directory, not yours.</li>
+<li><strong>Server crashes on startup:</strong> Test manually with <code>node server.js</code> -- it should start and wait for stdio input without errors.</li>
+<li><strong>Tool not appearing:</strong> Ensure <code>server.tool()</code> is called before <code>server.connect()</code>. Claude discovers tools at connection time.</li>
+<li><strong>Type errors in tool inputs:</strong> Check your Zod schema matches what Claude is sending. Add <code>.describe()</code> to each field for better tool discovery.</li>
+</ul>
+<!-- end howto -->
+
+  </div>
+  <div class="tab-panel" data-tab-panel="reference">
+
 <h2 id="technical-reference">Technical Reference<a class="anchor" href="#technical-reference">#</a></h2>
-<div class="callout callout-info">
-  <div class="callout-title">Info</div>
-  <p>Detailed reference specs for MCP are coming in Phase 4.</p>
+<h3 id="mcpjson-config-schema">.mcp.json Config Schema<a class="anchor" href="#mcpjson-config-schema">#</a></h3>
+<p>The <code>.mcp.json</code> file configures MCP servers for Claude Code. It supports two scopes based on file location.</p>
+<h4 id="file-location">File Location<a class="anchor" href="#file-location">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>Path</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Project</strong></td>
+<td><code>.mcp.json</code> at repository root</td>
+<td>Shared with team via git. Loaded automatically when Claude Code opens the project.</td>
+</tr>
+<tr>
+<td><strong>User</strong></td>
+<td><code>~/.claude/.mcp.json</code></td>
+<td>Personal servers available in all projects. Not shared.</td>
+</tr>
+</tbody></table>
+<p>Project-scope servers are loaded first, then user-scope servers. If the same server name appears in both, the project-scope definition takes precedence.</p>
+<h4 id="complete-schema-example">Complete Schema Example<a class="anchor" href="#complete-schema-example">#</a></h4>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">json</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-json">&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;mcpServers&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;github&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;command&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;npx&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;args&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;@modelcontextprotocol/server-github&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;env&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+        &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;GITHUB_TOKEN&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;$<span class="hljs-punctuation">{</span>GITHUB_TOKEN<span class="hljs-punctuation">}</span>&amp;quot;&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;analytics&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;type&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;http&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;url&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;https<span class="hljs-punctuation">:</span><span class="hljs-comment">//mcp.example.com/analytics&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;</span>
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;headers&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+        &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;Authorization&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Bearer $<span class="hljs-punctuation">{</span>ANALYTICS_TOKEN<span class="hljs-punctuation">}</span>&amp;quot;&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;</code></pre>
 </div>
-<p>Planned references:</p>
+<h4 id="field-reference">Field Reference<a class="anchor" href="#field-reference">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>mcpServers</code></td>
+<td>object</td>
+<td>Yes</td>
+<td><code>{}</code></td>
+<td>Top-level object containing all server definitions. Keys are server names.</td>
+</tr>
+<tr>
+<td><code>mcpServers.&lt;name&gt;.command</code></td>
+<td>string</td>
+<td>Yes (stdio)</td>
+<td>--</td>
+<td>Executable command to run the server. Required for stdio transport.</td>
+</tr>
+<tr>
+<td><code>mcpServers.&lt;name&gt;.args</code></td>
+<td>string[]</td>
+<td>No</td>
+<td><code>[]</code></td>
+<td>Arguments passed to the command.</td>
+</tr>
+<tr>
+<td><code>mcpServers.&lt;name&gt;.env</code></td>
+<td>object</td>
+<td>No</td>
+<td><code>{}</code></td>
+<td>Environment variables for the server process. Values support <code>${VAR}</code> expansion from the host environment.</td>
+</tr>
+<tr>
+<td><code>mcpServers.&lt;name&gt;.type</code></td>
+<td>string</td>
+<td>No</td>
+<td><code>&quot;stdio&quot;</code></td>
+<td>Transport type: <code>&quot;stdio&quot;</code> for local processes, <code>&quot;http&quot;</code> for remote servers.</td>
+</tr>
+<tr>
+<td><code>mcpServers.&lt;name&gt;.url</code></td>
+<td>string</td>
+<td>Yes (http)</td>
+<td>--</td>
+<td>Server URL. Required when <code>type</code> is <code>&quot;http&quot;</code>.</td>
+</tr>
+<tr>
+<td><code>mcpServers.&lt;name&gt;.headers</code></td>
+<td>object</td>
+<td>No</td>
+<td><code>{}</code></td>
+<td>HTTP headers sent with requests. Only applicable when <code>type</code> is <code>&quot;http&quot;</code>. Values support <code>${VAR}</code> expansion.</td>
+</tr>
+</tbody></table>
+<h4 id="environment-variable-expansion">Environment Variable Expansion<a class="anchor" href="#environment-variable-expansion">#</a></h4>
+<p>Values in <code>env</code> and <code>headers</code> fields support <code>${VAR_NAME}</code> syntax. At server startup, Claude Code replaces these with values from the developer&#39;s shell environment.</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">json</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-json">&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;env&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;API_KEY&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;$<span class="hljs-punctuation">{</span>MY_API_KEY<span class="hljs-punctuation">}</span>&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;DB_HOST&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;$<span class="hljs-punctuation">{</span>DB_HOST<span class="hljs-punctuation">:</span>-localhost<span class="hljs-punctuation">}</span>&amp;quot;&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;</code></pre>
+</div>
+<p>If a referenced variable is not set, it resolves to an empty string. The server may fail to start if it requires the variable.</p>
+<h3 id="managed-mcpjson-schema-enterprise">managed-mcp.json Schema (Enterprise)<a class="anchor" href="#managed-mcpjson-schema-enterprise">#</a></h3>
+<p>The <code>managed-mcp.json</code> file lets organization admins control which MCP servers are allowed or denied across all users. It is deployed to a system-level path via MDM or configuration management.</p>
+<h4 id="complete-schema">Complete Schema<a class="anchor" href="#complete-schema">#</a></h4>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">json</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-json">&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;mcpServers&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;company-tools&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;command&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;npx&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;args&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;@company/mcp-internal-tools&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;env&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+        &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;COMPANY_TOKEN&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;$<span class="hljs-punctuation">{</span>COMPANY_TOKEN<span class="hljs-punctuation">}</span>&amp;quot;&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;allowedMcpServers&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;serverName&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;github&amp;quot;&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;serverName&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;jira&amp;quot;&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;serverUrl&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;https<span class="hljs-punctuation">:</span><span class="hljs-comment">//*.company.com/*&amp;quot;&lt;/span&gt; &lt;span class=&quot;hljs-punctuation&quot;&gt;}&lt;/span&gt;</span>
+  &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;deniedMcpServers&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;serverCommand&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;npx untrusted-*&amp;quot;&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;serverUrl&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;http<span class="hljs-punctuation">:</span><span class="hljs-comment">//*&amp;quot;&lt;/span&gt; &lt;span class=&quot;hljs-punctuation&quot;&gt;}&lt;/span&gt;</span>
+  &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;
+&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;</code></pre>
+</div>
+<h4 id="field-reference">Field Reference<a class="anchor" href="#field-reference">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>mcpServers</code></td>
+<td>object</td>
+<td>No</td>
+<td><code>{}</code></td>
+<td>Organization-provided MCP servers. Same schema as <code>.mcp.json</code> servers. Always available to all users.</td>
+</tr>
+<tr>
+<td><code>allowedMcpServers</code></td>
+<td>array</td>
+<td>No</td>
+<td><code>[]</code></td>
+<td>Allowlist of permitted servers. If non-empty, only matching servers can be added by users.</td>
+</tr>
+<tr>
+<td><code>allowedMcpServers[].serverName</code></td>
+<td>string</td>
+<td>No</td>
+<td>--</td>
+<td>Match by server name (exact or glob pattern).</td>
+</tr>
+<tr>
+<td><code>allowedMcpServers[].serverUrl</code></td>
+<td>string</td>
+<td>No</td>
+<td>--</td>
+<td>Match by server URL (glob pattern).</td>
+</tr>
+<tr>
+<td><code>allowedMcpServers[].serverCommand</code></td>
+<td>string</td>
+<td>No</td>
+<td>--</td>
+<td>Match by command (glob pattern).</td>
+</tr>
+<tr>
+<td><code>deniedMcpServers</code></td>
+<td>array</td>
+<td>No</td>
+<td><code>[]</code></td>
+<td>Denylist of blocked servers. Denied servers cannot be added even if they match the allowlist.</td>
+</tr>
+<tr>
+<td><code>deniedMcpServers[].serverName</code></td>
+<td>string</td>
+<td>No</td>
+<td>--</td>
+<td>Match by server name (exact or glob pattern).</td>
+</tr>
+<tr>
+<td><code>deniedMcpServers[].serverUrl</code></td>
+<td>string</td>
+<td>No</td>
+<td>--</td>
+<td>Match by server URL (glob pattern).</td>
+</tr>
+<tr>
+<td><code>deniedMcpServers[].serverCommand</code></td>
+<td>string</td>
+<td>No</td>
+<td>--</td>
+<td>Match by command (glob pattern).</td>
+</tr>
+</tbody></table>
+<h4 id="validation-rules">Validation Rules<a class="anchor" href="#validation-rules">#</a></h4>
 <ul>
-<li><p>MCP config schema (.mcp.json format, all fields) -- <em>coming soon</em></p>
-</li>
-<li><p>Environment variables reference -- <em>coming soon</em></p>
-</div>
-</div></li>
+<li>The <code>mcpServers</code> object in <code>managed-mcp.json</code> follows the same schema as <code>.mcp.json</code></li>
+<li>If <code>allowedMcpServers</code> is present and non-empty, it acts as a whitelist -- only matching servers are permitted</li>
+<li><code>deniedMcpServers</code> takes priority over <code>allowedMcpServers</code> -- a server matching both is denied</li>
+<li>Glob patterns in matchers use standard glob syntax (<code>*</code> matches any characters, <code>?</code> matches one character)</li>
+<li>Managed servers (in the <code>mcpServers</code> object) are always available regardless of allow/deny rules</li>
 </ul>
+<h4 id="scope-precedence">Scope Precedence<a class="anchor" href="#scope-precedence">#</a></h4>
+<p>When servers are configured at multiple scopes, Claude Code resolves them in this order (highest priority first):</p>
+<ol>
+<li><strong>Subagent</strong> -- servers declared in an agent&#39;s frontmatter (scoped to that agent only)</li>
+<li><strong>Project</strong> -- <code>.mcp.json</code> at repository root</li>
+<li><strong>User</strong> -- <code>~/.claude/.mcp.json</code></li>
+<li><strong>Managed</strong> -- <code>managed-mcp.json</code> (always loaded, cannot be overridden)</li>
+</ol>
+<p>For the complete configuration overview, see the <strong>Concept</strong> tab.</p>
+<h3 id="minimal-example">Minimal Example<a class="anchor" href="#minimal-example">#</a></h3>
+<p>A single stdio server with no environment variables:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">json</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-json">&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;mcpServers&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;filesystem&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;command&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;npx&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;args&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;@modelcontextprotocol/server-filesystem&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;/path/to/allowed/dir&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;</code></pre>
+</div>
+<h3 id="full-example-with-multiple-servers">Full Example with Multiple Servers<a class="anchor" href="#full-example-with-multiple-servers">#</a></h3>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">json</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-json">&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;mcpServers&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;github&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;command&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;npx&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;args&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;@modelcontextprotocol/server-github&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;env&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+        &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;GITHUB_TOKEN&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;$<span class="hljs-punctuation">{</span>GITHUB_TOKEN<span class="hljs-punctuation">}</span>&amp;quot;&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;postgres&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;command&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;npx&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;args&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;@modelcontextprotocol/server-postgres&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;env&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+        &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;DATABASE_URL&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;$<span class="hljs-punctuation">{</span>DATABASE_URL<span class="hljs-punctuation">}</span>&amp;quot;&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;sentry&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;command&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;npx&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;args&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;@modelcontextprotocol/server-sentry&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;env&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+        &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;SENTRY_AUTH_TOKEN&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;$<span class="hljs-punctuation">{</span>SENTRY_AUTH_TOKEN<span class="hljs-punctuation">}</span>&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+        &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;SENTRY_ORG&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;my-org&amp;quot;&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;company-api&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;type&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;http&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;url&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;https<span class="hljs-punctuation">:</span><span class="hljs-comment">//mcp.company.com/tools&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;</span>
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;headers&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+        &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;Authorization&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Bearer $<span class="hljs-punctuation">{</span>COMPANY_API_TOKEN<span class="hljs-punctuation">}</span>&amp;quot;&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;</code></pre>
+</div>
+  </div>
+</div>
+
 <h2 id="related">Related<a class="anchor" href="#related">#</a></h2>
 <ul>
 <li><a href="skills.html">Skills</a> -- Skills provide instructions, MCP provides tools; they complement each other</li>

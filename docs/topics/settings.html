@@ -41,6 +41,10 @@
         </svg>
       </button>
     </div>
+    <div class="search-container" id="searchContainer">
+      <input type="search" id="searchInput" placeholder="Search docs..." aria-label="Search documentation">
+      <div class="search-results" id="searchResults"></div>
+    </div>
     <nav class="sidebar-nav">
       <div class="nav-section">
   <div class="nav-section-title">Topics</div>
@@ -59,6 +63,19 @@
   <div class="nav-section-title">Reference</div>
   <a href="../topics/compatibility.html" class="nav-link">Compatibility Matrix</a>
 </div>
+<div class="nav-section">
+  <div class="nav-section-title">Decision Tools</div>
+  <a href="../topics/decision-wizard.html" class="nav-link">Decision Wizard</a>
+  <a href="../topics/comparisons.html" class="nav-link">Comparisons</a>
+</div>
+<div class="nav-section">
+  <div class="nav-section-title">Recipes</div>
+  <a href="../topics/recipe-deployment-skill.html" class="nav-link">Recipe: Build a Deployment Skill</a>
+  <a href="../topics/recipe-crm-mcp.html" class="nav-link">Recipe: CRM Enrichment with MCP</a>
+  <a href="../topics/recipe-pre-commit-hook.html" class="nav-link">Recipe: Pre-Commit Linting Hook</a>
+  <a href="../topics/recipe-custom-agent.html" class="nav-link">Recipe: Build a Custom Agent</a>
+  <a href="../topics/recipe-monorepo-settings.html" class="nav-link">Recipe: Monorepo Settings Hierarchy</a>
+</div>
 
     </nav>
   </aside>
@@ -68,7 +85,7 @@
     <span class="hamburger-line"></span>
     <span class="hamburger-line"></span>
   </button>
-  <main class="content">
+  <main class="content" data-pagefind-body>
     <article>
       <h1 id="settings-hierarchy">Settings Hierarchy<a class="anchor" href="#settings-hierarchy">#</a></h1>
 <div class="tabs">
@@ -208,124 +225,13 @@
 <li><strong>settings.json</strong> (project, shared) -- Team-wide project settings: approved tool permissions, shared MCP server configs, linting hooks. Check this into git.</li>
 <li><strong>User settings</strong> (~/.claude/settings.json) -- Global personal defaults that apply across all projects: your default model, commonly used tool permissions, personal MCP servers.</li>
 </ul>
+<div class="callout callout-tip">
+  <div class="callout-title">Tip</div>
+  <p>**Consider alternatives:** If you need to give Claude project-wide instructions (not just behavior settings), consider [Projects (CLAUDE.md)](projects.html). If you need deterministic automation triggered by settings, consider [Hooks](hooks.html). Settings configure *how* Claude behaves; Projects tell Claude *what* to do.</p>
+</div>
 <h2 id="configuration">Configuration<a class="anchor" href="#configuration">#</a></h2>
-<h3 id="project-shared-settings">Project-Shared Settings<a class="anchor" href="#project-shared-settings">#</a></h3>
-<p>Check <code>.claude/settings.json</code> into git so the whole team shares the same configuration:</p>
-<div class="code-block">
-  <div class="code-header">
-    <span class="code-lang">json</span>
-    <button class="copy-btn" aria-label="Copy code">Copy</button>
-  </div>
-  <pre><code class="hljs language-json">&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
-  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;permissions&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
-    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;allow&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;
-      &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Bash(npm run *)&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
-      &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Bash(pnpm *)&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
-      &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Edit(src<span class="hljs-comment">/**)&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;
-      &lt;span class=&quot;hljs-string&quot;&gt;&amp;quot;Write(src/**)&amp;quot;&lt;/span&gt;
-    &lt;span class=&quot;hljs-punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;hljs-attr&quot;&gt;&amp;quot;deny&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;hljs-punctuation&quot;&gt;[&lt;/span&gt;
-      &lt;span class=&quot;hljs-string&quot;&gt;&amp;quot;Bash(rm -rf *)&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;
-      &lt;span class=&quot;hljs-string&quot;&gt;&amp;quot;Edit(.env*)&amp;quot;&lt;/span&gt;
-    &lt;span class=&quot;hljs-punctuation&quot;&gt;]&lt;/span&gt;
-  &lt;span class=&quot;hljs-punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;
-  &lt;span class=&quot;hljs-attr&quot;&gt;&amp;quot;hooks&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;hljs-punctuation&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;hljs-attr&quot;&gt;&amp;quot;PostToolUse&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;hljs-punctuation&quot;&gt;[&lt;/span&gt;
-      &lt;span class=&quot;hljs-punctuation&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;hljs-attr&quot;&gt;&amp;quot;matcher&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;hljs-string&quot;&gt;&amp;quot;Edit|Write&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;
-        &lt;span class=&quot;hljs-attr&quot;&gt;&amp;quot;type&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;hljs-string&quot;&gt;&amp;quot;command&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;
-        &lt;span class=&quot;hljs-attr&quot;&gt;&amp;quot;command&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;hljs-string&quot;&gt;&amp;quot;npx eslint --fix $CLAUDE_FILE_PATH&amp;quot;&lt;/span&gt;
-      &lt;span class=&quot;hljs-punctuation&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;hljs-punctuation&quot;&gt;]&lt;/span&gt;
-  &lt;span class=&quot;hljs-punctuation&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;hljs-punctuation&quot;&gt;}&lt;/span&gt;</span></code></pre>
-</div>
-<h3 id="personal-project-overrides">Personal Project Overrides<a class="anchor" href="#personal-project-overrides">#</a></h3>
-<p>Use <code>.claude/settings.local.json</code> for personal preferences that shouldn&#39;t be shared (automatically gitignored):</p>
-<div class="code-block">
-  <div class="code-header">
-    <span class="code-lang">json</span>
-    <button class="copy-btn" aria-label="Copy code">Copy</button>
-  </div>
-  <pre><code class="hljs language-json">&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
-  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;permissions&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
-    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;allow&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;
-      &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Bash(docker *)&amp;quot;&lt;/span&gt;
-    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;
-  &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
-&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;</code></pre>
-</div>
-<h3 id="organization-wide-managed-settings">Organization-Wide Managed Settings<a class="anchor" href="#organization-wide-managed-settings">#</a></h3>
-<p>Managed settings are pushed via MDM (Jamf, Intune), Chef, Puppet, or Ansible:</p>
-<p><strong>Deployment locations:</strong></p>
-<ul>
-<li>macOS: <code>/Library/Application Support/ClaudeCode/</code></li>
-<li>Linux: <code>/etc/claude-code/</code></li>
-<li>Windows: <code>C:\Program Files\ClaudeCode\</code></li>
-</ul>
-<p><strong>MCP server policies</strong> (<code>managed-mcp.json</code>):</p>
-<div class="code-block">
-  <div class="code-header">
-    <span class="code-lang">json</span>
-    <button class="copy-btn" aria-label="Copy code">Copy</button>
-  </div>
-  <pre><code class="hljs language-json">&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
-  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;mcpServers&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
-  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;allowedMcpServers&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;
-    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;serverName&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;github&amp;quot;&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
-    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;serverUrl&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;https<span class="hljs-punctuation">:</span><span class="hljs-comment">//*.yourcompany.com/*&amp;quot;&lt;/span&gt; &lt;span class=&quot;hljs-punctuation&quot;&gt;}&lt;/span&gt;</span>
-  &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
-  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;deniedMcpServers&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;
-    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;serverCommand&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;npx untrusted-*&amp;quot;&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
-  &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;
-&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;</code></pre>
-</div>
-<h3 id="key-environment-variables">Key Environment Variables<a class="anchor" href="#key-environment-variables">#</a></h3>
-<p>Claude Code supports 140+ environment variables for fine-grained control:</p>
-<table>
-<thead>
-<tr>
-<th>Variable</th>
-<th>Purpose</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>ANTHROPIC_MODEL</code></td>
-<td>Override default model</td>
-</tr>
-<tr>
-<td><code>CLAUDE_CODE_EFFORT_LEVEL</code></td>
-<td>Set effort level (Low/Med/High)</td>
-</tr>
-<tr>
-<td><code>CLAUDE_CODE_SUBAGENT_MODEL</code></td>
-<td>Model for subagents</td>
-</tr>
-<tr>
-<td><code>CLAUDE_AUTOCOMPACT_PCT_OVERRIDE</code></td>
-<td>Auto-compact threshold</td>
-</tr>
-<tr>
-<td><code>MAX_THINKING_TOKENS</code></td>
-<td>Limit extended thinking tokens</td>
-</tr>
-<tr>
-<td><code>CLAUDE_CODE_MAX_OUTPUT_TOKENS</code></td>
-<td>Max output tokens (up to 64000)</td>
-</tr>
-<tr>
-<td><code>ENABLE_TOOL_SEARCH</code></td>
-<td>Auto-defer MCP tools (<code>auto:N</code>)</td>
-</tr>
-<tr>
-<td><code>SLASH_COMMAND_TOOL_CHAR_BUDGET</code></td>
-<td>Skill content budget (default 15000)</td>
-</tr>
-<tr>
-<td><code>CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS</code></td>
-<td>Enable agent teams (<code>1</code>)</td>
-</tr>
-</tbody></table>
+<p>Settings files use standard JSON. Check <code>.claude/settings.json</code> into git for team-shared config, and use <code>.claude/settings.local.json</code> for personal overrides (gitignored automatically).</p>
+<p>For the complete schema, file locations, allow/deny syntax, and environment variables reference, see the <strong>Reference</strong> tab.</p>
 <h3 id="model-selection">Model Selection<a class="anchor" href="#model-selection">#</a></h3>
 <p>Override the default model per session or globally:</p>
 <div class="code-block">
@@ -369,40 +275,569 @@ Use <code>/model</code> during a session, <code>ANTHROPIC_MODEL</code> env var f
   </div>
   <div class="tab-panel" data-tab-panel="howto">
 
-<h2 id="how-to-guides">How-To Guides<a class="anchor" href="#how-to-guides">#</a></h2>
-<div class="callout callout-info">
-  <div class="callout-title">Info</div>
-  <p>Step-by-step guides for Settings are coming in Phase 4.</p>
-</div>
-<p>Planned guides:</p>
+<h2 id="how-to-configure-settings-for-your-team">How to Configure Settings for Your Team<a class="anchor" href="#how-to-configure-settings-for-your-team">#</a></h2>
+<h3 id="prerequisites">Prerequisites<a class="anchor" href="#prerequisites">#</a></h3>
 <ul>
-<li><p>Configuring project-shared settings for your team -- <em>coming soon</em></p>
-</li>
-<li><p>Setting up managed enterprise policies -- <em>coming soon</em></p>
-</li>
-<li><p>Customizing model selection and thinking behavior -- <em>coming soon</em></p>
-</li>
-<li><p>Managing permissions with allow/deny rules -- <em>coming soon</em></p>
-</div>
-<div class="tab-panel" data-tab-panel="reference"></li>
+<li>Claude Code installed and working (<code>claude --version</code>)</li>
+<li>A project directory with <code>.claude/</code> directory (create one if needed)</li>
 </ul>
+<h3 id="step-1-create-project-shared-settings">Step 1: Create Project-Shared Settings<a class="anchor" href="#step-1-create-project-shared-settings">#</a></h3>
+<p>Create <code>.claude/settings.json</code> at your project root to share settings with your team:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">json</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-json">&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;permissions&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;allow&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Bash(npm run *)&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Bash(pnpm *)&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Edit(src<span class="hljs-comment">/**)&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;hljs-string&quot;&gt;&amp;quot;Write(src/**)&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;hljs-string&quot;&gt;&amp;quot;Read(*)&amp;quot;&lt;/span&gt;
+    &lt;span class=&quot;hljs-punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;hljs-attr&quot;&gt;&amp;quot;deny&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;hljs-punctuation&quot;&gt;[&lt;/span&gt;
+      &lt;span class=&quot;hljs-string&quot;&gt;&amp;quot;Bash(rm -rf *)&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;hljs-string&quot;&gt;&amp;quot;Bash(curl * | bash)&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;hljs-string&quot;&gt;&amp;quot;Edit(.env*)&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;hljs-string&quot;&gt;&amp;quot;Write(.env*)&amp;quot;&lt;/span&gt;
+    &lt;span class=&quot;hljs-punctuation&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;hljs-punctuation&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;hljs-punctuation&quot;&gt;}&lt;/span&gt;</span></code></pre>
+</div>
+<p>Check this file into git so everyone on the team gets the same permissions.</p>
+<h3 id="step-2-add-personal-overrides">Step 2: Add Personal Overrides<a class="anchor" href="#step-2-add-personal-overrides">#</a></h3>
+<p>Create <code>.claude/settings.local.json</code> for preferences that should not be shared (this file is automatically gitignored):</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">json</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-json">&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;permissions&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;allow&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Bash(docker *)&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Bash(kubectl *)&amp;quot;&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;</code></pre>
+</div>
+<p>Personal overrides merge with and take precedence over project-shared settings.</p>
+<h3 id="step-3-configure-user-wide-defaults">Step 3: Configure User-Wide Defaults<a class="anchor" href="#step-3-configure-user-wide-defaults">#</a></h3>
+<p>Set global defaults that apply across all your projects:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-bash">&lt;span class=<span class="hljs-string">&quot;hljs-comment&quot;</span>&gt;# Open your user settings file&lt;/span&gt;
+&lt;span class=<span class="hljs-string">&quot;hljs-comment&quot;</span>&gt;# macOS/Linux: ~/.claude/settings.json&lt;/span&gt;</code></pre>
+</div>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">json</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-json">&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;permissions&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;allow&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Bash(git *)&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Read(*)&amp;quot;&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;</code></pre>
+</div>
+<p>These defaults are the lowest priority -- any project or CLI setting overrides them.</p>
+<h3 id="step-4-use-cli-flags-for-temporary-overrides">Step 4: Use CLI Flags for Temporary Overrides<a class="anchor" href="#step-4-use-cli-flags-for-temporary-overrides">#</a></h3>
+<p>For one-off session needs, use CLI flags (highest developer-controlled priority):</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-bash">&lt;span class=<span class="hljs-string">&quot;hljs-comment&quot;</span>&gt;# Use a different model <span class="hljs-keyword">for</span> this session&lt;/span&gt;
+claude --model haiku
+
+&lt;span class=<span class="hljs-string">&quot;hljs-comment&quot;</span>&gt;# Read-only exploration mode&lt;/span&gt;
+claude --permission-mode plan
+
+&lt;span class=<span class="hljs-string">&quot;hljs-comment&quot;</span>&gt;# Accept all file edits automatically&lt;/span&gt;
+claude --permission-mode acceptEdits</code></pre>
+</div>
+<p>CLI flags only last for the current session and are not persisted.</p>
+<h3 id="step-5-set-up-environment-variables">Step 5: Set Up Environment Variables<a class="anchor" href="#step-5-set-up-environment-variables">#</a></h3>
+<p>Export environment variables for persistent behavior overrides:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-bash">&lt;span class=<span class="hljs-string">&quot;hljs-comment&quot;</span>&gt;# In your shell profile (~/.zshrc, ~/.bashrc)&lt;/span&gt;
+&lt;span class=<span class="hljs-string">&quot;hljs-built_in&quot;</span>&gt;<span class="hljs-built_in">export</span>&lt;/span&gt; ANTHROPIC_MODEL=&lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;claude-sonnet-4-20250514&amp;quot;&lt;/span&gt;
+&lt;span class=<span class="hljs-string">&quot;hljs-built_in&quot;</span>&gt;<span class="hljs-built_in">export</span>&lt;/span&gt; CLAUDE_CODE_EFFORT_LEVEL=&lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;high&amp;quot;&lt;/span&gt;
+&lt;span class=<span class="hljs-string">&quot;hljs-built_in&quot;</span>&gt;<span class="hljs-built_in">export</span>&lt;/span&gt; CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=&lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;70&amp;quot;&lt;/span&gt;</code></pre>
+</div>
+<p>See the <strong>Reference</strong> tab for the complete environment variables table.</p>
+<h3 id="verify-it-works">Verify It Works<a class="anchor" href="#verify-it-works">#</a></h3>
+<p>Start a Claude Code session and check which settings are active:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang"></span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-plaintext">&amp;gt; What permission mode am I in?
+&amp;gt; What model are you using?</code></pre>
+</div>
+<p>You can also verify settings merge correctly by checking if your project permissions are applied:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang"></span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-plaintext">&amp;gt; Can you run npm run test?</code></pre>
+</div>
+<p>If the command is in your <code>allow</code> list, Claude will execute it without prompting.</p>
+<h3 id="troubleshooting">Troubleshooting<a class="anchor" href="#troubleshooting">#</a></h3>
+<ul>
+<li><strong>Settings not applying:</strong> Ensure the file is valid JSON. Check file location -- <code>.claude/settings.json</code> must be inside the <code>.claude/</code> directory at the project root.</li>
+<li><strong>Permission denied unexpectedly:</strong> A higher-priority settings source may be overriding your config. Check managed settings (enterprise) or CLI flags.</li>
+<li><strong>Local settings committed to git:</strong> Verify <code>.claude/settings.local.json</code> is in your <code>.gitignore</code>. It should be gitignored automatically, but check if your gitignore has been modified.</li>
+</ul>
+<!-- end howto -->
+
+  </div>
+  <div class="tab-panel" data-tab-panel="reference">
+
 <h2 id="technical-reference">Technical Reference<a class="anchor" href="#technical-reference">#</a></h2>
-<div class="callout callout-info">
-  <div class="callout-title">Info</div>
-  <p>Detailed reference specs for Settings are coming in Phase 4.</p>
+<h3 id="settings-hierarchy-5-level-precedence">Settings Hierarchy -- 5-Level Precedence<a class="anchor" href="#settings-hierarchy-5-level-precedence">#</a></h3>
+<p>Settings resolve in strict priority order. Higher priority always overrides lower:</p>
+<table>
+<thead>
+<tr>
+<th>Priority</th>
+<th>Source</th>
+<th>File Path</th>
+<th>Scope</th>
+<th>Who Controls</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1 (highest)</td>
+<td>Managed settings</td>
+<td>See Managed Locations below</td>
+<td>Organization-wide</td>
+<td>Admins only</td>
+</tr>
+<tr>
+<td>2</td>
+<td>CLI arguments</td>
+<td>N/A (passed at invocation)</td>
+<td>Current session</td>
+<td>Developer</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Project local</td>
+<td><code>&lt;repo&gt;/.claude/settings.local.json</code></td>
+<td>Project (personal)</td>
+<td>Developer</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Project shared</td>
+<td><code>&lt;repo&gt;/.claude/settings.json</code></td>
+<td>Project (shared via git)</td>
+<td>Team</td>
+</tr>
+<tr>
+<td>5 (lowest)</td>
+<td>User-wide</td>
+<td><code>~/.claude/settings.json</code></td>
+<td>All projects</td>
+<td>Developer</td>
+</tr>
+</tbody></table>
+<p>No lower-priority source can override a higher-priority restriction. Managed settings always win.</p>
+<h3 id="settings-file-locations">Settings File Locations<a class="anchor" href="#settings-file-locations">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>macOS</th>
+<th>Linux</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>User settings</td>
+<td><code>~/.claude/settings.json</code></td>
+<td><code>~/.claude/settings.json</code></td>
+</tr>
+<tr>
+<td>Project shared</td>
+<td><code>&lt;repo&gt;/.claude/settings.json</code></td>
+<td><code>&lt;repo&gt;/.claude/settings.json</code></td>
+</tr>
+<tr>
+<td>Project local</td>
+<td><code>&lt;repo&gt;/.claude/settings.local.json</code></td>
+<td><code>&lt;repo&gt;/.claude/settings.local.json</code></td>
+</tr>
+<tr>
+<td>Managed settings</td>
+<td><code>/Library/Application Support/ClaudeCode/</code></td>
+<td><code>/etc/claude-code/</code></td>
+</tr>
+<tr>
+<td>Managed MCP</td>
+<td><code>/Library/Application Support/ClaudeCode/managed-mcp.json</code></td>
+<td><code>/etc/claude-code/managed-mcp.json</code></td>
+</tr>
+</tbody></table>
+<h3 id="complete-settingsjson-schema">Complete settings.json Schema<a class="anchor" href="#complete-settingsjson-schema">#</a></h3>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">json</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-json">&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;permissions&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;allow&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;&amp;lt;tool&amp;gt;(&amp;lt;pattern&amp;gt;)&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;...&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;deny&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;&amp;lt;tool&amp;gt;(&amp;lt;pattern&amp;gt;)&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;...&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;hooks&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;&amp;lt;EventName&amp;gt;&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+        &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;matcher&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;&amp;lt;regex&amp;gt;&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+        &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;hooks&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;
+          &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+            &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;type&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;command&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+            &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;command&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;&amp;lt;shell command&amp;gt;&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+            &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;timeout&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-number&quot;</span>&gt;<span class="hljs-number">600</span>&lt;/span&gt;
+          &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+        &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;mcpServers&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;&amp;lt;server-name&amp;gt;&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;command&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;&amp;lt;executable&amp;gt;&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;args&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;&amp;lt;arg1&amp;gt;&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;&amp;lt;arg2&amp;gt;&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;env&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;&amp;lt;KEY&amp;gt;&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;&amp;lt;value&amp;gt;&amp;quot;&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;</code></pre>
 </div>
-<p>Planned references:</p>
-<ul>
-<li><p>Complete settings.json schema -- <em>coming soon</em></p>
-</li>
-<li><p>All 140+ environment variables -- <em>coming soon</em></p>
-</li>
-<li><p>Managed settings deployment guide -- <em>coming soon</em></p>
-</li>
-<li><p>Permission mode reference -- <em>coming soon</em></p>
+<h3 id="field-reference">Field Reference<a class="anchor" href="#field-reference">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>permissions</code></td>
+<td>object</td>
+<td>No</td>
+<td>Tool permission rules</td>
+</tr>
+<tr>
+<td><code>permissions.allow</code></td>
+<td>string[]</td>
+<td>No</td>
+<td>Tool patterns to auto-approve</td>
+</tr>
+<tr>
+<td><code>permissions.deny</code></td>
+<td>string[]</td>
+<td>No</td>
+<td>Tool patterns to always deny</td>
+</tr>
+<tr>
+<td><code>hooks</code></td>
+<td>object</td>
+<td>No</td>
+<td>Lifecycle hook configuration (see <a href="hooks.html">Hooks Reference</a>)</td>
+</tr>
+<tr>
+<td><code>mcpServers</code></td>
+<td>object</td>
+<td>No</td>
+<td>MCP server definitions (see <a href="mcp.html">MCP Reference</a>)</td>
+</tr>
+</tbody></table>
+<h3 id="permission-modes">Permission Modes<a class="anchor" href="#permission-modes">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Behavior</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>default</code></td>
+<td>Standard checking -- prompts for approval on unrecognized tools</td>
+<td>Normal development</td>
+</tr>
+<tr>
+<td><code>acceptEdits</code></td>
+<td>Auto-accepts file edits, prompts for other tools</td>
+<td>Trusted editing sessions</td>
+</tr>
+<tr>
+<td><code>dontAsk</code></td>
+<td>Auto-denies any permission prompts</td>
+<td>Automated CI/CD pipelines</td>
+</tr>
+<tr>
+<td><code>bypassPermissions</code></td>
+<td>Skips all permission checks</td>
+<td>Use with extreme caution</td>
+</tr>
+<tr>
+<td><code>plan</code></td>
+<td>Read-only exploration, no writes or executions</td>
+<td>Code review, onboarding</td>
+</tr>
+</tbody></table>
+<p>Set via CLI: <code>claude --permission-mode &lt;mode&gt;</code></p>
+<h3 id="allowdeny-syntax">Allow/Deny Syntax<a class="anchor" href="#allowdeny-syntax">#</a></h3>
+<p>Permission rules use a <code>Tool(pattern)</code> format with glob-style wildcards:</p>
+<table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>Matches</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Bash(npm run *)</code></td>
+<td>Any <code>npm run</code> command</td>
+</tr>
+<tr>
+<td><code>Edit(src/**)</code></td>
+<td>Edits to any file under <code>src/</code></td>
+</tr>
+<tr>
+<td><code>Write(*.test.ts)</code></td>
+<td>Writing any <code>.test.ts</code> file</td>
+</tr>
+<tr>
+<td><code>Bash(rm -rf *)</code></td>
+<td>Any <code>rm -rf</code> command (deny this)</td>
+</tr>
+<tr>
+<td><code>Edit(.env*)</code></td>
+<td>Edits to any <code>.env</code> file (deny this)</td>
+</tr>
+<tr>
+<td><code>Read(*)</code></td>
+<td>Reading any file</td>
+</tr>
+</tbody></table>
+<p>Rules are evaluated in order: deny rules take precedence over allow rules at the same settings level.</p>
+<h3 id="managed-mcp-server-policies">Managed MCP Server Policies<a class="anchor" href="#managed-mcp-server-policies">#</a></h3>
+<p>The <code>managed-mcp.json</code> file controls which MCP servers are permitted organization-wide:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">json</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-json">&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;mcpServers&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;allowedMcpServers&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;serverName&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;github&amp;quot;&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;serverUrl&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;https<span class="hljs-punctuation">:</span><span class="hljs-comment">//*.yourcompany.com/*&amp;quot;&lt;/span&gt; &lt;span class=&quot;hljs-punctuation&quot;&gt;}&lt;/span&gt;</span>
+  &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;deniedMcpServers&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;serverCommand&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;npx untrusted-*&amp;quot;&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;
+&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;</code></pre>
 </div>
-</div></li>
-</ul>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>mcpServers</code></td>
+<td>object</td>
+<td>Org-mandated MCP servers (always connected)</td>
+</tr>
+<tr>
+<td><code>allowedMcpServers</code></td>
+<td>array</td>
+<td>Allowlist patterns for permitted servers</td>
+</tr>
+<tr>
+<td><code>deniedMcpServers</code></td>
+<td>array</td>
+<td>Denylist patterns for blocked servers</td>
+</tr>
+</tbody></table>
+<h3 id="environment-variables-reference">Environment Variables Reference<a class="anchor" href="#environment-variables-reference">#</a></h3>
+<p>Claude Code supports 140+ environment variables. The table below lists the most important ones. For the full list, run <code>claude config list</code> or consult the <a href="https://code.claude.com/docs">official documentation</a>.</p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ANTHROPIC_MODEL</code></td>
+<td>string</td>
+<td><code>claude-opus-4-20250514</code></td>
+<td>Override the default model for all sessions</td>
+</tr>
+<tr>
+<td><code>CLAUDE_CODE_EFFORT_LEVEL</code></td>
+<td>string</td>
+<td><code>&quot;high&quot;</code></td>
+<td>Set effort level: <code>low</code>, <code>medium</code>, or <code>high</code></td>
+</tr>
+<tr>
+<td><code>CLAUDE_CODE_SUBAGENT_MODEL</code></td>
+<td>string</td>
+<td>(same as main)</td>
+<td>Model used for subagent/agent tasks</td>
+</tr>
+<tr>
+<td><code>CLAUDE_AUTOCOMPACT_PCT_OVERRIDE</code></td>
+<td>number</td>
+<td><code>80</code></td>
+<td>Context window percentage that triggers auto-compaction</td>
+</tr>
+<tr>
+<td><code>MAX_THINKING_TOKENS</code></td>
+<td>number</td>
+<td>(model default)</td>
+<td>Maximum tokens for extended thinking</td>
+</tr>
+<tr>
+<td><code>CLAUDE_CODE_MAX_OUTPUT_TOKENS</code></td>
+<td>number</td>
+<td><code>16000</code></td>
+<td>Max output tokens per response (up to 64000)</td>
+</tr>
+<tr>
+<td><code>ENABLE_TOOL_SEARCH</code></td>
+<td>string</td>
+<td><code>&quot;false&quot;</code></td>
+<td>Auto-defer MCP tools with <code>auto:N</code> (set to <code>auto:40</code>)</td>
+</tr>
+<tr>
+<td><code>ANTHROPIC_DEFAULT_HAIKU_MODEL</code></td>
+<td>string</td>
+<td><code>claude-haiku-3-5-20241022</code></td>
+<td>Override the default Haiku model</td>
+</tr>
+<tr>
+<td><code>ANTHROPIC_BASE_URL</code></td>
+<td>string</td>
+<td><code>https://api.anthropic.com</code></td>
+<td>Custom API endpoint (for proxies or enterprise)</td>
+</tr>
+<tr>
+<td><code>CLAUDE_CODE_DISABLE_BACKGROUND_TASKS</code></td>
+<td>string</td>
+<td><code>&quot;false&quot;</code></td>
+<td>Disable background task execution</td>
+</tr>
+<tr>
+<td><code>CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS</code></td>
+<td>number</td>
+<td><code>60000</code></td>
+<td>Timeout for session-end hooks in milliseconds</td>
+</tr>
+<tr>
+<td><code>CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS</code></td>
+<td>string</td>
+<td><code>&quot;0&quot;</code></td>
+<td>Enable agent teams feature (<code>1</code> to enable)</td>
+</tr>
+<tr>
+<td><code>SLASH_COMMAND_TOOL_CHAR_BUDGET</code></td>
+<td>number</td>
+<td><code>15000</code></td>
+<td>Character budget for skill/command content</td>
+</tr>
+</tbody></table>
+<blockquote><p>[!NOTE]
+<code>ANTHROPIC_SMALL_FAST_MODEL</code> is deprecated. Use <code>ANTHROPIC_DEFAULT_HAIKU_MODEL</code> instead.</p>
+</blockquote>
+<h3 id="examples">Examples<a class="anchor" href="#examples">#</a></h3>
+<p><strong>Minimal project settings:</strong></p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">json</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-json">&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;permissions&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;allow&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Bash(npm run *)&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Edit(src<span class="hljs-comment">/**)&amp;quot;&lt;/span&gt;
+    &lt;span class=&quot;hljs-punctuation&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;hljs-punctuation&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;hljs-punctuation&quot;&gt;}&lt;/span&gt;</span></code></pre>
+</div>
+<p><strong>Full team settings with hooks and MCP:</strong></p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">json</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-json">&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;permissions&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;allow&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Bash(npm run *)&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Bash(pnpm *)&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Bash(git *)&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Edit(src<span class="hljs-comment">/**)&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;hljs-string&quot;&gt;&amp;quot;Write(src/**)&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;hljs-string&quot;&gt;&amp;quot;Read(*)&amp;quot;&lt;/span&gt;
+    &lt;span class=&quot;hljs-punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;hljs-attr&quot;&gt;&amp;quot;deny&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;hljs-punctuation&quot;&gt;[&lt;/span&gt;
+      &lt;span class=&quot;hljs-string&quot;&gt;&amp;quot;Bash(rm -rf *)&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;hljs-string&quot;&gt;&amp;quot;Bash(curl * | bash)&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;hljs-string&quot;&gt;&amp;quot;Edit(.env*)&amp;quot;&lt;/span&gt;
+    &lt;span class=&quot;hljs-punctuation&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;hljs-punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;hljs-attr&quot;&gt;&amp;quot;hooks&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;hljs-punctuation&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;hljs-attr&quot;&gt;&amp;quot;PostToolUse&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;hljs-punctuation&quot;&gt;[&lt;/span&gt;
+      &lt;span class=&quot;hljs-punctuation&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;hljs-attr&quot;&gt;&amp;quot;matcher&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;hljs-string&quot;&gt;&amp;quot;Edit|Write&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;hljs-attr&quot;&gt;&amp;quot;hooks&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;hljs-punctuation&quot;&gt;[&lt;/span&gt;
+          &lt;span class=&quot;hljs-punctuation&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;hljs-attr&quot;&gt;&amp;quot;type&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;hljs-string&quot;&gt;&amp;quot;command&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;hljs-attr&quot;&gt;&amp;quot;command&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;hljs-string&quot;&gt;&amp;quot;npx eslint --fix $CLAUDE_FILE_PATH&amp;quot;&lt;/span&gt;
+          &lt;span class=&quot;hljs-punctuation&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;hljs-punctuation&quot;&gt;]&lt;/span&gt;
+      &lt;span class=&quot;hljs-punctuation&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;hljs-punctuation&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;hljs-punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;hljs-attr&quot;&gt;&amp;quot;mcpServers&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;hljs-punctuation&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;hljs-attr&quot;&gt;&amp;quot;github&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;hljs-punctuation&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;hljs-attr&quot;&gt;&amp;quot;command&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;hljs-string&quot;&gt;&amp;quot;npx&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;hljs-attr&quot;&gt;&amp;quot;args&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;hljs-punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;hljs-string&quot;&gt;&amp;quot;@modelcontextprotocol/server-github&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;hljs-attr&quot;&gt;&amp;quot;env&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;hljs-punctuation&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;hljs-attr&quot;&gt;&amp;quot;GITHUB_TOKEN&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;hljs-string&quot;&gt;&amp;quot;${GITHUB_TOKEN}&amp;quot;&lt;/span&gt; &lt;span class=&quot;hljs-punctuation&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;hljs-punctuation&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;hljs-punctuation&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;hljs-punctuation&quot;&gt;}&lt;/span&gt;</span></code></pre>
+</div>
+  </div>
+</div>
+
 <h2 id="related">Related<a class="anchor" href="#related">#</a></h2>
 <ul>
 <li><a href="projects.html">Projects</a> -- CLAUDE.md provides instructions; settings provide permissions and controls</li>

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recipe: CRM Enrichment with MCP - Claude Ecosystem Guide</title>
+  <script>
+    // Prevent flash of wrong theme - runs before CSS/body render
+    (function() {
+      var stored = localStorage.getItem('claude-guide-theme');
+      if (stored) {
+        document.documentElement.setAttribute('data-theme', stored);
+      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="../index.html" class="site-title">Claude Ecosystem</a>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+    </div>
+    <div class="search-container" id="searchContainer">
+      <input type="search" id="searchInput" placeholder="Search docs..." aria-label="Search documentation">
+      <div class="search-results" id="searchResults"></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+  <div class="nav-section-title">Topics</div>
+  <a href="../topics/mcp.html" class="nav-link">MCP Servers and Connectors</a>
+  <a href="../topics/skills.html" class="nav-link">Skills</a>
+  <a href="../topics/plugins.html" class="nav-link">Plugins</a>
+  <a href="../topics/hooks.html" class="nav-link">Hooks</a>
+  <a href="../topics/agents.html" class="nav-link">Agents</a>
+  <a href="../topics/projects.html" class="nav-link">Projects and CLAUDE.md</a>
+  <a href="../topics/connectors.html" class="nav-link">Connectors</a>
+  <a href="../topics/commands.html" class="nav-link">Commands</a>
+  <a href="../topics/memory.html" class="nav-link">Memory</a>
+  <a href="../topics/settings.html" class="nav-link">Settings</a>
+</div>
+<div class="nav-section">
+  <div class="nav-section-title">Reference</div>
+  <a href="../topics/compatibility.html" class="nav-link">Compatibility Matrix</a>
+</div>
+<div class="nav-section">
+  <div class="nav-section-title">Decision Tools</div>
+  <a href="../topics/decision-wizard.html" class="nav-link">Decision Wizard</a>
+  <a href="../topics/comparisons.html" class="nav-link">Comparisons</a>
+</div>
+<div class="nav-section">
+  <div class="nav-section-title">Recipes</div>
+  <a href="../topics/recipe-deployment-skill.html" class="nav-link">Recipe: Build a Deployment Skill</a>
+  <a href="../topics/recipe-crm-mcp.html" class="nav-link active">Recipe: CRM Enrichment with MCP</a>
+  <a href="../topics/recipe-pre-commit-hook.html" class="nav-link">Recipe: Pre-Commit Linting Hook</a>
+  <a href="../topics/recipe-custom-agent.html" class="nav-link">Recipe: Build a Custom Agent</a>
+  <a href="../topics/recipe-monorepo-settings.html" class="nav-link">Recipe: Monorepo Settings Hierarchy</a>
+</div>
+
+    </nav>
+  </aside>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Toggle navigation">
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+  </button>
+  <main class="content" data-pagefind-body>
+    <article>
+      <h1 id="recipe-crm-enrichment-with-mcp">Recipe: CRM Enrichment with MCP<a class="anchor" href="#recipe-crm-enrichment-with-mcp">#</a></h1>
+<h2 id="what-you-will-build">What You Will Build<a class="anchor" href="#what-you-will-build">#</a></h2>
+<p>An <strong>MCP server</strong> that connects Claude to a CRM system, letting Claude look up customer records and enrich them with additional data. When you ask &quot;look up customer John Doe,&quot; Claude calls your MCP tools to fetch and update the record -- no manual API work required.</p>
+<p>The Model Context Protocol (MCP) gives Claude structured access to external systems through tool definitions. You will build a small Node.js server that exposes two tools: <code>lookup_customer</code> and <code>enrich_record</code>.</p>
+<h2 id="prerequisites">Prerequisites<a class="anchor" href="#prerequisites">#</a></h2>
+<ul>
+<li>Node.js 18 or later</li>
+<li>Claude Code installed</li>
+<li>A CRM or REST API with customer data (this recipe uses a generic REST API; adapt endpoints to your system)</li>
+<li>Basic familiarity with <a href="topics/mcp.html">MCP</a> concepts</li>
+</ul>
+<h2 id="step-1-scaffold-the-mcp-server">Step 1: Scaffold the MCP Server<a class="anchor" href="#step-1-scaffold-the-mcp-server">#</a></h2>
+<p>Create a new directory for your server and initialize it:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-bash">&lt;span class=<span class="hljs-string">&quot;hljs-built_in&quot;</span>&gt;<span class="hljs-built_in">mkdir</span>&lt;/span&gt; crm-mcp-server &amp;amp;&amp;amp; &lt;span class=<span class="hljs-string">&quot;hljs-built_in&quot;</span>&gt;<span class="hljs-built_in">cd</span>&lt;/span&gt; crm-mcp-server
+npm init -y
+npm install @modelcontextprotocol/sdk</code></pre>
+</div>
+<p>Your project structure:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">plaintext</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-plaintext">crm-mcp-server/
+  node_modules/
+  package.json
+  server.js          &amp;lt;-- you will create this</code></pre>
+</div>
+<p>Add <code>&quot;type&quot;: &quot;module&quot;</code> to your <code>package.json</code> so you can use ES module imports.</p>
+<h2 id="step-2-implement-the-server">Step 2: Implement the Server<a class="anchor" href="#step-2-implement-the-server">#</a></h2>
+<p>Create <code>server.js</code> with the full MCP server implementation. This uses the stdio transport, which means Claude launches the server as a child process and communicates over stdin/stdout.</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">javascript</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-javascript">&lt;span <span class="hljs-keyword">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;<span class="hljs-keyword">import</span>&lt;<span class="hljs-regexp">/span&gt; { &lt;span class=&quot;hljs-title class_&quot;&gt;McpServer&lt;/</span>span&gt; } &lt;span <span class="hljs-keyword">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;<span class="hljs-keyword">from</span>&lt;<span class="hljs-regexp">/span&gt; &lt;span class=&quot;hljs-string&quot;&gt;&amp;quot;@modelcontextprotocol/</span>sdk/server/mcp.<span class="hljs-property">js</span>&amp;quot;&lt;/span&gt;;
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;</span>import<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> { <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-title class_&quot;</span>&gt;</span>StdioServerTransport<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> } &lt;span <span class="hljs-keyword">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;<span class="hljs-keyword">from</span>&lt;<span class="hljs-regexp">/span&gt; &lt;span class=&quot;hljs-string&quot;&gt;&amp;quot;@modelcontextprotocol/</span>sdk/server/stdio.<span class="hljs-property">js</span>&amp;quot;&lt;/span&gt;;
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;</span>import<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> { z } &lt;span <span class="hljs-keyword">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;<span class="hljs-keyword">from</span>&lt;<span class="hljs-regexp">/span&gt; &lt;span class=&quot;hljs-string&quot;&gt;&amp;quot;zod&amp;quot;&lt;/</span>span&gt;;
+
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;</span>const<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-variable constant_&quot;</span>&gt;</span>CRM_BASE_URL<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> = process.&lt;span <span class="hljs-keyword">class</span>=<span class="hljs-string">&quot;hljs-property&quot;</span>&gt;env&lt;<span class="hljs-regexp">/span&gt;.&lt;span class=&quot;hljs-property&quot;&gt;CRM_API_URL&lt;/</span>span&gt; || <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;</span><span class="hljs-symbol">&amp;quot;</span>https://api.example.com<span class="hljs-symbol">&amp;quot;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>;
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;</span>const<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-variable constant_&quot;</span>&gt;</span>CRM_API_KEY<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> = process.&lt;span <span class="hljs-keyword">class</span>=<span class="hljs-string">&quot;hljs-property&quot;</span>&gt;env&lt;<span class="hljs-regexp">/span&gt;.&lt;span class=&quot;hljs-property&quot;&gt;CRM_API_KEY&lt;/</span>span&gt;;
+
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;</span>const<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> server = <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;</span>new<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-title class_&quot;</span>&gt;</span>McpServer<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>({
+  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;</span>name<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>: <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;</span><span class="hljs-symbol">&amp;quot;</span>crm-enrichment<span class="hljs-symbol">&amp;quot;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>,
+  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;</span>version<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>: <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;</span><span class="hljs-symbol">&amp;quot;</span>1.0.0<span class="hljs-symbol">&amp;quot;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>,
+});
+
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-comment&quot;</span>&gt;</span>// Tool: Look up a customer by name or email<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+server.&lt;span <span class="hljs-keyword">class</span>=<span class="hljs-string">&quot;hljs-title function_&quot;</span>&gt;tool&lt;/span&gt;(
+  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;</span><span class="hljs-symbol">&amp;quot;</span>lookup_customer<span class="hljs-symbol">&amp;quot;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>,
+  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;</span><span class="hljs-symbol">&amp;quot;</span>Search for a customer record by name or email address<span class="hljs-symbol">&amp;quot;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>,
+  {
+    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;</span>query<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>: z.&lt;span <span class="hljs-keyword">class</span>=<span class="hljs-string">&quot;hljs-title function_&quot;</span>&gt;string&lt;<span class="hljs-regexp">/span&gt;().&lt;span class=&quot;hljs-title function_&quot;&gt;describe&lt;/</span>span&gt;(<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;</span><span class="hljs-symbol">&amp;quot;</span>Customer name or email to search for<span class="hljs-symbol">&amp;quot;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>),
+  },
+  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-title function_&quot;</span>&gt;</span>async<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> ({ query }) =&amp;gt; {
+    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;</span>const<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> res = <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;</span>await<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-title function_&quot;</span>&gt;</span>fetch<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>(
+      <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;</span>`<span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-subst&quot;</span>&gt;</span>${CRM_BASE_URL}<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>/customers/search?q=<span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-subst&quot;</span>&gt;</span>${<span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-built_in&quot;</span>&gt;</span>encodeURIComponent<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>(query)}<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>`<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>,
+      { <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;</span>headers<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>: { <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-title class_&quot;</span>&gt;</span>Authorization<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>: <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;</span>`Bearer <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-subst&quot;</span>&gt;</span>${CRM_API_KEY}<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>`<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> } }
+    );
+
+    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;</span>if<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> (!res.&lt;span <span class="hljs-keyword">class</span>=<span class="hljs-string">&quot;hljs-property&quot;</span>&gt;ok&lt;/span&gt;) {
+      <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;</span>return<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> {
+        <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;</span>content<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>: [{ <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;</span>type<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>: <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;</span><span class="hljs-symbol">&amp;quot;</span>text<span class="hljs-symbol">&amp;quot;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>, <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;</span>text<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>: <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;</span>`API error: <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-subst&quot;</span>&gt;</span>${res.status}<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span> <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-subst&quot;</span>&gt;</span>${res.statusText}<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>`<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> }],
+      };
+    }
+
+    &lt;span <span class="hljs-keyword">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;<span class="hljs-keyword">const</span>&lt;<span class="hljs-regexp">/span&gt; data = &lt;span class=&quot;hljs-keyword&quot;&gt;await&lt;/</span>span&gt; res.&lt;span <span class="hljs-keyword">class</span>=<span class="hljs-string">&quot;hljs-title function_&quot;</span>&gt;json&lt;/span&gt;();
+    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;</span>return<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> {
+      <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;</span>content<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>: [{ <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;</span>type<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>: <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;</span><span class="hljs-symbol">&amp;quot;</span>text<span class="hljs-symbol">&amp;quot;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>, <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;</span>text<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>: <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-title class_&quot;</span>&gt;</span>JSON<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>.&lt;span <span class="hljs-keyword">class</span>=<span class="hljs-string">&quot;hljs-title function_&quot;</span>&gt;stringify&lt;<span class="hljs-regexp">/span&gt;(data, &lt;span class=&quot;hljs-literal&quot;&gt;null&lt;/</span>span&gt;, <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-number&quot;</span>&gt;</span>2<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>) }],
+    };
+  }
+);
+
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-comment&quot;</span>&gt;</span>// Tool: Enrich a customer record with additional data<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+server.&lt;span <span class="hljs-keyword">class</span>=<span class="hljs-string">&quot;hljs-title function_&quot;</span>&gt;tool&lt;/span&gt;(
+  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;</span><span class="hljs-symbol">&amp;quot;</span>enrich_record<span class="hljs-symbol">&amp;quot;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>,
+  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;</span><span class="hljs-symbol">&amp;quot;</span>Add or update fields on a customer record<span class="hljs-symbol">&amp;quot;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>,
+  {
+    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;</span>customerId<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>: z.&lt;span <span class="hljs-keyword">class</span>=<span class="hljs-string">&quot;hljs-title function_&quot;</span>&gt;string&lt;<span class="hljs-regexp">/span&gt;().&lt;span class=&quot;hljs-title function_&quot;&gt;describe&lt;/</span>span&gt;(<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;</span><span class="hljs-symbol">&amp;quot;</span>The customer ID to update<span class="hljs-symbol">&amp;quot;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>),
+    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;</span>fields<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>: z.&lt;span <span class="hljs-keyword">class</span>=<span class="hljs-string">&quot;hljs-title function_&quot;</span>&gt;record&lt;<span class="hljs-regexp">/span&gt;(z.&lt;span class=&quot;hljs-title function_&quot;&gt;string&lt;/</span>span&gt;()).&lt;span <span class="hljs-keyword">class</span>=<span class="hljs-string">&quot;hljs-title function_&quot;</span>&gt;describe&lt;<span class="hljs-regexp">/span&gt;(&lt;span class=&quot;hljs-string&quot;&gt;&amp;quot;Key-value pairs to add or update&amp;quot;&lt;/</span>span&gt;),
+  },
+  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-title function_&quot;</span>&gt;</span>async<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> ({ customerId, fields }) =&amp;gt; {
+    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;</span>const<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> res = <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;</span>await<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-title function_&quot;</span>&gt;</span>fetch<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>(<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;</span>`<span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-subst&quot;</span>&gt;</span>${CRM_BASE_URL}<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>/customers/<span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-subst&quot;</span>&gt;</span>${customerId}<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>`<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>, {
+      <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;</span>method<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>: <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;</span><span class="hljs-symbol">&amp;quot;</span>PATCH<span class="hljs-symbol">&amp;quot;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>,
+      <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;</span>headers<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>: {
+        <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-title class_&quot;</span>&gt;</span>Authorization<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>: <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;</span>`Bearer <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-subst&quot;</span>&gt;</span>${CRM_API_KEY}<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>`<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>,
+        <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;</span><span class="hljs-symbol">&amp;quot;</span>Content-Type<span class="hljs-symbol">&amp;quot;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>: <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;</span><span class="hljs-symbol">&amp;quot;</span>application/json<span class="hljs-symbol">&amp;quot;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>,
+      },
+      <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;</span>body<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>: <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-title class_&quot;</span>&gt;</span>JSON<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>.&lt;span <span class="hljs-keyword">class</span>=<span class="hljs-string">&quot;hljs-title function_&quot;</span>&gt;stringify&lt;/span&gt;(fields),
+    });
+
+    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;</span>if<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> (!res.&lt;span <span class="hljs-keyword">class</span>=<span class="hljs-string">&quot;hljs-property&quot;</span>&gt;ok&lt;/span&gt;) {
+      <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;</span>return<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> {
+        <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;</span>content<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>: [{ <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;</span>type<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>: <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;</span><span class="hljs-symbol">&amp;quot;</span>text<span class="hljs-symbol">&amp;quot;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>, <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;</span>text<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>: <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;</span>`Update failed: <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-subst&quot;</span>&gt;</span>${res.status}<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span> <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-subst&quot;</span>&gt;</span>${res.statusText}<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>`<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> }],
+      };
+    }
+
+    &lt;span <span class="hljs-keyword">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;<span class="hljs-keyword">const</span>&lt;<span class="hljs-regexp">/span&gt; updated = &lt;span class=&quot;hljs-keyword&quot;&gt;await&lt;/</span>span&gt; res.&lt;span <span class="hljs-keyword">class</span>=<span class="hljs-string">&quot;hljs-title function_&quot;</span>&gt;json&lt;/span&gt;();
+    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;</span>return<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> {
+      <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;</span>content<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>: [{ <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;</span>type<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>: <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;</span><span class="hljs-symbol">&amp;quot;</span>text<span class="hljs-symbol">&amp;quot;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>, <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;</span>text<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>: <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;</span>`Record updated:\n<span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-subst&quot;</span>&gt;</span>${<span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-built_in&quot;</span>&gt;</span>JSON<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>.stringify(updated, <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-literal&quot;</span>&gt;</span>null<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>, <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-number&quot;</span>&gt;</span>2<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>)}<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>`<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> }],
+    };
+  }
+);
+
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-comment&quot;</span>&gt;</span>// Start the server<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;</span>const<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> transport = <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;</span>new<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-title class_&quot;</span>&gt;</span>StdioServerTransport<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>();
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-keyword&quot;</span>&gt;</span>await<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> server.&lt;span <span class="hljs-keyword">class</span>=<span class="hljs-string">&quot;hljs-title function_&quot;</span>&gt;connect&lt;/span&gt;(transport);</code></pre>
+</div>
+<h2 id="step-3-configure-claude-code">Step 3: Configure Claude Code<a class="anchor" href="#step-3-configure-claude-code">#</a></h2>
+<p>Register the MCP server in your project&#39;s <code>.mcp.json</code> file (create it in the project root where you use Claude):</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">json</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-json">&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;mcpServers&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;crm&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;command&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;node&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;args&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">[</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;/absolute/path/to/crm-mcp-server/server.js&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">]</span>&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">,</span>&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;env&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">{</span>&lt;/span&gt;
+        &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;CRM_API_URL&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;https<span class="hljs-punctuation">:</span><span class="hljs-comment">//api.your-crm.com&amp;quot;&lt;/span&gt;&lt;span class=&quot;hljs-punctuation&quot;&gt;,&lt;/span&gt;</span>
+        &lt;span class=<span class="hljs-string">&quot;hljs-attr&quot;</span>&gt;&amp;quot;CRM_API_KEY&amp;quot;&lt;/span&gt;&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">:</span>&lt;/span&gt; &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;your-api-key-here&amp;quot;&lt;/span&gt;
+      &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+    &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+  &lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;
+&lt;span class=<span class="hljs-string">&quot;hljs-punctuation&quot;</span>&gt;<span class="hljs-punctuation">}</span>&lt;/span&gt;</code></pre>
+</div>
+<p>Key points:</p>
+<ul>
+<li><strong>command</strong> and <strong>args</strong> tell Claude how to start the server process.</li>
+<li><strong>env</strong> passes environment variables (API keys, base URLs) to the server process.</li>
+<li>Use an absolute path to the server file, or a path relative to the <code>.mcp.json</code> location.</li>
+</ul>
+<h2 id="step-4-test-the-integration">Step 4: Test the Integration<a class="anchor" href="#step-4-test-the-integration">#</a></h2>
+<p>Restart Claude Code (or start a new session) so it discovers the new MCP server. Then try:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-bash">claude &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;look up customer John Doe&amp;quot;&lt;/span&gt;</code></pre>
+</div>
+<p>Claude will:</p>
+<ol>
+<li>See the <code>lookup_customer</code> tool from your MCP server.</li>
+<li>Call it with <code>{ &quot;query&quot;: &quot;John Doe&quot; }</code>.</li>
+<li>Display the results from your CRM API.</li>
+</ol>
+<p>To test enrichment:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-bash">claude &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;add the tag &amp;#x27;enterprise&amp;#x27; to customer cust_12345&amp;quot;&lt;/span&gt;</code></pre>
+</div>
+<p>Claude will call <code>enrich_record</code> with the customer ID and the new field.</p>
+<h2 id="verify-it-works">Verify It Works<a class="anchor" href="#verify-it-works">#</a></h2>
+<p>Your integration is working when:</p>
+<ul>
+<li>Claude lists <code>lookup_customer</code> and <code>enrich_record</code> among its available tools (you can ask &quot;what MCP tools do you have?&quot;).</li>
+<li>A lookup query returns structured customer data from your API.</li>
+<li>An enrichment request updates the record and returns the updated data.</li>
+<li>Error responses (invalid API key, customer not found) surface as readable messages, not crashes.</li>
+</ul>
+<h2 id="next-steps">Next Steps<a class="anchor" href="#next-steps">#</a></h2>
+<ul>
+<li>Read the <a href="topics/mcp.html">MCP reference</a> for the full configuration schema, including <code>headers</code> and <code>timeout</code> options.</li>
+<li>Switch to SSE transport if you need to host the MCP server remotely (see the MCP How-To tab).</li>
+<li>Add more tools: <code>create_customer</code>, <code>list_recent_activity</code>, <code>generate_report</code>.</li>
+<li>Combine with a <a href="topics/recipe-deployment-skill.html">deployment skill</a> to automate CRM data migrations.</li>
+</ul>
+
+    </article>
+  </main>
+  <script src="../assets/main.js"></script>
+</body>
+</html>

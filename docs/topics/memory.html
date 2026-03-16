@@ -41,6 +41,10 @@
         </svg>
       </button>
     </div>
+    <div class="search-container" id="searchContainer">
+      <input type="search" id="searchInput" placeholder="Search docs..." aria-label="Search documentation">
+      <div class="search-results" id="searchResults"></div>
+    </div>
     <nav class="sidebar-nav">
       <div class="nav-section">
   <div class="nav-section-title">Topics</div>
@@ -59,6 +63,19 @@
   <div class="nav-section-title">Reference</div>
   <a href="../topics/compatibility.html" class="nav-link">Compatibility Matrix</a>
 </div>
+<div class="nav-section">
+  <div class="nav-section-title">Decision Tools</div>
+  <a href="../topics/decision-wizard.html" class="nav-link">Decision Wizard</a>
+  <a href="../topics/comparisons.html" class="nav-link">Comparisons</a>
+</div>
+<div class="nav-section">
+  <div class="nav-section-title">Recipes</div>
+  <a href="../topics/recipe-deployment-skill.html" class="nav-link">Recipe: Build a Deployment Skill</a>
+  <a href="../topics/recipe-crm-mcp.html" class="nav-link">Recipe: CRM Enrichment with MCP</a>
+  <a href="../topics/recipe-pre-commit-hook.html" class="nav-link">Recipe: Pre-Commit Linting Hook</a>
+  <a href="../topics/recipe-custom-agent.html" class="nav-link">Recipe: Build a Custom Agent</a>
+  <a href="../topics/recipe-monorepo-settings.html" class="nav-link">Recipe: Monorepo Settings Hierarchy</a>
+</div>
 
     </nav>
   </aside>
@@ -68,7 +85,7 @@
     <span class="hamburger-line"></span>
     <span class="hamburger-line"></span>
   </button>
-  <main class="content">
+  <main class="content" data-pagefind-body>
     <article>
       <h1 id="memory-system">Memory System<a class="anchor" href="#memory-system">#</a></h1>
 <div class="tabs">
@@ -192,6 +209,10 @@
 <li><strong>/memory command</strong> -- Important one-off facts you want Claude to remember: &quot;my API key format is X&quot;, &quot;always use tabs not spaces in this project&quot;, &quot;the staging server is at deploy.example.com&quot;.</li>
 <li><strong>Agent memory</strong> -- Specialized knowledge for custom agents that need to accumulate expertise over time. An agent that reviews PRs might learn your team&#39;s review standards across sessions.</li>
 </ul>
+<div class="callout callout-tip">
+  <div class="callout-title">Tip</div>
+  <p>**Consider alternatives:** If you need project-wide instructions rather than persistent memory, consider [Projects (CLAUDE.md)](projects.html). If you need to configure behavior settings, consider [Settings](settings.html). Memory is about what Claude remembers; Projects are about what Claude should do.</p>
+</div>
 <h3 id="what-persists-and-what-doesn39t">What Persists and What Doesn&#39;t<a class="anchor" href="#what-persists-and-what-doesn39t">#</a></h3>
 <table>
 <thead>
@@ -250,40 +271,413 @@ CLAUDE.md files always load. Auto-memory loads (first 200 lines). Agent memory l
   </div>
   <div class="tab-panel" data-tab-panel="howto">
 
-<h2 id="how-to-guides">How-To Guides<a class="anchor" href="#how-to-guides">#</a></h2>
-<div class="callout callout-info">
-  <div class="callout-title">Info</div>
-  <p>Step-by-step guides for Memory are coming in Phase 4.</p>
-</div>
-<p>Planned guides:</p>
+<h2 id="how-to-use-the-memory-system-effectively">How to Use the Memory System Effectively<a class="anchor" href="#how-to-use-the-memory-system-effectively">#</a></h2>
+<h3 id="prerequisites">Prerequisites<a class="anchor" href="#prerequisites">#</a></h3>
 <ul>
-<li><p>Setting up effective CLAUDE.md files -- <em>coming soon</em></p>
-</li>
-<li><p>Configuring agent memory scopes -- <em>coming soon</em></p>
-</li>
-<li><p>Managing auto-memory and the /memory command -- <em>coming soon</em></p>
-</li>
-<li><p>Memory strategies for monorepos -- <em>coming soon</em></p>
-</div>
-<div class="tab-panel" data-tab-panel="reference"></li>
+<li>Claude Code installed and working (<code>claude --version</code>)</li>
+<li>A project directory (for project-scoped memory)</li>
 </ul>
+<h3 id="step-1-understand-the-4-memory-layers">Step 1: Understand the 4 Memory Layers<a class="anchor" href="#step-1-understand-the-4-memory-layers">#</a></h3>
+<p>Before configuring memory, know what each layer does:</p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>You Write It?</th>
+<th>Best For</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>CLAUDE.md</strong></td>
+<td>Yes -- manually</td>
+<td>Team conventions, architecture, key commands</td>
+</tr>
+<tr>
+<td><strong>Auto-memory</strong></td>
+<td>No -- Claude writes automatically</td>
+<td>Personal patterns Claude learns over time</td>
+</tr>
+<tr>
+<td><strong>/memory command</strong></td>
+<td>Yes -- via chat</td>
+<td>One-off facts you want Claude to remember</td>
+</tr>
+<tr>
+<td><strong>Agent memory</strong></td>
+<td>No -- agent writes</td>
+<td>Specialized knowledge for custom agents</td>
+</tr>
+</tbody></table>
+<p>Start with CLAUDE.md (see the <a href="projects.html">Projects How-To</a> guide). Then use the other layers as needed.</p>
+<h3 id="step-2-use-the-memory-command-to-save-important-context">Step 2: Use the /memory Command to Save Important Context<a class="anchor" href="#step-2-use-the-memory-command-to-save-important-context">#</a></h3>
+<p>During a Claude Code session, tell Claude to remember something:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang"></span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-plaintext">&amp;gt; Remember: our API always returns { data, error, meta } format -- never return raw arrays</code></pre>
+</div>
+<p>Or use the <code>/memory</code> command to toggle auto-memory behavior:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang"></span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-plaintext">&amp;gt; /memory</code></pre>
+</div>
+<p>This toggles whether Claude automatically writes to the memory file during sessions.</p>
+<p>You can also be specific about what to save:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang"></span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-plaintext">&amp;gt; Remember: the staging database is at postgres://staging.internal:5432/app
+&amp;gt; Remember: always use our custom fetch wrapper from src/lib/api-client.ts, never raw fetch
+&amp;gt; Remember: John prefers tabs, the rest of the team uses spaces -- use spaces in shared code</code></pre>
+</div>
+<p>These facts are written to your auto-memory file and loaded in future sessions.</p>
+<h3 id="step-3-configure-auto-memory-behavior">Step 3: Configure Auto-Memory Behavior<a class="anchor" href="#step-3-configure-auto-memory-behavior">#</a></h3>
+<p>Auto-memory captures corrections and patterns Claude discovers during sessions. When Claude learns something -- like &quot;this project uses tabs not spaces&quot; after you correct it -- it saves that to the memory file automatically.</p>
+<p>Auto-memory is <strong>on by default</strong>. Toggle it with:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang"></span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-plaintext">&amp;gt; /memory</code></pre>
+</div>
+<p>The memory file lives at:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang"></span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-plaintext">~/.claude/projects/&amp;lt;project-hash&amp;gt;/memory/MEMORY.md</code></pre>
+</div>
+<p>The first 200 lines of this file are auto-loaded at every session start.</p>
+<h3 id="step-4-set-up-agent-scoped-memory">Step 4: Set Up Agent-Scoped Memory<a class="anchor" href="#step-4-set-up-agent-scoped-memory">#</a></h3>
+<p>Custom agents can maintain their own persistent knowledge across sessions. Configure the memory scope in the agent&#39;s frontmatter:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">yaml</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-yaml"><span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-meta&quot;&gt;---&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;name:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;code-reviewer&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;description:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Reviews&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;PRs&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;for&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;quality&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;and&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;security&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;memory:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;project&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-meta&quot;&gt;---&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Review&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;the&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;code&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;changes&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;for&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;quality&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;issues...&lt;/span&gt;</span></code></pre>
+</div>
+<p>Memory scope options:</p>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>Stored At</th>
+<th>Best For</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>user</code></td>
+<td><code>~/.claude/agent-memory/&lt;agent-name&gt;/</code></td>
+<td>Personal agents used across projects</td>
+</tr>
+<tr>
+<td><code>project</code></td>
+<td><code>.claude/agent-memory/&lt;agent-name&gt;/</code></td>
+<td>Team-shared agents (committed to git)</td>
+</tr>
+<tr>
+<td><code>local</code></td>
+<td><code>.claude/agent-memory-local/&lt;agent-name&gt;/</code></td>
+<td>Personal per-project agents</td>
+</tr>
+</tbody></table>
+<p>The agent reads its memory at startup and writes to it during sessions as it learns.</p>
+<h3 id="step-5-debug-memory-issues">Step 5: Debug Memory Issues<a class="anchor" href="#step-5-debug-memory-issues">#</a></h3>
+<p><strong>Find your memory files:</strong></p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-bash">&lt;span class=<span class="hljs-string">&quot;hljs-comment&quot;</span>&gt;# Auto-memory location (project-specific)&lt;/span&gt;
+&lt;span class=<span class="hljs-string">&quot;hljs-built_in&quot;</span>&gt;<span class="hljs-built_in">ls</span>&lt;/span&gt; ~/.claude/projects/
+
+&lt;span class=<span class="hljs-string">&quot;hljs-comment&quot;</span>&gt;# Each project directory contains a memory/ subdirectory&lt;/span&gt;
+&lt;span class=<span class="hljs-string">&quot;hljs-built_in&quot;</span>&gt;<span class="hljs-built_in">ls</span>&lt;/span&gt; ~/.claude/projects/&amp;lt;project-hash&amp;gt;/memory/</code></pre>
+</div>
+<p><strong>View what Claude remembers:</strong></p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang"></span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-plaintext">&amp;gt; What do you know from your memory file?</code></pre>
+</div>
+<p><strong>Clear stale memories:</strong></p>
+<p>Edit or delete the memory file directly:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-bash">&lt;span class=<span class="hljs-string">&quot;hljs-comment&quot;</span>&gt;# View current memories&lt;/span&gt;
+&lt;span class=<span class="hljs-string">&quot;hljs-built_in&quot;</span>&gt;<span class="hljs-built_in">cat</span>&lt;/span&gt; ~/.claude/projects/&amp;lt;project-hash&amp;gt;/memory/MEMORY.md
+
+&lt;span class=<span class="hljs-string">&quot;hljs-comment&quot;</span>&gt;# Edit to remove stale entries&lt;/span&gt;
+nano ~/.claude/projects/&amp;lt;project-hash&amp;gt;/memory/MEMORY.md</code></pre>
+</div>
+<p><strong>Check what CLAUDE.md instructions are active:</strong></p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang"></span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-plaintext">&amp;gt; What instructions are loaded from CLAUDE.md?</code></pre>
+</div>
+<h3 id="verify-it-works">Verify It Works<a class="anchor" href="#verify-it-works">#</a></h3>
+<ol>
+<li>Save something with the memory system:</li>
+</ol>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang"></span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-plaintext">&amp;gt; Remember: always use structured logging with pino, never console.log in production code</code></pre>
+</div>
+<ol start="2">
+<li><p>Start a <strong>new</strong> Claude Code session in the same project directory.</p>
+</li>
+<li><p>Ask Claude about the saved context:</p>
+</li>
+</ol>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang"></span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-plaintext">&amp;gt; What logging library should I use in this project?</code></pre>
+</div>
+<p>Claude should reference pino and the structured logging instruction from the previous session.</p>
+<h3 id="troubleshooting">Troubleshooting<a class="anchor" href="#troubleshooting">#</a></h3>
+<ul>
+<li><strong>Memory not persisting:</strong> Check file permissions on <code>~/.claude/projects/</code>. Ensure the directory is writable. Verify auto-memory is enabled with <code>/memory</code>.</li>
+<li><strong>Too many memories (slow startup):</strong> The file may have grown beyond 200 lines. Edit <code>MEMORY.md</code> directly to prune old or redundant entries -- only the first 200 lines are loaded.</li>
+<li><strong>Agent memory not loading:</strong> Verify the <code>memory</code> field in agent frontmatter is set to a valid scope (<code>user</code>, <code>project</code>, or <code>local</code>). Check the corresponding directory exists.</li>
+<li><strong>Conflicting memories:</strong> If CLAUDE.md says one thing and auto-memory says another, CLAUDE.md takes precedence. Edit the auto-memory file to remove conflicting entries.</li>
+</ul>
+<!-- end howto -->
+
+  </div>
+  <div class="tab-panel" data-tab-panel="reference">
+
 <h2 id="technical-reference">Technical Reference<a class="anchor" href="#technical-reference">#</a></h2>
-<div class="callout callout-info">
-  <div class="callout-title">Info</div>
-  <p>Detailed reference specs for Memory are coming in Phase 4.</p>
+<h3 id="memory-file-locations">Memory File Locations<a class="anchor" href="#memory-file-locations">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Path</th>
+<th>Loaded At</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CLAUDE.md (global)</td>
+<td><code>~/.claude/CLAUDE.md</code></td>
+<td>Session start (always)</td>
+</tr>
+<tr>
+<td>CLAUDE.md (project)</td>
+<td><code>&lt;repo-root&gt;/CLAUDE.md</code></td>
+<td>Session start (always)</td>
+</tr>
+<tr>
+<td>CLAUDE.md (extended)</td>
+<td><code>&lt;repo-root&gt;/.claude/CLAUDE.md</code></td>
+<td>Session start (always)</td>
+</tr>
+<tr>
+<td>CLAUDE.md (personal)</td>
+<td><code>&lt;repo-root&gt;/CLAUDE.local.md</code></td>
+<td>Session start (always)</td>
+</tr>
+<tr>
+<td>Modular rules</td>
+<td><code>&lt;repo-root&gt;/.claude/rules/*.md</code></td>
+<td>When Claude accesses project files</td>
+</tr>
+<tr>
+<td>Auto-memory</td>
+<td><code>~/.claude/projects/&lt;hash&gt;/memory/MEMORY.md</code></td>
+<td>Session start (first 200 lines)</td>
+</tr>
+<tr>
+<td>Agent memory (user)</td>
+<td><code>~/.claude/agent-memory/&lt;agent-name&gt;/</code></td>
+<td>Agent startup</td>
+</tr>
+<tr>
+<td>Agent memory (project)</td>
+<td><code>&lt;repo-root&gt;/.claude/agent-memory/&lt;agent-name&gt;/</code></td>
+<td>Agent startup</td>
+</tr>
+<tr>
+<td>Agent memory (local)</td>
+<td><code>&lt;repo-root&gt;/.claude/agent-memory-local/&lt;agent-name&gt;/</code></td>
+<td>Agent startup</td>
+</tr>
+</tbody></table>
+<h3 id="auto-memory-file-format">Auto-Memory File Format<a class="anchor" href="#auto-memory-file-format">#</a></h3>
+<p>The auto-memory file is plain markdown. Claude appends entries as it learns:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">markdown</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-markdown"><span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span># Memory Index<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> [<span class="hljs-string">&lt;span class=&quot;hljs-string&quot;&gt;feedback_design.md&lt;/span&gt;</span>](<span class="hljs-link">&lt;span class=&quot;hljs-link&quot;&gt;feedback_design.md&lt;/span&gt;</span>) -- Use Oxford Blue/Turquoise color scheme for UI
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Project uses pnpm workspaces, never npm
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> API error format: { error: string, code: string, details?: unknown }
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Staging server: deploy-staging.example.com
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> User prefers verbose commit messages with bullet points</code></pre>
 </div>
-<p>Planned references:</p>
-<ul>
-<li><p>Memory file locations and format -- <em>coming soon</em></p>
-</li>
-<li><p>Auto-memory loading behavior and limits -- <em>coming soon</em></p>
-</li>
-<li><p>Agent memory scope configuration -- <em>coming soon</em></p>
-</li>
-<li><p>CLAUDE.md loading order in monorepos -- <em>coming soon</em></p>
+<p><strong>Loading behavior:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Auto-loaded lines</td>
+<td>First 200 lines</td>
+</tr>
+<tr>
+<td>Format</td>
+<td>Plain markdown</td>
+</tr>
+<tr>
+<td>Who writes</td>
+<td>Claude (automatically) or user (via /memory command)</td>
+</tr>
+<tr>
+<td>Who reads</td>
+<td>Claude only (not shared with other users)</td>
+</tr>
+<tr>
+<td>Gitignored</td>
+<td>Yes (stored in user home directory)</td>
+</tr>
+</tbody></table>
+<h3 id="agent-memory-scope-options">Agent Memory Scope Options<a class="anchor" href="#agent-memory-scope-options">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Values</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>memory</code></td>
+<td>string</td>
+<td><code>user</code>, <code>project</code>, <code>local</code></td>
+<td>Where the agent stores its persistent knowledge</td>
+</tr>
+</tbody></table>
+<p><strong>Scope details:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>Location</th>
+<th>Visibility</th>
+<th>Git-tracked</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>user</code></td>
+<td><code>~/.claude/agent-memory/&lt;name&gt;/</code></td>
+<td>Cross-project, personal</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>project</code></td>
+<td><code>.claude/agent-memory/&lt;name&gt;/</code></td>
+<td>Team-shared</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>local</code></td>
+<td><code>.claude/agent-memory-local/&lt;name&gt;/</code></td>
+<td>Personal, per-project</td>
+<td>No</td>
+</tr>
+</tbody></table>
+<h3 id="memory-command-reference">/memory Command Reference<a class="anchor" href="#memory-command-reference">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/memory</code></td>
+<td>Toggle auto-memory on or off for the current session</td>
+</tr>
+<tr>
+<td><code>&quot;Remember: &lt;fact&gt;&quot;</code></td>
+<td>Instruct Claude to save a specific fact to the memory file</td>
+</tr>
+</tbody></table>
+<p>Both approaches write to the same auto-memory file at <code>~/.claude/projects/&lt;hash&gt;/memory/MEMORY.md</code>.</p>
+<h3 id="persistence-summary">Persistence Summary<a class="anchor" href="#persistence-summary">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Survives Session Restart</th>
+<th>Scope</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CLAUDE.md files</td>
+<td>Yes (always loaded)</td>
+<td>Project-wide, all users</td>
+</tr>
+<tr>
+<td>Auto-memory</td>
+<td>Yes (first 200 lines)</td>
+<td>Per-project, per-user</td>
+</tr>
+<tr>
+<td>Agent memory</td>
+<td>Yes (at agent startup)</td>
+<td>Per-agent, scope-dependent</td>
+</tr>
+<tr>
+<td>Conversation history</td>
+<td>No (fresh each session)</td>
+<td>Session only</td>
+</tr>
+<tr>
+<td>Session transcripts</td>
+<td>Stored locally, resumable with <code>claude --resume</code></td>
+<td>Local</td>
+</tr>
+</tbody></table>
+  </div>
 </div>
-</div></li>
-</ul>
+
 <h2 id="related">Related<a class="anchor" href="#related">#</a></h2>
 <ul>
 <li><a href="projects.html">Projects</a> -- CLAUDE.md is the foundation of the memory system</li>

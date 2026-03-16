@@ -138,6 +138,80 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
+  // ════ SEARCH ════
+  var searchInput = document.getElementById('searchInput');
+  var searchResults = document.getElementById('searchResults');
+  var pagefindModule = null;
+  var searchLoaded = false;
+
+  if (searchInput && searchResults) {
+    // Lazy-load Pagefind on first focus
+    searchInput.addEventListener('focus', function() {
+      if (searchLoaded) return;
+      searchLoaded = true;
+
+      // Determine base path from existing script/link tags
+      var basePath = '';
+      var styleLink = document.querySelector('link[href*="assets/style.css"]');
+      if (styleLink) {
+        basePath = styleLink.getAttribute('href').replace('assets/style.css', '');
+      }
+
+      import(basePath + 'pagefind/pagefind.js').then(function(pf) {
+        pagefindModule = pf;
+      }).catch(function() {
+        searchResults.innerHTML = '<div class="search-no-results">Search not available</div>';
+      });
+    });
+
+    // Search on input
+    searchInput.addEventListener('input', function() {
+      var query = searchInput.value.trim();
+
+      if (query.length < 2) {
+        searchResults.innerHTML = '';
+        return;
+      }
+
+      if (!pagefindModule) return;
+
+      pagefindModule.debouncedSearch(query, {}, 300).then(function(search) {
+        if (search === null) return; // superseded
+
+        if (search.results.length === 0) {
+          searchResults.innerHTML = '<div class="search-no-results">No results found</div>';
+          return;
+        }
+
+        // Load first 8 results
+        var toLoad = search.results.slice(0, 8);
+        Promise.all(toLoad.map(function(r) { return r.data(); })).then(function(items) {
+          var html = '';
+          for (var i = 0; i < items.length; i++) {
+            var item = items[i];
+            var url = item.url;
+            // Make URL relative - strip leading slash
+            if (url.startsWith('/')) {
+              url = url.substring(1);
+            }
+            html += '<a href="' + url + '" class="search-result">';
+            html += '<div class="search-result-title">' + (item.meta && item.meta.title ? item.meta.title : 'Untitled') + '</div>';
+            html += '<div class="search-result-excerpt">' + (item.excerpt || '') + '</div>';
+            html += '</a>';
+          }
+          searchResults.innerHTML = html;
+        });
+      });
+    });
+
+    // Close results when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('#searchContainer')) {
+        searchResults.innerHTML = '';
+      }
+    });
+  }
+
   // ════ DECISION WIZARD ════
   var wizardContainer = document.getElementById('wizard');
 
