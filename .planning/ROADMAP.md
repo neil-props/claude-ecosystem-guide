@@ -32,11 +32,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Site is usable on mobile and tablet (responsive layout)
   4. Code blocks have syntax highlighting and copy-to-clipboard buttons
   5. Running the build script converts markdown source files into HTML pages with correct layout
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 01-01: TBD
-- [ ] 01-02: TBD
+- [ ] 01-01-PLAN.md — Build pipeline, HTML template, CSS/JS assets, placeholder content pages with syntax highlighting and copy-to-clipboard
+- [ ] 01-02-PLAN.md — Sidebar navigation, theme toggle, responsive mobile layout, compatibility matrix, deploy workflow
 
 ### Phase 1.1: Design System (INSERTED)
 **Goal**: A polished visual design system is defined with mockups approved, establishing the look and feel for all site pages, content layers, and interactive elements
@@ -138,7 +138,7 @@ Phases execute in numeric order: 1 → 1.1 → 2 → 3 → 4 → 5 → 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/2 | Not started | - |
+| 1. Foundation | 0/2 | Planning complete | - |
 | 1.1. Design System | 0/2 | Not started | - |
 | 2. Knowledge Base | 0/2 | Not started | - |
 | 3. Conceptual Content | 0/2 | Not started | - |
