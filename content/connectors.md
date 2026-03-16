@@ -9,13 +9,37 @@ section: topics
 
 # Interactive Apps
 
+<div class="tabs">
+  <div class="tab-group">
+    <button class="tab-btn active" data-tab="concept">Concept</button>
+    <button class="tab-btn" data-tab="howto">How-To</button>
+    <button class="tab-btn" data-tab="reference">Reference</button>
+  </div>
+  <div class="tab-panel active" data-tab-panel="concept">
+
 ## Overview
 
-Interactive Apps are live application interfaces embedded directly inside Claude Chat conversations. Built on the MCP Apps extension (co-developed with Anthropic and OpenAI, Nov 2025), these render sandboxed HTML iframes that let you interact with external apps -- Slack, Figma, Asana, Canva, and more -- without leaving Claude.
+Interactive Apps are live application interfaces embedded directly inside Claude Chat conversations. Built on the MCP Apps extension (co-developed by Anthropic and OpenAI, Nov 2025), these render sandboxed HTML iframes that let you interact with external apps -- Slack, Figma, Asana, Canva, and more -- without leaving Claude.
 
 > **Naming note:** In Claude Chat settings, MCP server connections are called "Connectors" (covered in the [MCP](mcp.html) page). The Interactive Apps extension point described here is specifically about embedded UI applications within conversations -- a distinct capability built on top of the MCP Apps protocol extension.
 
+**How Connectors differ from MCP in Claude Code:** Connectors are pre-built, one-click MCP integrations available in Claude Chat and Cowork -- they are the managed, hosted version of what MCP does in Claude Code. In Claude Code, you configure MCP servers directly via CLI or `.mcp.json`. In Claude Chat, you just click "Connect" and authorize the service. Interactive Apps go a step further by rendering visual UI inside the conversation.
+
 Interactive Apps are available in Claude Chat only (claude.ai web interface). They are not available in Claude Code or Claude Cowork.
+
+### Available Interactive Apps
+
+The MCP Apps extension enables a growing catalog of embedded applications:
+
+| Category | Apps | Capability |
+|----------|------|-----------|
+| **Communication** | Slack | Read and send messages in channels |
+| **Design** | Figma, Canva | View designs inline, create and edit directly |
+| **Project Management** | Asana | Manage tasks and projects |
+| **File Management** | Box | Browse and manage files |
+| **CRM** | Clay | CRM and prospecting |
+
+Additional connectors for productivity and data services (Google Drive, Notion, Confluence, Jira, Linear, and 50+ more) are available as standard MCP connectors in Claude Chat -- they provide tool access without embedded UI.
 
 ## How It Works
 
@@ -29,17 +53,6 @@ The MCP Apps extension enables MCP servers to render interactive UIs via sandbox
 4. Claude can read from and write to the embedded app
 5. Results from your interactions flow back into the conversation context
 
-**Available Interactive Apps (Jan 2026+):**
-
-| App | Capability |
-|-----|-----------|
-| **Slack** | Read and send messages in channels |
-| **Figma** | View and discuss designs inline |
-| **Asana** | Manage tasks and projects |
-| **Canva** | Create and edit designs directly |
-| **Box** | Browse and manage files |
-| **Clay** | CRM and prospecting |
-
 To use Interactive Apps, the corresponding connector must be enabled in **Settings > Connectors** (or claude.ai/settings/connectors).
 
 ### MCP Apps Extension
@@ -52,16 +65,12 @@ The MCP Apps extension was introduced in November 2025 and co-developed with Ope
 
 This is an ecosystem-level capability -- the same MCP Apps standard works across Claude, ChatGPT, and other supporting AI clients.
 
-## Configuration
+## When to Use Connectors
 
-Interactive Apps require no special configuration beyond enabling the relevant connector:
-
-1. Go to **Settings > Connectors** in Claude Chat
-2. Find the service you want (Slack, Figma, Asana, etc.)
-3. Click **Connect** and authorize the service
-4. The Interactive App becomes available in conversations automatically
-
-For Cowork, connectors (including those that power Interactive Apps) are configured in the **Customize** menu and may be bundled within plugins. Users control which connectors are active and whether internet access is allowed.
+- **Use Connectors in Claude Chat** when you want instant, one-click access to external tools without any configuration
+- **Use Interactive Apps** when your task benefits from visual context -- reviewing Figma designs, browsing Slack conversations, managing Asana tasks
+- **Use raw MCP in Claude Code** when you need more control, custom server configuration, or are working in a terminal-based workflow
+- **Don't use Interactive Apps** for data-heavy integrations (databases, large APIs) -- use standard MCP Connectors or MCP servers instead
 
 ## Best Practices
 
@@ -80,6 +89,35 @@ Interactive Apps in Claude Chat embed live app interfaces directly in your conve
 
 **Are Interactive Apps available in Claude Code or Cowork?**
 No, Interactive Apps are currently available only in Claude Chat (claude.ai web interface). Claude Code uses MCP servers configured via CLI or `.mcp.json`. Cowork uses connectors configured in the Customize menu, bundled within plugins.
+
+  </div>
+  <div class="tab-panel" data-tab-panel="howto">
+
+## How-To Guides
+
+> [!INFO]
+> Step-by-step guides for Connectors are coming in Phase 4.
+
+Planned guides:
+- Connecting Figma, Slack, and Asana in Claude Chat -- _coming soon_
+- Using Interactive Apps for design review workflows -- _coming soon_
+- Choosing between Connectors and MCP servers -- _coming soon_
+
+  </div>
+  <div class="tab-panel" data-tab-panel="reference">
+
+## Technical Reference
+
+> [!INFO]
+> Detailed reference specs for Connectors are coming in Phase 4.
+
+Planned references:
+- Available connectors catalog and capabilities -- _coming soon_
+- MCP Apps extension protocol details -- _coming soon_
+- Connector configuration options -- _coming soon_
+
+  </div>
+</div>
 
 ## Related
 

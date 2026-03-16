@@ -15,43 +15,231 @@
       }
     })();
   </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
-  <aside class="sidebar" id="sidebar"></aside>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="../index.html" class="site-title">Claude Ecosystem</a>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+  <div class="nav-section-title">Topics</div>
+  <a href="../topics/mcp.html" class="nav-link">MCP Servers and Connectors</a>
+  <a href="../topics/skills.html" class="nav-link">Skills</a>
+  <a href="../topics/plugins.html" class="nav-link">Plugins</a>
+  <a href="../topics/hooks.html" class="nav-link">Hooks</a>
+  <a href="../topics/agents.html" class="nav-link">Agents</a>
+  <a href="../topics/projects.html" class="nav-link">Projects and CLAUDE.md</a>
+  <a href="../topics/connectors.html" class="nav-link">Connectors</a>
+  <a href="../topics/commands.html" class="nav-link active">Commands</a>
+  <a href="../topics/memory.html" class="nav-link">Memory</a>
+  <a href="../topics/settings.html" class="nav-link">Settings</a>
+</div>
+<div class="nav-section">
+  <div class="nav-section-title">Reference</div>
+  <a href="../topics/compatibility.html" class="nav-link">Compatibility Matrix</a>
+</div>
+
+    </nav>
+  </aside>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Toggle navigation">
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+  </button>
   <main class="content">
     <article>
-      <h1 id="commands">Commands<a class="anchor" href="#commands">#</a></h1>
+      <h1 id="commands-and-slash-commands">Commands and Slash Commands<a class="anchor" href="#commands-and-slash-commands">#</a></h1>
+<div class="tabs">
+  <div class="tab-group">
+    <button class="tab-btn active" data-tab="concept">Concept</button>
+    <button class="tab-btn" data-tab="howto">How-To</button>
+    <button class="tab-btn" data-tab="reference">Reference</button>
+  </div>
+  <div class="tab-panel active" data-tab-panel="concept">
+
 <h2 id="overview">Overview<a class="anchor" href="#overview">#</a></h2>
-<p>Commands are reusable prompt shortcuts that let you invoke complex instructions with a simple name. Instead of typing the same detailed prompt every time, you define a command once and call it by name. Commands can include parameters, reference files, and chain multiple actions together.</p>
-<p>Commands are ideal for repetitive tasks where the prompt structure stays the same but the target changes.</p>
-<h2 id="quick-example">Quick Example<a class="anchor" href="#quick-example">#</a></h2>
-<p>Define a command in <code>.claude/commands/</code>:</p>
-<div class="code-block">
-  <div class="code-header">
-    <span class="code-lang">markdown</span>
-    <button class="copy-btn" aria-label="Copy code">Copy</button>
+<p>Commands are reusable prompt shortcuts in Claude Code, invoked with a <code>/</code> prefix. They range from built-in system commands (<code>/help</code>, <code>/compact</code>, <code>/clear</code>) to custom user-defined commands and skill-based slash commands. Commands provide quick access to common workflows without retyping complex prompts.</p>
+<p>Slash commands were the original way to teach Claude reusable workflows -- you would place markdown files in <code>.claude/commands/</code> and invoke them with <code>/command-name</code>. With the introduction of Skills (Oct 2025), this system has evolved. Custom commands still work for backward compatibility, but Skills (<code>.claude/skills/</code>) are now the recommended approach, offering auto-invocation, cross-interface portability, and richer frontmatter configuration.</p>
+<h2 id="how-it-works">How It Works<a class="anchor" href="#how-it-works">#</a></h2>
+<h3 id="in-claude-code">In Claude Code<a class="anchor" href="#in-claude-code">#</a></h3>
+<p>Claude Code provides several categories of commands:</p>
+<p><strong>Built-in system commands</strong> for session management:</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/help</code></td>
+<td>Show help and available commands</td>
+</tr>
+<tr>
+<td><code>/model</code></td>
+<td>Switch model (opus, sonnet, haiku)</td>
+</tr>
+<tr>
+<td><code>/memory</code></td>
+<td>Toggle auto-memory</td>
+</tr>
+<tr>
+<td><code>/compact</code></td>
+<td>Compress conversation context</td>
+</tr>
+<tr>
+<td><code>/clear</code></td>
+<td>Clear conversation history</td>
+</tr>
+<tr>
+<td><code>/status</code></td>
+<td>Show session info</td>
+</tr>
+</tbody></table>
+<p><strong>Built-in skill commands</strong> that ship with Claude Code:</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/commit</code></td>
+<td>Analyze changes and create a git commit</td>
+</tr>
+<tr>
+<td><code>/simplify</code></td>
+<td>Review code for quality and efficiency</td>
+</tr>
+<tr>
+<td><code>/loop 5m /command</code></td>
+<td>Run a command on a recurring interval</td>
+</tr>
+<tr>
+<td><code>/claude-api</code></td>
+<td>Load API reference docs</td>
+</tr>
+</tbody></table>
+<p><strong>Custom skill commands:</strong> Any SKILL.md file placed in <code>.claude/skills/</code> becomes a <code>/skill-name</code> slash command automatically. For example, <code>.claude/skills/deploy/SKILL.md</code> becomes <code>/deploy</code>.</p>
+<p><strong>Legacy custom commands:</strong> Markdown files in <code>.claude/commands/</code> directory are also available as slash commands. These still work but lack the auto-invocation and frontmatter features of Skills.</p>
+<p><strong>Resolution order:</strong> When a <code>/name</code> is invoked, Claude resolves it as: Skill (inline) &gt; Agent (separate context) &gt; Command (explicit <code>/</code> only).</p>
+<p><strong>Keyboard shortcuts:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Shortcut</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Ctrl+C</code></td>
+<td>Cancel current operation</td>
+</tr>
+<tr>
+<td><code>Ctrl+D</code></td>
+<td>Exit session</td>
+</tr>
+<tr>
+<td><code>Tab</code></td>
+<td>Autocomplete file paths and commands</td>
+</tr>
+<tr>
+<td><code>Up/Down</code></td>
+<td>Navigate command history</td>
+</tr>
+<tr>
+<td><code>Esc</code></td>
+<td>Cancel current input</td>
+</tr>
+</tbody></table>
+<p>Customize keybindings in <code>~/.claude/keybindings.json</code>.</p>
+<h3 id="in-claude-cowork">In Claude Cowork<a class="anchor" href="#in-claude-cowork">#</a></h3>
+<p>Cowork supports slash commands bundled within plugins. The 11+ official plugins include 69+ slash commands total (e.g., <code>/reconcile</code>, <code>/forecast</code> from the Finance plugin). Commands are available after installing the relevant plugin via the Customize menu.</p>
+<h2 id="when-to-use-commands">When to Use Commands<a class="anchor" href="#when-to-use-commands">#</a></h2>
+<ul>
+<li><strong>Built-in system commands:</strong> Use these for session management -- <code>/compact</code> when context is filling up, <code>/clear</code> when switching tasks, <code>/model</code> to switch between Opus and Sonnet</li>
+<li><strong>For custom reusable instructions:</strong> Create a Skill (<code>.claude/skills/</code>) instead of a legacy command -- Skills offer auto-invocation, model overrides, tool restrictions, and work across Claude Code, Chat, and Cowork</li>
+<li><strong>Legacy commands:</strong> Only if you already have a <code>.claude/commands/</code> setup and don&#39;t need the extra features of Skills</li>
+<li><strong>If you do something more than once a day:</strong> Make it a Skill (and it automatically becomes a slash command)</li>
+</ul>
+<h2 id="best-practices">Best Practices<a class="anchor" href="#best-practices">#</a></h2>
+<ul>
+<li><strong>Use Skills instead of legacy Commands</strong> -- Skills offer auto-invocation, model overrides, tool restrictions, and cross-interface portability</li>
+<li>If you do something more than once a day, make it a skill (and therefore a slash command)</li>
+<li>Use <code>/compact</code> proactively before hitting 50% context window</li>
+<li>Use <code>/clear</code> when switching tasks to avoid polluting context</li>
+<li>Use <code>/model</code> to switch between Opus (complex tasks), Sonnet (balanced), and Haiku (fast)</li>
+<li>Character budget for skill content: 15,000 chars default. Override with <code>SLASH_COMMAND_TOOL_CHAR_BUDGET</code></li>
+</ul>
+<h2 id="common-questions">Common Questions<a class="anchor" href="#common-questions">#</a></h2>
+<p><strong>What keyboard shortcuts and slash commands does Claude Code support?</strong>
+Built-in commands include <code>/help</code>, <code>/model</code>, <code>/memory</code>, <code>/compact</code>, <code>/clear</code>, and <code>/status</code>. Built-in skills add <code>/commit</code>, <code>/simplify</code>, <code>/loop</code>, and <code>/claude-api</code>. Any SKILL.md in <code>.claude/skills/</code> automatically becomes a <code>/skill-name</code> command. Key shortcuts: <code>Ctrl+C</code> (cancel), <code>Ctrl+D</code> (exit), <code>Tab</code> (autocomplete), <code>Up/Down</code> (history).</p>
+<p><strong>What is the difference between Skills, Commands, and Agents?</strong>
+Skills are portable instruction sets (SKILL.md) that auto-invoke based on task context and work across all interfaces. Commands are legacy user-invoked prompts in <code>.claude/commands/</code> (Code only, never auto-triggered). Agents are specialized AI assistants with isolated contexts. Recommendation: use Skills instead of Commands for new work.</p>
+<p><strong>How do I create a reusable /deploy command for my team?</strong>
+Create a Skill at <code>.claude/skills/deploy/SKILL.md</code> and check it into your repo. For distribution across multiple repos, bundle it in a Plugin and host on GitHub. The same skill works as a slash command in Code and as an installable command in Cowork via plugins.</p>
   </div>
-  <pre><code class="hljs language-markdown"><span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span># Generate Tests<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+  <div class="tab-panel" data-tab-panel="howto">
 
-Generate comprehensive tests for the specified file:
-
-<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>1.<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Read the source file: $FILE
-<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>2.<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Identify all exported functions and classes
-<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>3.<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Write tests using the project<span class="hljs-literal">&amp;#x27;</span>s test framework
-<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>4.<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Include edge cases and error scenarios
-<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>5.<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Save tests to the corresponding test directory</code></pre>
+<h2 id="how-to-guides">How-To Guides<a class="anchor" href="#how-to-guides">#</a></h2>
+<div class="callout callout-info">
+  <div class="callout-title">Info</div>
+  <p>Step-by-step guides for Commands are coming in Phase 4.</p>
 </div>
-<p>Then use it:</p>
-<div class="code-block">
-  <div class="code-header">
-    <span class="code-lang">bash</span>
-    <button class="copy-btn" aria-label="Copy code">Copy</button>
-  </div>
-  <pre><code class="hljs language-bash">claude /generate-tests FILE=src/utils/auth.ts</code></pre>
+<p>Planned guides:</p>
+<ul>
+<li><p>Creating custom slash commands with Skills -- <em>coming soon</em></p>
+</li>
+<li><p>Migrating legacy commands to Skills -- <em>coming soon</em></p>
+</li>
+<li><p>Using built-in commands for effective session management -- <em>coming soon</em></p>
 </div>
-<h2 id="coming-soon">Coming Soon<a class="anchor" href="#coming-soon">#</a></h2>
-<p>Full content including command syntax, parameter handling, file references, and command vs agent comparison will be added in Phases 2-4.</p>
+<div class="tab-panel" data-tab-panel="reference"></li>
+</ul>
+<h2 id="technical-reference">Technical Reference<a class="anchor" href="#technical-reference">#</a></h2>
+<div class="callout callout-info">
+  <div class="callout-title">Info</div>
+  <p>Detailed reference specs for Commands are coming in Phase 4.</p>
+</div>
+<p>Planned references:</p>
+<ul>
+<li><p>Complete built-in command reference -- <em>coming soon</em></p>
+</li>
+<li><p>Keyboard shortcuts and keybinding configuration -- <em>coming soon</em></p>
+</li>
+<li><p>Skill-to-command resolution order -- <em>coming soon</em></p>
+</div>
+</div></li>
+</ul>
+<h2 id="related">Related<a class="anchor" href="#related">#</a></h2>
+<ul>
+<li><a href="skills.html">Skills</a> -- Skills are the recommended replacement for custom commands</li>
+<li><a href="plugins.html">Plugins</a> -- Plugins bundle multiple skill commands for distribution</li>
+<li><a href="projects.html">Projects</a> -- CLAUDE.md provides persistent context; commands provide reusable actions</li>
+</ul>
 
     </article>
   </main>

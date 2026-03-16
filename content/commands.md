@@ -9,11 +9,19 @@ section: topics
 
 # Commands and Slash Commands
 
+<div class="tabs">
+  <div class="tab-group">
+    <button class="tab-btn active" data-tab="concept">Concept</button>
+    <button class="tab-btn" data-tab="howto">How-To</button>
+    <button class="tab-btn" data-tab="reference">Reference</button>
+  </div>
+  <div class="tab-panel active" data-tab-panel="concept">
+
 ## Overview
 
 Commands are reusable prompt shortcuts in Claude Code, invoked with a `/` prefix. They range from built-in system commands (`/help`, `/compact`, `/clear`) to custom user-defined commands and skill-based slash commands. Commands provide quick access to common workflows without retyping complex prompts.
 
-With the introduction of Skills (Oct 2025), the command system has evolved. Custom commands in `.claude/commands/` still work for backward compatibility, but the recommended approach is now to use Skills (`.claude/skills/`) which offer auto-invocation, cross-interface portability, and richer frontmatter configuration.
+Slash commands were the original way to teach Claude reusable workflows -- you would place markdown files in `.claude/commands/` and invoke them with `/command-name`. With the introduction of Skills (Oct 2025), this system has evolved. Custom commands still work for backward compatibility, but Skills (`.claude/skills/`) are now the recommended approach, offering auto-invocation, cross-interface portability, and richer frontmatter configuration.
 
 ## How It Works
 
@@ -21,7 +29,7 @@ With the introduction of Skills (Oct 2025), the command system has evolved. Cust
 
 Claude Code provides several categories of commands:
 
-**Built-in system commands:**
+**Built-in system commands** for session management:
 
 | Command | Purpose |
 |---------|---------|
@@ -32,7 +40,7 @@ Claude Code provides several categories of commands:
 | `/clear` | Clear conversation history |
 | `/status` | Show session info |
 
-**Built-in skill commands:**
+**Built-in skill commands** that ship with Claude Code:
 
 | Command | Purpose |
 |---------|---------|
@@ -63,61 +71,12 @@ Customize keybindings in `~/.claude/keybindings.json`.
 
 Cowork supports slash commands bundled within plugins. The 11+ official plugins include 69+ slash commands total (e.g., `/reconcile`, `/forecast` from the Finance plugin). Commands are available after installing the relevant plugin via the Customize menu.
 
-## Configuration
+## When to Use Commands
 
-### Creating Custom Commands via Skills
-
-The recommended way to create custom commands:
-
-```bash
-mkdir -p .claude/skills/my-command
-```
-
-Write the SKILL.md file:
-
-```markdown
----
-name: deploy
-description: Deploy the current branch to staging
-allowed-tools: Read, Bash
-model: sonnet
----
-# Deploy to Staging
-
-1. Run the test suite: `npm test`
-2. If tests pass, build the project: `npm run build`
-3. Deploy to staging: `npm run deploy:staging`
-4. Verify the deployment by checking the health endpoint
-5. Report the deployment URL and status
-```
-
-Use it: `/deploy`
-
-### Legacy Commands Directory
-
-For backward compatibility, markdown files in `.claude/commands/` also work:
-
-```markdown
-# Generate Tests
-
-Generate comprehensive tests for the specified file:
-
-1. Read the source file: $FILE
-2. Identify all exported functions
-3. Write tests using the project's test framework
-4. Save tests to the corresponding test directory
-```
-
-Use it: `/generate-tests FILE=src/utils/auth.ts`
-
-### Plugin Commands
-
-When plugins are installed, their bundled commands become available with namespace prefixes to avoid collisions:
-
-```
-/my-plugin:deploy
-/my-plugin:review
-```
+- **Built-in system commands:** Use these for session management -- `/compact` when context is filling up, `/clear` when switching tasks, `/model` to switch between Opus and Sonnet
+- **For custom reusable instructions:** Create a Skill (`.claude/skills/`) instead of a legacy command -- Skills offer auto-invocation, model overrides, tool restrictions, and work across Claude Code, Chat, and Cowork
+- **Legacy commands:** Only if you already have a `.claude/commands/` setup and don't need the extra features of Skills
+- **If you do something more than once a day:** Make it a Skill (and it automatically becomes a slash command)
 
 ## Best Practices
 
@@ -138,6 +97,35 @@ Skills are portable instruction sets (SKILL.md) that auto-invoke based on task c
 
 **How do I create a reusable /deploy command for my team?**
 Create a Skill at `.claude/skills/deploy/SKILL.md` and check it into your repo. For distribution across multiple repos, bundle it in a Plugin and host on GitHub. The same skill works as a slash command in Code and as an installable command in Cowork via plugins.
+
+  </div>
+  <div class="tab-panel" data-tab-panel="howto">
+
+## How-To Guides
+
+> [!INFO]
+> Step-by-step guides for Commands are coming in Phase 4.
+
+Planned guides:
+- Creating custom slash commands with Skills -- _coming soon_
+- Migrating legacy commands to Skills -- _coming soon_
+- Using built-in commands for effective session management -- _coming soon_
+
+  </div>
+  <div class="tab-panel" data-tab-panel="reference">
+
+## Technical Reference
+
+> [!INFO]
+> Detailed reference specs for Commands are coming in Phase 4.
+
+Planned references:
+- Complete built-in command reference -- _coming soon_
+- Keyboard shortcuts and keybinding configuration -- _coming soon_
+- Skill-to-command resolution order -- _coming soon_
+
+  </div>
+</div>
 
 ## Related
 

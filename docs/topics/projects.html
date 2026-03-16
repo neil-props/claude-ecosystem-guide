@@ -15,42 +15,261 @@
       }
     })();
   </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
-  <aside class="sidebar" id="sidebar"></aside>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="../index.html" class="site-title">Claude Ecosystem</a>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+  <div class="nav-section-title">Topics</div>
+  <a href="../topics/mcp.html" class="nav-link">MCP Servers and Connectors</a>
+  <a href="../topics/skills.html" class="nav-link">Skills</a>
+  <a href="../topics/plugins.html" class="nav-link">Plugins</a>
+  <a href="../topics/hooks.html" class="nav-link">Hooks</a>
+  <a href="../topics/agents.html" class="nav-link">Agents</a>
+  <a href="../topics/projects.html" class="nav-link active">Projects and CLAUDE.md</a>
+  <a href="../topics/connectors.html" class="nav-link">Connectors</a>
+  <a href="../topics/commands.html" class="nav-link">Commands</a>
+  <a href="../topics/memory.html" class="nav-link">Memory</a>
+  <a href="../topics/settings.html" class="nav-link">Settings</a>
+</div>
+<div class="nav-section">
+  <div class="nav-section-title">Reference</div>
+  <a href="../topics/compatibility.html" class="nav-link">Compatibility Matrix</a>
+</div>
+
+    </nav>
+  </aside>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Toggle navigation">
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+  </button>
   <main class="content">
     <article>
       <h1 id="projects-and-claudemd">Projects and CLAUDE.md<a class="anchor" href="#projects-and-claudemd">#</a></h1>
+<div class="tabs">
+  <div class="tab-group">
+    <button class="tab-btn active" data-tab="concept">Concept</button>
+    <button class="tab-btn" data-tab="howto">How-To</button>
+    <button class="tab-btn" data-tab="reference">Reference</button>
+  </div>
+  <div class="tab-panel active" data-tab-panel="concept">
+
 <h2 id="overview">Overview<a class="anchor" href="#overview">#</a></h2>
-<p>The <code>CLAUDE.md</code> file is the primary way to give Claude Code project-specific instructions. Placed at the root of your project, it tells Claude about your codebase&#39;s conventions, architecture, and preferences. Claude reads this file at the start of every conversation, making it the most reliable way to ensure consistent behavior across all interactions.</p>
-<p>CLAUDE.md files can exist at multiple levels -- global (<code>~/.claude/CLAUDE.md</code>), project root, and subdirectories -- with each level adding context.</p>
-<h2 id="quick-example">Quick Example<a class="anchor" href="#quick-example">#</a></h2>
-<p>Create a <code>CLAUDE.md</code> at your project root:</p>
+<p>Projects provide persistent context that travels with your codebase. In Claude Code, the <code>CLAUDE.md</code> file is the primary mechanism -- a markdown file that Claude reads at the start of every session, giving it project-specific knowledge about your conventions, architecture, and preferences. Think of it as the &quot;onboarding doc&quot; that a new team member would read -- except Claude reads it every single time, reliably.</p>
+<p>CLAUDE.md is the first thing you should set up in any project that uses Claude Code. It is the most reliable way to ensure consistent behavior across all interactions, because it is always loaded, never compacted, and shared with every agent in the project.</p>
+<p>In Claude Chat, Projects are named spaces with uploaded knowledge bases and custom instructions. In Claude Cowork, folder-specific and global instructions serve the same purpose.</p>
+<h3 id="the-claudemd-hierarchy">The CLAUDE.md Hierarchy<a class="anchor" href="#the-claudemd-hierarchy">#</a></h3>
+<p>CLAUDE.md files can exist at multiple levels, each adding context:</p>
+<table>
+<thead>
+<tr>
+<th>Level</th>
+<th>Location</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Global</strong></td>
+<td><code>~/.claude/CLAUDE.md</code></td>
+<td>Personal preferences across all projects</td>
+</tr>
+<tr>
+<td><strong>Project</strong></td>
+<td><code>CLAUDE.md</code> (repo root)</td>
+<td>Team-shared conventions and architecture</td>
+</tr>
+<tr>
+<td><strong>Project (extended)</strong></td>
+<td><code>.claude/CLAUDE.md</code></td>
+<td>Additional project context</td>
+</tr>
+<tr>
+<td><strong>Personal override</strong></td>
+<td><code>CLAUDE.local.md</code></td>
+<td>Personal overrides, gitignored</td>
+</tr>
+<tr>
+<td><strong>Modular rules</strong></td>
+<td><code>.claude/rules/*.md</code></td>
+<td>Path-specific rules</td>
+</tr>
+</tbody></table>
+<p>The merge semantics are additive: global instructions load first, then project-level files layer on top. Higher priority settings override lower ones when there are conflicts (Managed &gt; Project &gt; User).</p>
+<h2 id="how-it-works">How It Works<a class="anchor" href="#how-it-works">#</a></h2>
+<h3 id="in-claude-code">In Claude Code<a class="anchor" href="#in-claude-code">#</a></h3>
+<p>CLAUDE.md files are automatically loaded when a session starts. The loading behavior in monorepos follows a clear pattern:</p>
+<ul>
+<li><strong>UP</strong> -- walks from the current working directory to the repo root, loading all CLAUDE.md files found along the way at startup</li>
+<li><strong>DOWN</strong> -- subdirectory CLAUDE.md files load lazily, only when Claude reads files in that directory</li>
+<li><strong>SIBLING</strong> -- never loads (directories at the same level are independent)</li>
+</ul>
+<p>You can import additional files using <code>@path/to/file</code> syntax within CLAUDE.md.</p>
+<p><strong>Example CLAUDE.md:</strong></p>
 <div class="code-block">
   <div class="code-header">
     <span class="code-lang">markdown</span>
     <button class="copy-btn" aria-label="Copy code">Copy</button>
   </div>
-  <pre><code class="hljs language-markdown"><span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span># Project Instructions<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+  <pre><code class="hljs language-markdown"><span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span># Project Name<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
 
 <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span>## Tech Stack<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
 <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> TypeScript with strict mode
 <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Next.js 14 with App Router
-<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> PostgreSQL with Drizzle ORM
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> PostgreSQL with Prisma ORM
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Vitest for testing
 
 <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span>## Conventions<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
-<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Use <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-code&quot;</span>&gt;</span></span><span class="hljs-code">`pnpm`</span><span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> for package management
-<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> All API routes go in <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-code&quot;</span>&gt;</span></span><span class="hljs-code">`src/app/api/`</span><span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
-<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Use zod for all input validation
-<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Write tests with vitest
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Use pnpm, not npm
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Components in src/components/ with PascalCase
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Tests co-located: MyComponent.test.tsx
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Use Zod for runtime validation
 
-<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span>## Do Not<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
-<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Never modify migration files directly
-<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Never commit .env files</code></pre>
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span>## Architecture<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Monorepo with Turborepo
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> API routes in src/app/api/
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Shared types in packages/types/
+
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span>## Commands<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-code&quot;</span>&gt;</span></span><span class="hljs-code">`pnpm dev`</span><span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> -- start dev server
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-code&quot;</span>&gt;</span></span><span class="hljs-code">`pnpm test`</span><span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> -- run tests
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-code&quot;</span>&gt;</span></span><span class="hljs-code">`pnpm lint`</span><span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> -- run ESLint</code></pre>
 </div>
-<h2 id="coming-soon">Coming Soon<a class="anchor" href="#coming-soon">#</a></h2>
-<p>Full content including CLAUDE.md format, inheritance rules, project detection, and best practices will be added in Phases 2-4.</p>
+<h3 id="project-memory">Project Memory<a class="anchor" href="#project-memory">#</a></h3>
+<p>Beyond CLAUDE.md, Claude Code maintains auto-memory -- a per-project, per-user learning journal:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang"></span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-plaintext">~/.claude/projects/&amp;lt;project-hash&amp;gt;/memory/MEMORY.md</code></pre>
+</div>
+<p>The first 200 lines of the memory file are auto-loaded at session start. Claude writes to this file automatically when it learns something important, or you can instruct it:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang"></span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-plaintext">&amp;gt; &amp;quot;Remember: always use our custom Button component from @/components/ui&amp;quot;</code></pre>
+</div>
+<p>Auto-memory complements CLAUDE.md: CLAUDE.md is for team-shared conventions you write deliberately, while auto-memory captures personal per-project learnings organically.</p>
+<h3 id="in-claude-chat">In Claude Chat<a class="anchor" href="#in-claude-chat">#</a></h3>
+<p>In Claude Chat, Projects are named spaces in the sidebar:</p>
+<ol>
+<li>Click <strong>Projects</strong> in the sidebar</li>
+<li>Create a new project with a descriptive name</li>
+<li>Add <strong>custom instructions</strong> (equivalent to CLAUDE.md for Chat)</li>
+<li>Upload <strong>knowledge base files</strong> (docs, code, data) that persist across conversations</li>
+</ol>
+<p>Custom instructions examples:</p>
+<ul>
+<li>&quot;You are a senior React developer helping our frontend team&quot;</li>
+<li>&quot;Our API uses REST with JSON. Base URL: api.example.com&quot;</li>
+</ul>
+<p>Knowledge base files persist within the project -- Claude can reference them without re-uploading. Available on Pro, Max, Team, and Enterprise plans.</p>
+<p><strong>Team features (Team/Enterprise):</strong> Shared projects across team members, organization-managed knowledge bases, and admin controls for project access.</p>
+<h3 id="in-claude-cowork">In Claude Cowork<a class="anchor" href="#in-claude-cowork">#</a></h3>
+<ul>
+<li><strong>Global instructions</strong> -- standing preferences applied across all Cowork sessions</li>
+<li><strong>Folder-specific instructions</strong> -- context applied when working in specific directories</li>
+<li>Set both in the <strong>Customize</strong> menu</li>
+</ul>
+<h2 id="when-to-use-projects">When to Use Projects<a class="anchor" href="#when-to-use-projects">#</a></h2>
+<p>Projects (and CLAUDE.md specifically) should be the first thing you set up for any project that uses Claude Code:</p>
+<ul>
+<li><strong>Always:</strong> Create a CLAUDE.md in your repo root with tech stack, conventions, and key commands</li>
+<li><strong>For teams:</strong> Check CLAUDE.md into git so every team member gets the same Claude behavior</li>
+<li><strong>For monorepos:</strong> Add subdirectory CLAUDE.md files for package-specific conventions</li>
+<li><strong>For personal overrides:</strong> Use <code>CLAUDE.local.md</code> for preferences that shouldn&#39;t be shared (gitignored automatically)</li>
+<li><strong>For modular rules:</strong> Use <code>.claude/rules/</code> when different parts of the codebase need different instructions</li>
+</ul>
+<p>In Claude Chat, create separate Projects per workflow domain -- don&#39;t overload one project with everything.</p>
+<h2 id="best-practices">Best Practices<a class="anchor" href="#best-practices">#</a></h2>
+<ul>
+<li>Keep CLAUDE.md files under <strong>200 lines</strong> each for reliable adherence</li>
+<li>Be specific and actionable, not vague -- Claude fills gaps with assumptions</li>
+<li>Share a single CLAUDE.md with your team and check it into git</li>
+<li>Use <code>CLAUDE.local.md</code> for personal overrides (automatically gitignored)</li>
+<li>Tag <code>@claude</code> on PRs to update CLAUDE.md when conventions change</li>
+<li>In Chat, create separate Projects per workflow domain -- don&#39;t overload one</li>
+<li>Use <code>.claude/rules/</code> for path-specific rules instead of one huge CLAUDE.md</li>
+<li>Put critical info in CLAUDE.md rather than repeating it in prompts -- it&#39;s always loaded and never compacted</li>
+</ul>
+<h2 id="common-questions">Common Questions<a class="anchor" href="#common-questions">#</a></h2>
+<p><strong>What is CLAUDE.md and how should I structure it?</strong>
+CLAUDE.md is a markdown file at your repo root that gives Claude persistent context about your project. Structure it with sections for tech stack, conventions, architecture, and key commands. Keep it under 200 lines, be specific, and use <code>CLAUDE.local.md</code> for personal overrides.</p>
+<p><strong>My CLAUDE.md isn&#39;t being picked up -- what&#39;s wrong?</strong>
+Check that the file is exactly <code>CLAUDE.md</code> (case-sensitive) at the repo root or inside <code>.claude/</code>. Verify it&#39;s not excluded by <code>claudeMdExcludes</code> in settings. Keep it under 200 lines, ensure you&#39;re in the correct working directory, and test by asking Claude what it knows from CLAUDE.md.</p>
+<p><strong>How do I get Claude to remember our conventions across sessions?</strong>
+In Code, put conventions in CLAUDE.md at your repo root (auto-loaded every session). Use auto-memory for cross-session learning. In Chat, create a Project with custom instructions and uploaded reference docs. In Cowork, set Global Instructions in the Customize menu.</p>
+<p><strong>How do I use Projects for non-technical teams?</strong>
+Create a Claude Chat Project with system instructions defining the workflow (decision tree, conflict rules, logging). Connect Connectors (HubSpot, ZoomInfo, etc.) and upload reference docs (taxonomy mapping, templates). The team opens the project and chats naturally -- no code or terminal required.</p>
+  </div>
+  <div class="tab-panel" data-tab-panel="howto">
+
+<h2 id="how-to-guides">How-To Guides<a class="anchor" href="#how-to-guides">#</a></h2>
+<div class="callout callout-info">
+  <div class="callout-title">Info</div>
+  <p>Step-by-step guides for Projects are coming in Phase 4.</p>
+</div>
+<p>Planned guides:</p>
+<ul>
+<li><p>Setting up CLAUDE.md for a new project -- <em>coming soon</em></p>
+</li>
+<li><p>Configuring path-specific rules with .claude/rules/ -- <em>coming soon</em></p>
+</li>
+<li><p>Structuring CLAUDE.md for monorepos -- <em>coming soon</em></p>
+</li>
+<li><p>Using auto-memory effectively -- <em>coming soon</em></p>
+</div>
+<div class="tab-panel" data-tab-panel="reference"></li>
+</ul>
+<h2 id="technical-reference">Technical Reference<a class="anchor" href="#technical-reference">#</a></h2>
+<div class="callout callout-info">
+  <div class="callout-title">Info</div>
+  <p>Detailed reference specs for Projects are coming in Phase 4.</p>
+</div>
+<p>Planned references:</p>
+<ul>
+<li><p>CLAUDE.md format and loading behavior -- <em>coming soon</em></p>
+</li>
+<li><p>Path-specific rules configuration -- <em>coming soon</em></p>
+</li>
+<li><p>Auto-memory file format and location -- <em>coming soon</em></p>
+</div>
+</div></li>
+</ul>
+<h2 id="related">Related<a class="anchor" href="#related">#</a></h2>
+<ul>
+<li><a href="mcp.html">MCP</a> -- Connectors provide tools; Projects provide context and instructions</li>
+<li><a href="skills.html">Skills</a> -- Skills provide reusable procedures; CLAUDE.md provides project-specific context</li>
+<li><a href="memory.html">Memory</a> -- Memory system layers build on CLAUDE.md as the foundation</li>
+<li><a href="settings.html">Settings</a> -- Settings hierarchy controls permissions; CLAUDE.md controls instructions</li>
+</ul>
 
     </article>
   </main>

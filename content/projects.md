@@ -9,29 +9,41 @@ section: topics
 
 # Projects and CLAUDE.md
 
+<div class="tabs">
+  <div class="tab-group">
+    <button class="tab-btn active" data-tab="concept">Concept</button>
+    <button class="tab-btn" data-tab="howto">How-To</button>
+    <button class="tab-btn" data-tab="reference">Reference</button>
+  </div>
+  <div class="tab-panel active" data-tab-panel="concept">
+
 ## Overview
 
-Projects provide persistent context that survives across sessions. In Claude Code, the `CLAUDE.md` file is the primary mechanism -- a markdown file auto-loaded at every session start that tells Claude about your codebase's conventions, architecture, and preferences. In Claude Chat, Projects are named spaces with uploaded knowledge bases and custom instructions. In Claude Cowork, folder-specific and global instructions serve the same purpose.
+Projects provide persistent context that travels with your codebase. In Claude Code, the `CLAUDE.md` file is the primary mechanism -- a markdown file that Claude reads at the start of every session, giving it project-specific knowledge about your conventions, architecture, and preferences. Think of it as the "onboarding doc" that a new team member would read -- except Claude reads it every single time, reliably.
 
-CLAUDE.md files can exist at multiple levels -- global (`~/.claude/CLAUDE.md`), project root, and subdirectories -- with each level adding context. This hierarchy makes it the most reliable way to ensure consistent behavior across all interactions.
+CLAUDE.md is the first thing you should set up in any project that uses Claude Code. It is the most reliable way to ensure consistent behavior across all interactions, because it is always loaded, never compacted, and shared with every agent in the project.
 
-## How It Works
+In Claude Chat, Projects are named spaces with uploaded knowledge bases and custom instructions. In Claude Cowork, folder-specific and global instructions serve the same purpose.
 
-### In Claude Code
+### The CLAUDE.md Hierarchy
 
-CLAUDE.md files are automatically loaded when a session starts. They support a multi-level hierarchy:
+CLAUDE.md files can exist at multiple levels, each adding context:
 
 | Level | Location | Purpose |
 |-------|----------|---------|
-| **User** | `~/.claude/CLAUDE.md` | Personal preferences across all projects |
+| **Global** | `~/.claude/CLAUDE.md` | Personal preferences across all projects |
 | **Project** | `CLAUDE.md` (repo root) | Team-shared conventions and architecture |
 | **Project (extended)** | `.claude/CLAUDE.md` | Additional project context |
 | **Personal override** | `CLAUDE.local.md` | Personal overrides, gitignored |
 | **Modular rules** | `.claude/rules/*.md` | Path-specific rules |
 
-**Loading order:** Managed > Project > User. Higher priority settings override lower ones.
+The merge semantics are additive: global instructions load first, then project-level files layer on top. Higher priority settings override lower ones when there are conflicts (Managed > Project > User).
 
-**Monorepo loading behavior:**
+## How It Works
+
+### In Claude Code
+
+CLAUDE.md files are automatically loaded when a session starts. The loading behavior in monorepos follows a clear pattern:
 
 - **UP** -- walks from the current working directory to the repo root, loading all CLAUDE.md files found along the way at startup
 - **DOWN** -- subdirectory CLAUDE.md files load lazily, only when Claude reads files in that directory
@@ -67,6 +79,22 @@ You can import additional files using `@path/to/file` syntax within CLAUDE.md.
 - `pnpm lint` -- run ESLint
 ```
 
+### Project Memory
+
+Beyond CLAUDE.md, Claude Code maintains auto-memory -- a per-project, per-user learning journal:
+
+```
+~/.claude/projects/<project-hash>/memory/MEMORY.md
+```
+
+The first 200 lines of the memory file are auto-loaded at session start. Claude writes to this file automatically when it learns something important, or you can instruct it:
+
+```
+> "Remember: always use our custom Button component from @/components/ui"
+```
+
+Auto-memory complements CLAUDE.md: CLAUDE.md is for team-shared conventions you write deliberately, while auto-memory captures personal per-project learnings organically.
+
 ### In Claude Chat
 
 In Claude Chat, Projects are named spaces in the sidebar:
@@ -90,50 +118,17 @@ Knowledge base files persist within the project -- Claude can reference them wit
 - **Folder-specific instructions** -- context applied when working in specific directories
 - Set both in the **Customize** menu
 
-## Configuration
+## When to Use Projects
 
-### CLAUDE.md Format
+Projects (and CLAUDE.md specifically) should be the first thing you set up for any project that uses Claude Code:
 
-CLAUDE.md files use standard markdown. Keep them factual and actionable:
+- **Always:** Create a CLAUDE.md in your repo root with tech stack, conventions, and key commands
+- **For teams:** Check CLAUDE.md into git so every team member gets the same Claude behavior
+- **For monorepos:** Add subdirectory CLAUDE.md files for package-specific conventions
+- **For personal overrides:** Use `CLAUDE.local.md` for preferences that shouldn't be shared (gitignored automatically)
+- **For modular rules:** Use `.claude/rules/` when different parts of the codebase need different instructions
 
-```markdown
-## Do
-- Use TypeScript strict mode
-- Write tests with vitest
-- Use Zod for all input validation
-
-## Do Not
-- Never modify migration files directly
-- Never commit .env files
-- Never use moment.js (use date-fns)
-```
-
-### Auto-Memory
-
-Claude Code maintains its own per-project, per-user memory at:
-
-```
-~/.claude/projects/<project-hash>/memory/MEMORY.md
-```
-
-The first 200 lines of the memory file are auto-loaded at session start. Claude writes to this file automatically when it learns something important, or you can instruct it:
-
-```
-> "Remember: always use our custom Button component from @/components/ui"
-```
-
-### Path-Specific Rules
-
-For modular, path-scoped instructions, use the `.claude/rules/` directory:
-
-```
-.claude/rules/
-├── api.md          # Rules for API routes
-├── components.md   # Rules for React components
-└── tests.md        # Rules for test files
-```
-
-Rules load based on the files Claude is working with.
+In Claude Chat, create separate Projects per workflow domain -- don't overload one project with everything.
 
 ## Best Practices
 
@@ -159,6 +154,36 @@ In Code, put conventions in CLAUDE.md at your repo root (auto-loaded every sessi
 
 **How do I use Projects for non-technical teams?**
 Create a Claude Chat Project with system instructions defining the workflow (decision tree, conflict rules, logging). Connect Connectors (HubSpot, ZoomInfo, etc.) and upload reference docs (taxonomy mapping, templates). The team opens the project and chats naturally -- no code or terminal required.
+
+  </div>
+  <div class="tab-panel" data-tab-panel="howto">
+
+## How-To Guides
+
+> [!INFO]
+> Step-by-step guides for Projects are coming in Phase 4.
+
+Planned guides:
+- Setting up CLAUDE.md for a new project -- _coming soon_
+- Configuring path-specific rules with .claude/rules/ -- _coming soon_
+- Structuring CLAUDE.md for monorepos -- _coming soon_
+- Using auto-memory effectively -- _coming soon_
+
+  </div>
+  <div class="tab-panel" data-tab-panel="reference">
+
+## Technical Reference
+
+> [!INFO]
+> Detailed reference specs for Projects are coming in Phase 4.
+
+Planned references:
+- CLAUDE.md format and loading behavior -- _coming soon_
+- Path-specific rules configuration -- _coming soon_
+- Auto-memory file format and location -- _coming soon_
+
+  </div>
+</div>
 
 ## Related
 
