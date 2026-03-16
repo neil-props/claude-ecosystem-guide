@@ -68,9 +68,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Content — Decision Trees
 
-- [ ] **DECT-01**: Interactive decision wizard — "What are you trying to do?" flow that recommends the right extension point
-- [ ] **DECT-02**: Per-topic decision guidance integrated into each topic page
-- [ ] **DECT-03**: Comparison tables — Skill vs Agent vs Command, MCP vs Plugin, Hook vs Skill
+- [x] **DECT-01**: Interactive decision wizard — "What are you trying to do?" flow that recommends the right extension point
+- [x] **DECT-02**: Per-topic decision guidance integrated into each topic page
+- [x] **DECT-03**: Comparison tables — Skill vs Agent vs Command, MCP vs Plugin, Hook vs Skill
 
 ### Content — Recipes
 
@@ -182,9 +182,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | REFR-06 | Phase 4: Guides and Reference | Complete |
 | REFR-07 | Phase 4: Guides and Reference | Complete |
 | REFR-08 | Phase 4: Guides and Reference | Complete |
-| DECT-01 | Phase 5: Decision Guidance and Recipes | Pending |
-| DECT-02 | Phase 5: Decision Guidance and Recipes | Pending |
-| DECT-03 | Phase 5: Decision Guidance and Recipes | Pending |
+| DECT-01 | Phase 5: Decision Guidance and Recipes | Complete |
+| DECT-02 | Phase 5: Decision Guidance and Recipes | Complete |
+| DECT-03 | Phase 5: Decision Guidance and Recipes | Complete |
 | RECP-01 | Phase 5: Decision Guidance and Recipes | Complete |
 | RECP-02 | Phase 5: Decision Guidance and Recipes | Complete |
 | RECP-03 | Phase 5: Decision Guidance and Recipes | Complete |

@@ -144,5 +144,5 @@ Phases execute in numeric order: 1 → 1.1 → 2 → 3 → 4 → 5 → 6
 | 2. Knowledge Base | 2/2 | Complete    | 2026-03-16 |
 | 3. Conceptual Content | 2/2 | Complete | 2026-03-16 |
 | 4. Guides and Reference | 2/3 | In Progress|  |
-| 5. Decision Guidance and Recipes | 1/3 | In Progress|  |
+| 5. Decision Guidance and Recipes | 2/3 | In Progress|  |
 | 6. Agent | 0/2 | Not started | - |
