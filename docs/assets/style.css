@@ -72,12 +72,13 @@ body {
   color: var(--text);
   line-height: 1.6;
   min-height: 100vh;
-}
-
-/* ════ LAYOUT ════ */
-body {
   display: grid;
   grid-template-columns: 260px 1fr;
+}
+
+/* ════ SIDEBAR OVERLAY (mobile) ════ */
+.sidebar-overlay {
+  display: none;
 }
 
 .sidebar {
@@ -421,4 +422,112 @@ article li code {
 
 .hljs-attribute {
   color: var(--code);
+}
+
+/* ════ TABLES ════ */
+article table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.875rem;
+}
+
+article th,
+article td {
+  padding: 0.65rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+article thead th {
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  background: var(--surface2);
+  position: sticky;
+  top: 0;
+}
+
+article tbody td {
+  color: var(--text-dim);
+}
+
+article tbody tr:hover td {
+  background: var(--surface2);
+}
+
+.table-wrap {
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+/* ════ RESPONSIVE: TABLET (max-width: 900px) ════ */
+@media (max-width: 900px) {
+  body {
+    grid-template-columns: 220px 1fr;
+  }
+
+  .content {
+    padding: 1.5rem;
+  }
+}
+
+/* ════ RESPONSIVE: MOBILE (max-width: 640px) ════ */
+@media (max-width: 640px) {
+  body {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: fixed;
+    left: -280px;
+    width: 280px;
+    z-index: 100;
+    transition: left 0.3s ease;
+    top: 0;
+    height: 100vh;
+    background: var(--surface);
+  }
+
+  .sidebar.sidebar-open {
+    left: 0;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.3);
+  }
+
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 99;
+  }
+
+  .sidebar-overlay.active {
+    display: block;
+  }
+
+  .mobile-nav-toggle {
+    display: flex;
+  }
+
+  .content {
+    padding: 1rem;
+    padding-top: 4rem;
+  }
+
+  article h1 {
+    font-size: 1.75rem;
+  }
+
+  article h2 {
+    font-size: 1.25rem;
+  }
+
+  article table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
 }

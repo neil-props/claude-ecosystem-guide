@@ -14,17 +14,20 @@ describe('Syntax highlighting and copy buttons', () => {
       .map(f => join('docs/topics', f));
   });
 
-  it('HTML files contain hljs class on code blocks', () => {
+  it('HTML files with code blocks contain hljs class', () => {
     assert.ok(topicFiles.length > 0, 'Should have topic files to test');
-    for (const file of topicFiles) {
+    const filesWithCode = topicFiles.filter(f => /<pre>/.test(readFileSync(f, 'utf-8')));
+    assert.ok(filesWithCode.length > 0, 'At least one topic file should have code blocks');
+    for (const file of filesWithCode) {
       const html = readFileSync(file, 'utf-8');
       const hasHljs = /class="hljs/.test(html);
       assert.ok(hasHljs, `${file} should have hljs class on code blocks`);
     }
   });
 
-  it('HTML files contain copy-btn class for copy buttons', () => {
-    for (const file of topicFiles) {
+  it('HTML files with code blocks contain copy-btn class for copy buttons', () => {
+    const filesWithCode = topicFiles.filter(f => /<pre>/.test(readFileSync(f, 'utf-8')));
+    for (const file of filesWithCode) {
       const html = readFileSync(file, 'utf-8');
       const hasCopyBtn = /copy-btn/.test(html);
       assert.ok(hasCopyBtn, `${file} should have copy-btn class`);
@@ -32,7 +35,8 @@ describe('Syntax highlighting and copy buttons', () => {
   });
 
   it('code blocks are wrapped in a .code-block container div', () => {
-    for (const file of topicFiles) {
+    const filesWithCode = topicFiles.filter(f => /<pre>/.test(readFileSync(f, 'utf-8')));
+    for (const file of filesWithCode) {
       const html = readFileSync(file, 'utf-8');
       const hasCodeBlock = /class="code-block"/.test(html);
       assert.ok(hasCodeBlock, `${file} should have .code-block container divs`);
