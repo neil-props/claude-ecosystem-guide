@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Multi-page site structure, shared layout, build pipeline, and code infrastructure (completed 2026-03-16)
 - [x] **Phase 1.1: Design System** - INSERTED - Visual design system, page layouts, component library, and design mockups (completed 2026-03-15)
-- [ ] **Phase 2: Knowledge Base** - Extract existing content into markdown knowledge files as single source of truth
+- [x] **Phase 2: Knowledge Base** - Extract existing content into markdown knowledge files as single source of truth (completed 2026-03-15)
 - [ ] **Phase 3: Conceptual Content** - Write conceptual overviews for all 10 ecosystem extension points
 - [ ] **Phase 4: Guides and Reference** - Write how-to guides and technical reference specs for all extension points
 - [ ] **Phase 5: Decision Guidance and Recipes** - Decision trees, comparison tables, recipes, and full-text search
@@ -66,8 +66,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — Wave 0 test scaffolds for content validation, extract content into MCP, Skills, Plugins, Hooks, and Agents markdown files
-- [ ] 02-02-PLAN.md — Extract content into Projects, Connectors, Commands, Memory, and Settings files; fix Connectors/Interactive Apps confusion
+- [x] 02-01-PLAN.md — Wave 0 test scaffolds for content validation, extract content into MCP, Skills, Plugins, Hooks, and Agents markdown files
+- [x] 02-02-PLAN.md — Extract content into Projects, Connectors, Commands, Memory, and Settings files; fix Connectors/Interactive Apps confusion
 
 ### Phase 3: Conceptual Content
 **Goal**: Users can read a clear conceptual overview for every extension point, understanding what it is, when to use it, and how it fits in the ecosystem
@@ -138,9 +138,9 @@ Phases execute in numeric order: 1 → 1.1 → 2 → 3 → 4 → 5 → 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/2 | Complete    | 2026-03-16 |
+| 1. Foundation | 2/2 | Complete    | 2026-03-16 |
 | 1.1. Design System | 2/2 | Complete | 2026-03-15 |
-| 2. Knowledge Base | 0/2 | Not started | - |
+| 2. Knowledge Base | 2/2 | Complete | 2026-03-15 |
 | 3. Conceptual Content | 0/2 | Not started | - |
 | 4. Guides and Reference | 0/3 | Not started | - |
 | 5. Decision Guidance and Recipes | 0/2 | Not started | - |
