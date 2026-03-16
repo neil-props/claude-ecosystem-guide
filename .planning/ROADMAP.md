@@ -78,11 +78,11 @@ Plans:
   2. MCP overview covers all three transport types (stdio, SSE, streamable HTTP)
   3. Skills overview explains frontmatter and when to use skills vs other extension points
   4. Each overview links to its corresponding how-to and reference sections (even if those pages are not yet populated)
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 03-01: TBD
-- [ ] 03-02: TBD
+- [ ] 03-01-PLAN.md — Restructure MCP, Skills, Plugins, Hooks, Agents with tab UI and enhanced conceptual overviews
+- [ ] 03-02-PLAN.md — Restructure Projects, Connectors, Commands, Memory, Settings with tab UI and enhanced conceptual overviews
 
 ### Phase 4: Guides and Reference
 **Goal**: Users can follow step-by-step how-to guides and consult precise technical reference specs for all extension points
