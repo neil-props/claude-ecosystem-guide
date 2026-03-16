@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}} - Claude Ecosystem Guide</title>
+  <script>
+    // Prevent flash of wrong theme - runs before CSS/body render
+    (function() {
+      var stored = localStorage.getItem('claude-guide-theme');
+      if (stored) {
+        document.documentElement.setAttribute('data-theme', stored);
+      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="{{basePath}}assets/style.css">
+</head>
+<body>
+  <aside class="sidebar" id="sidebar">{{nav}}</aside>
+  <main class="content">
+    <article>
+      {{content}}
+    </article>
+  </main>
+  <script src="{{basePath}}assets/main.js"></script>
+</body>
+</html>

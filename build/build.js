@@ -1,0 +1,178 @@
+import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync, copyFileSync, readdirSync } from 'fs';
+import { join, dirname, resolve } from 'path';
+import { fileURLToPath } from 'url';
+import { glob } from 'glob';
+import matter from 'gray-matter';
+import { marked } from 'marked';
+import { markedHighlight } from 'marked-highlight';
+import hljs from 'highlight.js/lib/core';
+
+// Register only needed languages
+import yaml from 'highlight.js/lib/languages/yaml';
+import json from 'highlight.js/lib/languages/json';
+import bash from 'highlight.js/lib/languages/bash';
+import javascript from 'highlight.js/lib/languages/javascript';
+import typescript from 'highlight.js/lib/languages/typescript';
+import markdown from 'highlight.js/lib/languages/markdown';
+import xml from 'highlight.js/lib/languages/xml';
+
+hljs.registerLanguage('yaml', yaml);
+hljs.registerLanguage('json', json);
+hljs.registerLanguage('bash', bash);
+hljs.registerLanguage('shell', bash);
+hljs.registerLanguage('javascript', javascript);
+hljs.registerLanguage('js', javascript);
+hljs.registerLanguage('typescript', typescript);
+hljs.registerLanguage('ts', typescript);
+hljs.registerLanguage('markdown', markdown);
+hljs.registerLanguage('md', markdown);
+hljs.registerLanguage('xml', xml);
+hljs.registerLanguage('html', xml);
+
+// Resolve paths relative to project root
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const ROOT = resolve(__dirname, '..');
+const CONTENT_DIR = join(ROOT, 'content');
+const DOCS_DIR = join(ROOT, 'docs');
+const TEMPLATE_PATH = join(__dirname, 'templates', 'page.html');
+const ASSETS_SRC = join(DOCS_DIR, 'assets');
+
+// Configure marked with highlight.js
+marked.use(markedHighlight({
+  emptyLangClass: 'hljs',
+  langPrefix: 'hljs language-',
+  highlight(code, lang) {
+    const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+    return hljs.highlight(code, { language }).value;
+  }
+}));
+
+// Slugify text for heading IDs
+function slugify(text) {
+  return text
+    .toLowerCase()
+    .replace(/<[^>]*>/g, '')   // strip HTML tags
+    .replace(/[^\w\s-]/g, '')  // remove special chars
+    .replace(/\s+/g, '-')      // spaces to hyphens
+    .replace(/-+/g, '-')       // collapse multiple hyphens
+    .replace(/^-|-$/g, '');    // trim leading/trailing hyphens
+}
+
+// Custom renderer for headings with anchor links
+const renderer = new marked.Renderer();
+renderer.heading = function({ tokens, depth }) {
+  const text = this.parser.parseInline(tokens);
+  const slug = slugify(text);
+  return `<h${depth} id="${slug}">${text}<a class="anchor" href="#${slug}">#</a></h${depth}>\n`;
+};
+
+// Custom renderer for code blocks with copy button
+renderer.code = function({ text, lang }) {
+  const language = lang && hljs.getLanguage(lang) ? lang : 'plaintext';
+  const displayLang = lang || '';
+  const highlighted = hljs.getLanguage(language)
+    ? hljs.highlight(text, { language }).value
+    : text;
+  return `<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">${displayLang}</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-${language}">${highlighted}</code></pre>
+</div>\n`;
+};
+
+marked.use({ renderer });
+
+// Read HTML template
+const template = readFileSync(TEMPLATE_PATH, 'utf-8');
+
+// Clean docs directory (preserve assets/)
+function cleanDocs() {
+  if (existsSync(DOCS_DIR)) {
+    // Remove all HTML files in docs root
+    if (existsSync(DOCS_DIR)) {
+      const rootFiles = readdirSync(DOCS_DIR);
+      for (const f of rootFiles) {
+        if (f.endsWith('.html')) {
+          rmSync(join(DOCS_DIR, f));
+        }
+      }
+    }
+    // Remove topics directory entirely
+    const topicsDir = join(DOCS_DIR, 'topics');
+    if (existsSync(topicsDir)) {
+      rmSync(topicsDir, { recursive: true });
+    }
+  }
+}
+
+// Build a single page
+function buildPage(filePath, basePath) {
+  const raw = readFileSync(filePath, 'utf-8');
+  const { data: meta, content } = matter(raw);
+  const html = marked.parse(content);
+
+  const page = template
+    .replace(/\{\{title\}\}/g, meta.title || 'Untitled')
+    .replace(/\{\{content\}\}/g, html)
+    .replace(/\{\{nav\}\}/g, '')  // empty nav for now -- Plan 02 adds real nav
+    .replace(/\{\{basePath\}\}/g, basePath);
+
+  return { page, meta };
+}
+
+// Main build
+async function build() {
+  console.log('Building Claude Ecosystem Guide...\n');
+
+  // Clean previous output
+  cleanDocs();
+
+  // Ensure output directories exist
+  mkdirSync(join(DOCS_DIR, 'topics'), { recursive: true });
+  mkdirSync(join(DOCS_DIR, 'assets'), { recursive: true });
+
+  // Copy static assets (they live in docs/assets/ as source of truth)
+  // Assets are already in docs/assets/ -- no copy needed since they're the source
+
+  // Find all content files
+  const files = await glob('*.md', { cwd: CONTENT_DIR });
+
+  if (files.length === 0) {
+    console.warn('Warning: No content files found in content/');
+    return;
+  }
+
+  let pageCount = 0;
+
+  for (const file of files) {
+    const filePath = join(CONTENT_DIR, file);
+    const { data: meta } = matter(readFileSync(filePath, 'utf-8'));
+    const slug = meta.slug || file.replace('.md', '');
+
+    let outputPath;
+    let basePath;
+
+    if (slug === 'index') {
+      outputPath = join(DOCS_DIR, 'index.html');
+      basePath = '';
+    } else {
+      outputPath = join(DOCS_DIR, 'topics', `${slug}.html`);
+      basePath = '../';
+    }
+
+    const { page } = buildPage(filePath, basePath);
+    writeFileSync(outputPath, page);
+    console.log(`  Built: ${outputPath.replace(ROOT + '/', '')}`);
+    pageCount++;
+  }
+
+  console.log(`\nDone! Built ${pageCount} pages.`);
+}
+
+build().catch(err => {
+  console.error('Build failed:', err);
+  process.exit(1);
+});
