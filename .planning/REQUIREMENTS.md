@@ -48,20 +48,20 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **HOWT-02**: How to set up an MCP server (SSE/streamable HTTP transport)
 - [x] **HOWT-03**: How to configure MCP authentication
 - [x] **HOWT-04**: How to build your own MCP server
-- [ ] **HOWT-05**: How to create a skill with correct frontmatter
-- [ ] **HOWT-06**: How to create a plugin that bundles skills
-- [ ] **HOWT-07**: How to set up hooks for lifecycle events
-- [ ] **HOWT-08**: How to create a custom agent
+- [x] **HOWT-05**: How to create a skill with correct frontmatter
+- [x] **HOWT-06**: How to create a plugin that bundles skills
+- [x] **HOWT-07**: How to set up hooks for lifecycle events
+- [x] **HOWT-08**: How to create a custom agent
 - [x] **HOWT-09**: How to configure CLAUDE.md for a project
 - [x] **HOWT-10**: How to use the memory system effectively
 
 ### Content — Technical Reference
 
 - [x] **REFR-01**: MCP config schema (.mcp.json format, all fields)
-- [ ] **REFR-02**: Skill frontmatter spec (all fields, validation rules)
-- [ ] **REFR-03**: Plugin manifest spec
-- [ ] **REFR-04**: Hook configuration spec (events, patterns, commands)
-- [ ] **REFR-05**: Agent file format spec
+- [x] **REFR-02**: Skill frontmatter spec (all fields, validation rules)
+- [x] **REFR-03**: Plugin manifest spec
+- [x] **REFR-04**: Hook configuration spec (events, patterns, commands)
+- [x] **REFR-05**: Agent file format spec
 - [x] **REFR-06**: Settings hierarchy resolution order (full detail)
 - [x] **REFR-07**: CLAUDE.md file format and loading order
 - [x] **REFR-08**: Environment variables reference
@@ -168,17 +168,17 @@ Which phases cover which requirements. Updated during roadmap creation.
 | HOWT-02 | Phase 4: Guides and Reference | Complete |
 | HOWT-03 | Phase 4: Guides and Reference | Complete |
 | HOWT-04 | Phase 4: Guides and Reference | Complete |
-| HOWT-05 | Phase 4: Guides and Reference | Pending |
-| HOWT-06 | Phase 4: Guides and Reference | Pending |
-| HOWT-07 | Phase 4: Guides and Reference | Pending |
-| HOWT-08 | Phase 4: Guides and Reference | Pending |
+| HOWT-05 | Phase 4: Guides and Reference | Complete |
+| HOWT-06 | Phase 4: Guides and Reference | Complete |
+| HOWT-07 | Phase 4: Guides and Reference | Complete |
+| HOWT-08 | Phase 4: Guides and Reference | Complete |
 | HOWT-09 | Phase 4: Guides and Reference | Complete |
 | HOWT-10 | Phase 4: Guides and Reference | Complete |
 | REFR-01 | Phase 4: Guides and Reference | Complete |
-| REFR-02 | Phase 4: Guides and Reference | Pending |
-| REFR-03 | Phase 4: Guides and Reference | Pending |
-| REFR-04 | Phase 4: Guides and Reference | Pending |
-| REFR-05 | Phase 4: Guides and Reference | Pending |
+| REFR-02 | Phase 4: Guides and Reference | Complete |
+| REFR-03 | Phase 4: Guides and Reference | Complete |
+| REFR-04 | Phase 4: Guides and Reference | Complete |
+| REFR-05 | Phase 4: Guides and Reference | Complete |
 | REFR-06 | Phase 4: Guides and Reference | Complete |
 | REFR-07 | Phase 4: Guides and Reference | Complete |
 | REFR-08 | Phase 4: Guides and Reference | Complete |
