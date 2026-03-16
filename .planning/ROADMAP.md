@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Foundation** - Multi-page site structure, shared layout, build pipeline, and code infrastructure (completed 2026-03-16)
 - [x] **Phase 1.1: Design System** - INSERTED - Visual design system, page layouts, component library, and design mockups (completed 2026-03-15)
 - [x] **Phase 2: Knowledge Base** - Extract existing content into markdown knowledge files as single source of truth (completed 2026-03-15)
-- [ ] **Phase 3: Conceptual Content** - Write conceptual overviews for all 10 ecosystem extension points
+- [x] **Phase 3: Conceptual Content** - Write conceptual overviews for all 10 ecosystem extension points (completed 2026-03-16)
 - [ ] **Phase 4: Guides and Reference** - Write how-to guides and technical reference specs for all extension points
 - [ ] **Phase 5: Decision Guidance and Recipes** - Decision trees, comparison tables, recipes, and full-text search
 - [ ] **Phase 6: Agent** - CLI agent companion with static knowledge, live fetch, and contextual recommendations
@@ -81,8 +81,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 03-01-PLAN.md — Restructure MCP, Skills, Plugins, Hooks, Agents with tab UI and enhanced conceptual overviews
-- [ ] 03-02-PLAN.md — Restructure Projects, Connectors, Commands, Memory, Settings with tab UI and enhanced conceptual overviews
+- [x] 03-01-PLAN.md — Restructure MCP, Skills, Plugins, Hooks, Agents with tab UI and enhanced conceptual overviews
+- [x] 03-02-PLAN.md — Restructure Projects, Connectors, Commands, Memory, Settings with tab UI and enhanced conceptual overviews
 
 ### Phase 4: Guides and Reference
 **Goal**: Users can follow step-by-step how-to guides and consult precise technical reference specs for all extension points
@@ -141,7 +141,7 @@ Phases execute in numeric order: 1 → 1.1 → 2 → 3 → 4 → 5 → 6
 | 1. Foundation | 2/2 | Complete    | 2026-03-16 |
 | 1.1. Design System | 2/2 | Complete | 2026-03-15 |
 | 2. Knowledge Base | 2/2 | Complete    | 2026-03-16 |
-| 3. Conceptual Content | 0/2 | Not started | - |
+| 3. Conceptual Content | 2/2 | Complete | 2026-03-16 |
 | 4. Guides and Reference | 0/3 | Not started | - |
 | 5. Decision Guidance and Recipes | 0/2 | Not started | - |
 | 6. Agent | 0/2 | Not started | - |

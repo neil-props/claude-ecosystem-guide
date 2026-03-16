@@ -36,11 +36,11 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **CONC-03**: Plugins overview — what they are, how they bundle skills, distribution
 - [x] **CONC-04**: Hooks overview — what they are, lifecycle events, use cases
 - [x] **CONC-05**: Agents overview — custom agents, agent files, when to use
-- [ ] **CONC-06**: Projects overview — CLAUDE.md hierarchy, project memory
-- [ ] **CONC-07**: Connectors overview — what they are, available connectors
-- [ ] **CONC-08**: Commands overview — slash commands, built-in vs custom
-- [ ] **CONC-09**: Memory system overview — how memory works, persistence, types
-- [ ] **CONC-10**: Settings hierarchy overview — resolution order, scopes, overrides
+- [x] **CONC-06**: Projects overview — CLAUDE.md hierarchy, project memory
+- [x] **CONC-07**: Connectors overview — what they are, available connectors
+- [x] **CONC-08**: Commands overview — slash commands, built-in vs custom
+- [x] **CONC-09**: Memory system overview — how memory works, persistence, types
+- [x] **CONC-10**: Settings hierarchy overview — resolution order, scopes, overrides
 
 ### Content — How-To Guides
 
@@ -159,11 +159,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CONC-03 | Phase 3: Conceptual Content | Complete |
 | CONC-04 | Phase 3: Conceptual Content | Complete |
 | CONC-05 | Phase 3: Conceptual Content | Complete |
-| CONC-06 | Phase 3: Conceptual Content | Pending |
-| CONC-07 | Phase 3: Conceptual Content | Pending |
-| CONC-08 | Phase 3: Conceptual Content | Pending |
-| CONC-09 | Phase 3: Conceptual Content | Pending |
-| CONC-10 | Phase 3: Conceptual Content | Pending |
+| CONC-06 | Phase 3: Conceptual Content | Complete |
+| CONC-07 | Phase 3: Conceptual Content | Complete |
+| CONC-08 | Phase 3: Conceptual Content | Complete |
+| CONC-09 | Phase 3: Conceptual Content | Complete |
+| CONC-10 | Phase 3: Conceptual Content | Complete |
 | HOWT-01 | Phase 4: Guides and Reference | Pending |
 | HOWT-02 | Phase 4: Guides and Reference | Pending |
 | HOWT-03 | Phase 4: Guides and Reference | Pending |
