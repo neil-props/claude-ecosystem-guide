@@ -23,11 +23,11 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **DSGN-01**: Visual design system defined — color palette, typography scale, spacing system for both dark and light themes
 - [x] **DSGN-02**: Page layout design — sidebar behavior, content area proportions, header/footer patterns
-- [ ] **DSGN-03**: Content layer UI — tab/accordion pattern for concept/howto/reference/decision-tree views per topic
-- [ ] **DSGN-04**: Interactive element design — decision wizard UI, search results display, code block styling, copy feedback
+- [x] **DSGN-03**: Content layer UI — tab/accordion pattern for concept/howto/reference/decision-tree views per topic
+- [x] **DSGN-04**: Interactive element design — decision wizard UI, search results display, code block styling, copy feedback
 - [x] **DSGN-05**: Mobile navigation design — hamburger/drawer pattern, touch-friendly interactions
-- [ ] **DSGN-06**: Design mockups created and approved before implementation
-- [ ] **DSGN-07**: Component library — reusable styled components (cards, callouts, tables, badges, nav items)
+- [x] **DSGN-06**: Design mockups created and approved before implementation
+- [x] **DSGN-07**: Component library — reusable styled components (cards, callouts, tables, badges, nav items)
 
 ### Content — Conceptual Overviews
 
@@ -149,11 +149,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SITE-09 | Phase 1: Foundation | Complete |
 | DSGN-01 | Phase 1.1: Design System | Complete |
 | DSGN-02 | Phase 1.1: Design System | Complete |
-| DSGN-03 | Phase 1.1: Design System | Pending |
-| DSGN-04 | Phase 1.1: Design System | Pending |
+| DSGN-03 | Phase 1.1: Design System | Complete |
+| DSGN-04 | Phase 1.1: Design System | Complete |
 | DSGN-05 | Phase 1.1: Design System | Complete |
-| DSGN-06 | Phase 1.1: Design System | Pending |
-| DSGN-07 | Phase 1.1: Design System | Pending |
+| DSGN-06 | Phase 1.1: Design System | Complete |
+| DSGN-07 | Phase 1.1: Design System | Complete |
 | CONC-01 | Phase 3: Conceptual Content | Pending |
 | CONC-02 | Phase 3: Conceptual Content | Pending |
 | CONC-03 | Phase 3: Conceptual Content | Pending |
