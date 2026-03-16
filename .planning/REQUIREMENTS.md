@@ -82,10 +82,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Knowledge Base
 
-- [ ] **KNOW-01**: Markdown knowledge files created for all 10 extension point topics
-- [ ] **KNOW-02**: Knowledge files structured as single source of truth (site and agent both consume them)
-- [ ] **KNOW-03**: Content extracted from existing index.html into knowledge files
-- [ ] **KNOW-04**: Content mined from existing ama.html into relevant knowledge files
+- [x] **KNOW-01**: Markdown knowledge files created for all 10 extension point topics
+- [x] **KNOW-02**: Knowledge files structured as single source of truth (site and agent both consume them)
+- [x] **KNOW-03**: Content extracted from existing index.html into knowledge files
+- [x] **KNOW-04**: Content mined from existing ama.html into relevant knowledge files
 - [x] **KNOW-05**: Build script converts knowledge markdown to site HTML pages
 
 ### Agent
@@ -190,10 +190,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | RECP-03 | Phase 5: Decision Guidance and Recipes | Pending |
 | RECP-04 | Phase 5: Decision Guidance and Recipes | Pending |
 | RECP-05 | Phase 5: Decision Guidance and Recipes | Pending |
-| KNOW-01 | Phase 2: Knowledge Base | Pending |
-| KNOW-02 | Phase 2: Knowledge Base | Pending |
-| KNOW-03 | Phase 2: Knowledge Base | Pending |
-| KNOW-04 | Phase 2: Knowledge Base | Pending |
+| KNOW-01 | Phase 2: Knowledge Base | Complete |
+| KNOW-02 | Phase 2: Knowledge Base | Complete |
+| KNOW-03 | Phase 2: Knowledge Base | Complete |
+| KNOW-04 | Phase 2: Knowledge Base | Complete |
 | KNOW-05 | Phase 1: Foundation | Complete |
 | AGNT-01 | Phase 6: Agent | Pending |
 | AGNT-02 | Phase 6: Agent | Pending |
