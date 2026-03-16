@@ -9,15 +9,15 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Site Structure
 
-- [ ] **SITE-01**: Site has multi-page structure with persistent sidebar navigation
+- [x] **SITE-01**: Site has multi-page structure with persistent sidebar navigation
 - [ ] **SITE-02**: Site has full-text search across all content pages
-- [ ] **SITE-03**: Site supports dark/light theme toggle (preserve existing)
-- [ ] **SITE-04**: Site is responsive on mobile and tablet
+- [x] **SITE-03**: Site supports dark/light theme toggle (preserve existing)
+- [x] **SITE-04**: Site is responsive on mobile and tablet
 - [x] **SITE-05**: All sections have deep-linkable anchor URLs
 - [x] **SITE-06**: Code examples have copy-to-clipboard buttons
 - [x] **SITE-07**: Code blocks have syntax highlighting (YAML, JSON, bash, markdown)
 - [x] **SITE-08**: Site loads fast with no framework overhead (static HTML/CSS/JS)
-- [ ] **SITE-09**: Compatibility matrix shows feature availability across Code/Chat/Cowork (preserve existing)
+- [x] **SITE-09**: Compatibility matrix shows feature availability across Code/Chat/Cowork (preserve existing)
 
 ### Design System
 
@@ -138,15 +138,15 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SITE-01 | Phase 1: Foundation | Pending |
+| SITE-01 | Phase 1: Foundation | Complete |
 | SITE-02 | Phase 5: Decision Guidance and Recipes | Pending |
-| SITE-03 | Phase 1: Foundation | Pending |
-| SITE-04 | Phase 1: Foundation | Pending |
+| SITE-03 | Phase 1: Foundation | Complete |
+| SITE-04 | Phase 1: Foundation | Complete |
 | SITE-05 | Phase 1: Foundation | Complete |
 | SITE-06 | Phase 1: Foundation | Complete |
 | SITE-07 | Phase 1: Foundation | Complete |
 | SITE-08 | Phase 1: Foundation | Complete |
-| SITE-09 | Phase 1: Foundation | Pending |
+| SITE-09 | Phase 1: Foundation | Complete |
 | DSGN-01 | Phase 1.1: Design System | Pending |
 | DSGN-02 | Phase 1.1: Design System | Pending |
 | DSGN-03 | Phase 1.1: Design System | Pending |
