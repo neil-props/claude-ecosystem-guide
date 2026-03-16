@@ -63,11 +63,11 @@ Plans:
   2. Content from existing index.html is preserved in the knowledge files (no information lost)
   3. Relevant Q&A content from ama.html is incorporated into the appropriate knowledge files
   4. Knowledge files follow a consistent structure template usable by both the site build and the agent
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 02-01: TBD
-- [ ] 02-02: TBD
+- [ ] 02-01-PLAN.md — Wave 0 test scaffolds for content validation, extract content into MCP, Skills, Plugins, Hooks, and Agents markdown files
+- [ ] 02-02-PLAN.md — Extract content into Projects, Connectors, Commands, Memory, and Settings files; fix Connectors/Interactive Apps confusion
 
 ### Phase 3: Conceptual Content
 **Goal**: Users can read a clear conceptual overview for every extension point, understanding what it is, when to use it, and how it fits in the ecosystem
