@@ -129,30 +129,231 @@ CLAUDE.md files always load. Auto-memory loads (first 200 lines). Agent memory l
   </div>
   <div class="tab-panel" data-tab-panel="howto">
 
-## How-To Guides
+## How to Use the Memory System Effectively
 
-> [!INFO]
-> Step-by-step guides for Memory are coming in Phase 4.
+### Prerequisites
 
-Planned guides:
-- Setting up effective CLAUDE.md files -- _coming soon_
-- Configuring agent memory scopes -- _coming soon_
-- Managing auto-memory and the /memory command -- _coming soon_
-- Memory strategies for monorepos -- _coming soon_
+- Claude Code installed and working (`claude --version`)
+- A project directory (for project-scoped memory)
+
+### Step 1: Understand the 4 Memory Layers
+
+Before configuring memory, know what each layer does:
+
+| Layer | You Write It? | Best For |
+|-------|--------------|----------|
+| **CLAUDE.md** | Yes -- manually | Team conventions, architecture, key commands |
+| **Auto-memory** | No -- Claude writes automatically | Personal patterns Claude learns over time |
+| **/memory command** | Yes -- via chat | One-off facts you want Claude to remember |
+| **Agent memory** | No -- agent writes | Specialized knowledge for custom agents |
+
+Start with CLAUDE.md (see the [Projects How-To](projects.html) guide). Then use the other layers as needed.
+
+### Step 2: Use the /memory Command to Save Important Context
+
+During a Claude Code session, tell Claude to remember something:
+
+```
+> Remember: our API always returns { data, error, meta } format -- never return raw arrays
+```
+
+Or use the `/memory` command to toggle auto-memory behavior:
+
+```
+> /memory
+```
+
+This toggles whether Claude automatically writes to the memory file during sessions.
+
+You can also be specific about what to save:
+
+```
+> Remember: the staging database is at postgres://staging.internal:5432/app
+> Remember: always use our custom fetch wrapper from src/lib/api-client.ts, never raw fetch
+> Remember: John prefers tabs, the rest of the team uses spaces -- use spaces in shared code
+```
+
+These facts are written to your auto-memory file and loaded in future sessions.
+
+### Step 3: Configure Auto-Memory Behavior
+
+Auto-memory captures corrections and patterns Claude discovers during sessions. When Claude learns something -- like "this project uses tabs not spaces" after you correct it -- it saves that to the memory file automatically.
+
+Auto-memory is **on by default**. Toggle it with:
+
+```
+> /memory
+```
+
+The memory file lives at:
+
+```
+~/.claude/projects/<project-hash>/memory/MEMORY.md
+```
+
+The first 200 lines of this file are auto-loaded at every session start.
+
+### Step 4: Set Up Agent-Scoped Memory
+
+Custom agents can maintain their own persistent knowledge across sessions. Configure the memory scope in the agent's frontmatter:
+
+```yaml
+---
+name: code-reviewer
+description: Reviews PRs for quality and security
+memory: project
+---
+Review the code changes for quality issues...
+```
+
+Memory scope options:
+
+| Scope | Stored At | Best For |
+|-------|-----------|----------|
+| `user` | `~/.claude/agent-memory/<agent-name>/` | Personal agents used across projects |
+| `project` | `.claude/agent-memory/<agent-name>/` | Team-shared agents (committed to git) |
+| `local` | `.claude/agent-memory-local/<agent-name>/` | Personal per-project agents |
+
+The agent reads its memory at startup and writes to it during sessions as it learns.
+
+### Step 5: Debug Memory Issues
+
+**Find your memory files:**
+
+```bash
+# Auto-memory location (project-specific)
+ls ~/.claude/projects/
+
+# Each project directory contains a memory/ subdirectory
+ls ~/.claude/projects/<project-hash>/memory/
+```
+
+**View what Claude remembers:**
+
+```
+> What do you know from your memory file?
+```
+
+**Clear stale memories:**
+
+Edit or delete the memory file directly:
+
+```bash
+# View current memories
+cat ~/.claude/projects/<project-hash>/memory/MEMORY.md
+
+# Edit to remove stale entries
+nano ~/.claude/projects/<project-hash>/memory/MEMORY.md
+```
+
+**Check what CLAUDE.md instructions are active:**
+
+```
+> What instructions are loaded from CLAUDE.md?
+```
+
+### Verify It Works
+
+1. Save something with the memory system:
+
+```
+> Remember: always use structured logging with pino, never console.log in production code
+```
+
+2. Start a **new** Claude Code session in the same project directory.
+
+3. Ask Claude about the saved context:
+
+```
+> What logging library should I use in this project?
+```
+
+Claude should reference pino and the structured logging instruction from the previous session.
+
+### Troubleshooting
+
+- **Memory not persisting:** Check file permissions on `~/.claude/projects/`. Ensure the directory is writable. Verify auto-memory is enabled with `/memory`.
+- **Too many memories (slow startup):** The file may have grown beyond 200 lines. Edit `MEMORY.md` directly to prune old or redundant entries -- only the first 200 lines are loaded.
+- **Agent memory not loading:** Verify the `memory` field in agent frontmatter is set to a valid scope (`user`, `project`, or `local`). Check the corresponding directory exists.
+- **Conflicting memories:** If CLAUDE.md says one thing and auto-memory says another, CLAUDE.md takes precedence. Edit the auto-memory file to remove conflicting entries.
+
+<!-- end howto -->
 
   </div>
   <div class="tab-panel" data-tab-panel="reference">
 
 ## Technical Reference
 
-> [!INFO]
-> Detailed reference specs for Memory are coming in Phase 4.
+### Memory File Locations
 
-Planned references:
-- Memory file locations and format -- _coming soon_
-- Auto-memory loading behavior and limits -- _coming soon_
-- Agent memory scope configuration -- _coming soon_
-- CLAUDE.md loading order in monorepos -- _coming soon_
+| Layer | Path | Loaded At |
+|-------|------|-----------|
+| CLAUDE.md (global) | `~/.claude/CLAUDE.md` | Session start (always) |
+| CLAUDE.md (project) | `<repo-root>/CLAUDE.md` | Session start (always) |
+| CLAUDE.md (extended) | `<repo-root>/.claude/CLAUDE.md` | Session start (always) |
+| CLAUDE.md (personal) | `<repo-root>/CLAUDE.local.md` | Session start (always) |
+| Modular rules | `<repo-root>/.claude/rules/*.md` | When Claude accesses project files |
+| Auto-memory | `~/.claude/projects/<hash>/memory/MEMORY.md` | Session start (first 200 lines) |
+| Agent memory (user) | `~/.claude/agent-memory/<agent-name>/` | Agent startup |
+| Agent memory (project) | `<repo-root>/.claude/agent-memory/<agent-name>/` | Agent startup |
+| Agent memory (local) | `<repo-root>/.claude/agent-memory-local/<agent-name>/` | Agent startup |
+
+### Auto-Memory File Format
+
+The auto-memory file is plain markdown. Claude appends entries as it learns:
+
+```markdown
+# Memory Index
+
+- [feedback_design.md](feedback_design.md) -- Use Oxford Blue/Turquoise color scheme for UI
+- Project uses pnpm workspaces, never npm
+- API error format: { error: string, code: string, details?: unknown }
+- Staging server: deploy-staging.example.com
+- User prefers verbose commit messages with bullet points
+```
+
+**Loading behavior:**
+
+| Property | Value |
+|----------|-------|
+| Auto-loaded lines | First 200 lines |
+| Format | Plain markdown |
+| Who writes | Claude (automatically) or user (via /memory command) |
+| Who reads | Claude only (not shared with other users) |
+| Gitignored | Yes (stored in user home directory) |
+
+### Agent Memory Scope Options
+
+| Field | Type | Values | Description |
+|-------|------|--------|-------------|
+| `memory` | string | `user`, `project`, `local` | Where the agent stores its persistent knowledge |
+
+**Scope details:**
+
+| Scope | Location | Visibility | Git-tracked |
+|-------|----------|------------|-------------|
+| `user` | `~/.claude/agent-memory/<name>/` | Cross-project, personal | No |
+| `project` | `.claude/agent-memory/<name>/` | Team-shared | Yes |
+| `local` | `.claude/agent-memory-local/<name>/` | Personal, per-project | No |
+
+### /memory Command Reference
+
+| Command | Action |
+|---------|--------|
+| `/memory` | Toggle auto-memory on or off for the current session |
+| `"Remember: <fact>"` | Instruct Claude to save a specific fact to the memory file |
+
+Both approaches write to the same auto-memory file at `~/.claude/projects/<hash>/memory/MEMORY.md`.
+
+### Persistence Summary
+
+| Item | Survives Session Restart | Scope |
+|------|-------------------------|-------|
+| CLAUDE.md files | Yes (always loaded) | Project-wide, all users |
+| Auto-memory | Yes (first 200 lines) | Per-project, per-user |
+| Agent memory | Yes (at agent startup) | Per-agent, scope-dependent |
+| Conversation history | No (fresh each session) | Session only |
+| Session transcripts | Stored locally, resumable with `claude --resume` | Local |
 
   </div>
 </div>

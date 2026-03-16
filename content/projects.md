@@ -158,29 +158,273 @@ Create a Claude Chat Project with system instructions defining the workflow (dec
   </div>
   <div class="tab-panel" data-tab-panel="howto">
 
-## How-To Guides
+## How to Configure CLAUDE.md for a Project
 
-> [!INFO]
-> Step-by-step guides for Projects are coming in Phase 4.
+### Prerequisites
 
-Planned guides:
-- Setting up CLAUDE.md for a new project -- _coming soon_
-- Configuring path-specific rules with .claude/rules/ -- _coming soon_
-- Structuring CLAUDE.md for monorepos -- _coming soon_
-- Using auto-memory effectively -- _coming soon_
+- Claude Code installed and working (`claude --version`)
+- A project directory (ideally a git repository)
+
+### Step 1: Create Your Project CLAUDE.md
+
+Create a `CLAUDE.md` file at your project root with your tech stack, conventions, and key commands:
+
+```markdown
+# My Project
+
+## Tech Stack
+- TypeScript with strict mode
+- Next.js 14 with App Router
+- PostgreSQL with Prisma ORM
+- Vitest for testing
+
+## Conventions
+- Use pnpm, not npm or yarn
+- Components in src/components/ with PascalCase filenames
+- Tests co-located: MyComponent.test.tsx next to MyComponent.tsx
+- Use Zod for all runtime validation
+- Prefer named exports over default exports
+
+## Key Commands
+- `pnpm dev` -- start dev server on port 3000
+- `pnpm test` -- run vitest
+- `pnpm lint` -- run ESLint + Prettier
+- `pnpm db:migrate` -- run Prisma migrations
+
+## Architecture
+- API routes in src/app/api/
+- Shared types in src/types/
+- Database models in prisma/schema.prisma
+```
+
+Check this file into git so every team member gets the same Claude behavior.
+
+### Step 2: Add Directory-Specific Rules
+
+For rules that only apply to certain parts of your codebase, create `.claude/rules/*.md` files:
+
+```bash
+# Create the rules directory
+mkdir -p .claude/rules
+```
+
+Create `.claude/rules/tests.md`:
+
+```markdown
+# Testing Rules
+- Use describe/it blocks, not test()
+- Mock external services with msw
+- Never import from src/index.ts in tests -- import directly from the module
+- Prefer userEvent over fireEvent in React tests
+```
+
+Create `.claude/rules/api.md`:
+
+```markdown
+# API Route Rules
+- All endpoints must validate input with Zod
+- Return consistent error format: { error: string, code: string }
+- Use middleware for auth -- never check auth inline
+- Log all errors with structured JSON logging
+```
+
+Rules files are loaded when Claude reads files in the project -- they provide targeted guidance without bloating the main CLAUDE.md.
+
+### Step 3: Create Personal Overrides with CLAUDE.local.md
+
+For preferences that are personal (not shared with the team), create `CLAUDE.local.md` at the project root:
+
+```markdown
+# Personal Preferences
+- I prefer verbose explanations in code comments
+- Use vim keybinding references when explaining shortcuts
+- My editor is Neovim -- reference its commands when relevant
+- Always show the full file path in code examples
+```
+
+`CLAUDE.local.md` is automatically gitignored -- it will not be committed to the repository.
+
+### Step 4: Set Up Monorepo Patterns
+
+For monorepos, create a root CLAUDE.md plus per-package files:
+
+```
+my-monorepo/
+  CLAUDE.md                    # Root: shared conventions, monorepo structure
+  packages/
+    api/
+      CLAUDE.md                # API-specific: Express patterns, route conventions
+    web/
+      CLAUDE.md                # Web-specific: React patterns, component library
+    shared/
+      CLAUDE.md                # Shared lib: no side effects, pure functions only
+```
+
+Root `CLAUDE.md`:
+
+```markdown
+# My Monorepo
+
+## Structure
+- packages/api -- Express REST API
+- packages/web -- Next.js frontend
+- packages/shared -- Shared TypeScript utilities
+
+## Global Conventions
+- Use pnpm workspaces
+- All packages use TypeScript strict mode
+- Shared types go in packages/shared/src/types/
+```
+
+Package-specific `packages/api/CLAUDE.md`:
+
+```markdown
+# API Package
+- Express with async error handling middleware
+- Routes in src/routes/, controllers in src/controllers/
+- Use Joi for request validation (not Zod -- this package predates the migration)
+- Database access only through src/db/ module
+```
+
+### Step 5: Import Shared Instructions
+
+Use `@import` syntax to reference shared instruction files from CLAUDE.md:
+
+```markdown
+# My Project
+
+@docs/coding-standards.md
+@docs/architecture-decisions.md
+```
+
+This includes the content of those files as additional context, keeping your CLAUDE.md concise while referencing detailed docs.
+
+### Verify It Works
+
+Start a new Claude Code session in your project directory and ask:
+
+```
+> What are the project conventions and tech stack?
+```
+
+Claude should reflect the content from your CLAUDE.md. You can also check what is loaded:
+
+```
+> What do you know from CLAUDE.md?
+```
+
+### Troubleshooting
+
+- **CLAUDE.md not loading:** Check the filename is exactly `CLAUDE.md` (case-sensitive). Ensure you are in the correct working directory. Verify the file is not excluded by `claudeMdExcludes` in your settings.
+- **Rules not applying:** Ensure `.claude/rules/` files have the `.md` extension and are in the correct directory. Rules are loaded when Claude accesses files in the project.
+- **File too large:** Keep each CLAUDE.md under 200 lines for reliable adherence. If you need more, split into `.claude/rules/` files or use `@import` for supplementary docs.
+- **Conflicting instructions:** When multiple CLAUDE.md files conflict, later-loaded files take precedence. Project-level files override global ones.
+
+<!-- end howto -->
 
   </div>
   <div class="tab-panel" data-tab-panel="reference">
 
 ## Technical Reference
 
-> [!INFO]
-> Detailed reference specs for Projects are coming in Phase 4.
+### CLAUDE.md File Format
 
-Planned references:
-- CLAUDE.md format and loading behavior -- _coming soon_
-- Path-specific rules configuration -- _coming soon_
-- Auto-memory file format and location -- _coming soon_
+CLAUDE.md files are plain markdown files. There is no special schema or frontmatter -- Claude reads the raw markdown content as project instructions.
+
+**Recognized file names:**
+
+| File | Purpose | Shared via Git? |
+|------|---------|-----------------|
+| `CLAUDE.md` | Primary project instructions | Yes |
+| `CLAUDE.local.md` | Personal overrides | No (gitignored) |
+| `.claude/CLAUDE.md` | Extended project instructions | Yes |
+| `.claude/rules/*.md` | Path-specific rules | Yes |
+| `~/.claude/CLAUDE.md` | Global personal instructions | N/A (user home) |
+
+### Loading Order and Precedence
+
+CLAUDE.md files load in a specific order. Later-loaded content overrides earlier content when instructions conflict.
+
+**Loading direction:**
+
+| Direction | Behavior | When |
+|-----------|----------|------|
+| **UP** | Walks from current working directory to repo root, loading all CLAUDE.md files found | At session startup |
+| **DOWN** | Subdirectory CLAUDE.md files load lazily | When Claude reads files in that directory |
+| **SIBLING** | Never loads | Directories at the same level are independent |
+
+**Full resolution order (lowest to highest priority):**
+
+| Priority | Source | Location |
+|----------|--------|----------|
+| 1 (lowest) | Global user instructions | `~/.claude/CLAUDE.md` |
+| 2 | Project root | `CLAUDE.md` (repo root) |
+| 3 | Project extended | `.claude/CLAUDE.md` |
+| 4 | Modular rules | `.claude/rules/*.md` |
+| 5 (highest) | Personal overrides | `CLAUDE.local.md` |
+
+Within each priority level, merge semantics are additive -- all content is loaded. When two sources give conflicting instructions, the higher-priority source wins.
+
+### @import Syntax
+
+Include content from other files using `@path/to/file` syntax within a CLAUDE.md file:
+
+```markdown
+@docs/coding-standards.md
+@docs/api-conventions.md
+```
+
+- Paths are relative to the CLAUDE.md file location
+- Imported files are read and their content is appended to the context
+- Circular imports are not followed
+
+### Character Limits
+
+- Keep individual CLAUDE.md files under **200 lines** (~4,000 characters) for reliable adherence
+- Auto-memory loads the first **200 lines** of the memory file
+- There is no hard character limit enforced by the system, but longer files reduce instruction-following reliability
+
+### File Location Resolution
+
+| Scope | Path |
+|-------|------|
+| Global (macOS/Linux) | `~/.claude/CLAUDE.md` |
+| Global (Windows) | `%USERPROFILE%\.claude\CLAUDE.md` |
+| Project root | `<repo-root>/CLAUDE.md` |
+| Project extended | `<repo-root>/.claude/CLAUDE.md` |
+| Project rules | `<repo-root>/.claude/rules/*.md` |
+| Personal override | `<repo-root>/CLAUDE.local.md` |
+| Subdirectory | `<subdir>/CLAUDE.md` (lazy-loaded) |
+
+### Examples
+
+**Minimal CLAUDE.md:**
+
+```markdown
+# My Project
+- TypeScript with strict mode
+- Use pnpm for package management
+- Tests in __tests__/ directories
+```
+
+**Monorepo CLAUDE.md (root):**
+
+```markdown
+# Acme Platform
+
+## Structure
+- apps/web -- Next.js frontend (port 3000)
+- apps/api -- Express backend (port 4000)
+- packages/ui -- Shared component library
+- packages/db -- Prisma database client
+
+## Global Rules
+- pnpm workspaces, never install in package root
+- TypeScript strict in all packages
+- Shared types in packages/db/src/types/
+
+@docs/deployment-checklist.md
+```
 
   </div>
 </div>
