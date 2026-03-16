@@ -9,13 +9,21 @@ section: topics
 
 # Hooks
 
+<div class="tabs">
+  <div class="tab-group">
+    <button class="tab-btn active" data-tab="concept">Concept</button>
+    <button class="tab-btn" data-tab="howto">How-To</button>
+    <button class="tab-btn" data-tab="reference">Reference</button>
+  </div>
+  <div class="tab-panel active" data-tab-panel="concept">
+
 ## Overview
 
-Hooks are deterministic, event-driven automation in Claude Code. They run shell scripts, call HTTP endpoints, invoke Claude prompts, or delegate to subagents at specific lifecycle points. Hooks execute **outside the agentic loop** -- they are predictable and deterministic, not AI-generated responses.
+Hooks are **deterministic automation outside the agentic loop**. They run shell scripts, call HTTP endpoints, invoke Claude prompts, or delegate to subagents at specific lifecycle events in Claude Code. Unlike skills and agents, hooks execute predictably and automatically -- Claude does not decide whether to run them. When the event fires, the hook runs. Every time.
 
 Hooks are the lightest-weight extension point: no SDK, no protocol, just automation triggered at the right time. They are available in **Claude Code only** (not Chat or Cowork).
 
-Use hooks when you want to react automatically to events -- auto-lint after edits, block commits to protected branches, log tool usage for compliance, or notify external services.
+Use hooks when you want to react automatically to events -- auto-lint after edits, block commits to protected branches, log tool usage for compliance, or notify external services. The key distinction: hooks are about *when things happen*, not about *what Claude should do*.
 
 ## How It Works
 
@@ -60,9 +68,18 @@ Additional events are available -- check the official documentation for the comp
 - `exit 2` -- **Block** the action (stderr shown as feedback to Claude)
 - Other codes -- Proceed (stderr logged but not shown)
 
+### Matchers
+
+The **matchers system** lets you scope hooks to specific tools or file patterns. Use the `matcher` field with a regex pattern:
+
+- `"matcher": "Edit|Write"` -- Only fire when the Edit or Write tool is used
+- `"matcher": "Bash"` -- Only fire for Bash tool calls
+- `"matcher": "Read|Edit"` -- Fire for Read or Edit operations
+
+Without a matcher, hooks fire for every instance of the event. Use matchers to keep hooks focused and avoid unnecessary execution.
+
 **Additional options:**
 - `async: true` -- Run the hook in the background (non-blocking)
-- `matcher: "Edit|Write"` -- Regex pattern to scope the hook to specific tools
 
 ### In Claude Code
 
@@ -79,6 +96,24 @@ Not available. Chat does not support hooks.
 ### In Claude Cowork
 
 Not available. Cowork does not support hooks.
+
+## When to Use Hooks
+
+**Use Hooks when:**
+- You need guardrails that enforce rules deterministically (block dangerous operations before they execute)
+- You want automatic enforcement after actions (auto-lint, auto-format after every edit)
+- You need compliance logging that captures every tool invocation
+- You want notifications sent to external services (Slack, webhooks) at lifecycle events
+- You need validation that runs without relying on Claude's judgment
+
+**Don't use Hooks when:**
+- You need Claude to make a judgment call about what to do (use [Skills](skills.html) instead -- skills provide instructions Claude interprets)
+- You need to interact with external data sources or APIs as part of Claude's reasoning (use [MCP](mcp.html) instead)
+- You need complex multi-step workflows with context isolation (use [Agents](agents.html) instead)
+
+**Hooks vs other extension points:**
+- **Hooks vs Skills:** Hooks are deterministic and automatic -- they fire at lifecycle events regardless of what Claude is thinking. Skills are on-demand instructions that Claude loads when relevant. Use hooks for "always do X when Y happens"; use skills for "here's how to do Z when asked."
+- **Hooks vs Agents:** Hooks are lightweight, single-action automations. Agents are full isolated contexts for multi-step work. You can use an `agent` type hook for complex validation, but that's the exception.
 
 ## Configuration
 
@@ -143,18 +178,6 @@ Notify Slack when a session starts:
 }
 ```
 
-### Async Hooks
-
-Background hooks that do not block the main flow:
-
-```json
-{
-  "type": "command",
-  "command": "curl -X POST https://api.example.com/log ...",
-  "async": true
-}
-```
-
 ### Audit Logging for Compliance
 
 ```json
@@ -214,6 +237,32 @@ Add hooks to `.claude/settings.json` (project-level) or `~/.claude/settings.json
 
 **What are common Hook patterns for enterprise teams?**
 Auto-formatting after edits (PostToolUse + prettier), audit logging for compliance (PostToolUse + async JSONL logging), security checks before bash commands (PreToolUse + prompt evaluation), Slack notifications on session start (SessionStart + HTTP webhook), and blocking access to sensitive files (PreToolUse + exit 2).
+
+  </div>
+  <div class="tab-panel" data-tab-panel="howto">
+
+## How-To Guides
+
+> [!INFO]
+> Step-by-step guides for Hooks are coming in Phase 4.
+
+Planned guides:
+- How to set up hooks for lifecycle events -- _coming soon_
+
+  </div>
+  <div class="tab-panel" data-tab-panel="reference">
+
+## Technical Reference
+
+> [!INFO]
+> Detailed reference specs for Hooks are coming in Phase 4.
+
+Planned references:
+- Hook configuration spec (events, patterns, commands) -- _coming soon_
+- Environment variables reference -- _coming soon_
+
+  </div>
+</div>
 
 ## Related
 

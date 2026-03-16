@@ -9,9 +9,17 @@ section: topics
 
 # Agents
 
+<div class="tabs">
+  <div class="tab-group">
+    <button class="tab-btn active" data-tab="concept">Concept</button>
+    <button class="tab-btn" data-tab="howto">How-To</button>
+    <button class="tab-btn" data-tab="reference">Reference</button>
+  </div>
+  <div class="tab-panel active" data-tab-panel="concept">
+
 ## Overview
 
-Agents are specialized AI assistants with their own isolated context, custom prompts, tool restrictions, and model selection. In Claude Code, agents range from built-in assistants (Explore, Plan) to fully custom agent files. In Claude Cowork, a coordinator + sub-agent architecture handles parallel work automatically.
+Agents are **isolated Claude instances with specific instructions and tool access**. Each agent runs in its own context window with custom prompts, tool restrictions, model selection, and optionally persistent memory. In Claude Code, agents range from built-in assistants (Explore, Plan) to fully custom agent files you define. In Claude Cowork, a coordinator + sub-agent architecture handles parallel work automatically.
 
 Agents are the right choice when you need Claude to take on a specific persona with constrained capabilities, operate in isolated context (without polluting the main session), or coordinate parallel work across multiple independent contexts.
 
@@ -28,9 +36,9 @@ Claude Code provides several **built-in agents**:
 - **general-purpose** -- Default subagent type
 - **claude-code-guide** -- Documentation helper
 
-**Custom agents** are defined as markdown files at `.claude/agents/my-agent.md` with up to 14 frontmatter fields.
+**Custom agents** are defined as markdown files at `.claude/agents/my-agent.md`. The file contains YAML frontmatter (up to 14 fields) followed by markdown instructions that define the agent's behavior, persona, and workflow.
 
-Invoke an agent:
+Invoke a custom agent from the CLI:
 
 ```bash
 claude --agent reviewer "Review the changes in src/auth/"
@@ -54,9 +62,27 @@ Cowork uses a **coordinator + sub-agent architecture**:
 
 This architecture is automatic -- users describe an outcome and step away. Cowork handles the decomposition and parallelization.
 
+## When to Use Agents
+
+**Use Agents when:**
+- You need context isolation -- the agent's work should not pollute your main session
+- You need a specific persona with constrained tool access (e.g., a read-only reviewer)
+- You need persistent memory that accumulates knowledge across sessions
+- You need parallel execution with multiple agents working on different aspects simultaneously
+- You want a reproducible, shareable workflow that others can invoke via `claude --agent`
+
+**Don't use Agents when:**
+- You just need inline guidance or instructions (use [Skills](skills.html) instead -- they are lighter weight and auto-invoke)
+- You need deterministic automation at lifecycle events (use [Hooks](hooks.html) instead)
+- You need to connect to external tools or data (use [MCP](mcp.html) instead -- agents can *use* MCP servers, but MCP provides the tools)
+
+**Agents vs other extension points:**
+- **Agents vs Skills:** Agents get their own isolated context window, can have persistent memory, their own MCP servers, and can be invoked via CLI with `--agent`. Skills are instructions loaded into the main session, auto-invoked by description matching. Use an agent for autonomous multi-step work; use a skill for inline guidance. (Skills with `context: fork` bridge the gap by running in a separate context.)
+- **Agents vs Direct Prompting:** Agents provide reproducible, shareable workflows. Instead of typing the same complex prompt repeatedly, define it once as an agent file and invoke it with `claude --agent my-agent`. Team members get the same behavior.
+
 ## Configuration
 
-### Agent Frontmatter (14 fields)
+### Agent File Format
 
 Custom agents in Claude Code use markdown files with YAML frontmatter:
 
@@ -186,6 +212,32 @@ Agents can maintain persistent cross-session knowledge. Three scopes: `user` (cr
 
 **When should I use an agent vs a skill?**
 Use an agent when you need context isolation, persistent memory, MCP server access, or parallel execution. Use a skill when you need inline instructions that auto-invoke based on task context. Skills with `context: fork` bridge the gap by running in a separate context like an agent.
+
+  </div>
+  <div class="tab-panel" data-tab-panel="howto">
+
+## How-To Guides
+
+> [!INFO]
+> Step-by-step guides for Agents are coming in Phase 4.
+
+Planned guides:
+- How to create a custom agent -- _coming soon_
+
+  </div>
+  <div class="tab-panel" data-tab-panel="reference">
+
+## Technical Reference
+
+> [!INFO]
+> Detailed reference specs for Agents are coming in Phase 4.
+
+Planned references:
+- Agent file format spec (all fields, validation rules) -- _coming soon_
+- Environment variables reference -- _coming soon_
+
+  </div>
+</div>
 
 ## Related
 

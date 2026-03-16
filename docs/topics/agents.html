@@ -15,35 +15,86 @@
       }
     })();
   </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
-  <aside class="sidebar" id="sidebar"></aside>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="../index.html" class="site-title">Claude Ecosystem</a>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+  <div class="nav-section-title">Topics</div>
+  <a href="../topics/mcp.html" class="nav-link">MCP Servers and Connectors</a>
+  <a href="../topics/skills.html" class="nav-link">Skills</a>
+  <a href="../topics/plugins.html" class="nav-link">Plugins</a>
+  <a href="../topics/hooks.html" class="nav-link">Hooks</a>
+  <a href="../topics/agents.html" class="nav-link active">Agents</a>
+  <a href="../topics/projects.html" class="nav-link">Projects and CLAUDE.md</a>
+  <a href="../topics/connectors.html" class="nav-link">Connectors</a>
+  <a href="../topics/commands.html" class="nav-link">Commands</a>
+  <a href="../topics/memory.html" class="nav-link">Memory</a>
+  <a href="../topics/settings.html" class="nav-link">Settings</a>
+</div>
+<div class="nav-section">
+  <div class="nav-section-title">Reference</div>
+  <a href="../topics/compatibility.html" class="nav-link">Compatibility Matrix</a>
+</div>
+
+    </nav>
+  </aside>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Toggle navigation">
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+  </button>
   <main class="content">
     <article>
       <h1 id="agents">Agents<a class="anchor" href="#agents">#</a></h1>
-<h2 id="overview">Overview<a class="anchor" href="#overview">#</a></h2>
-<p>Agents are specialized Claude Code configurations that combine custom instructions, specific tool access, and defined workflows into reusable AI assistants. An agent can be a code reviewer, a documentation writer, a test generator, or any other focused role. Agents are defined as markdown files and invoked via the CLI.</p>
-<p>Agents are the right choice when you need Claude to take on a specific persona with constrained capabilities and clear objectives.</p>
-<h2 id="quick-example">Quick Example<a class="anchor" href="#quick-example">#</a></h2>
-<p>Create an agent file at <code>.claude/agents/reviewer.md</code>:</p>
-<div class="code-block">
-  <div class="code-header">
-    <span class="code-lang">markdown</span>
-    <button class="copy-btn" aria-label="Copy code">Copy</button>
+<div class="tabs">
+  <div class="tab-group">
+    <button class="tab-btn active" data-tab="concept">Concept</button>
+    <button class="tab-btn" data-tab="howto">How-To</button>
+    <button class="tab-btn" data-tab="reference">Reference</button>
   </div>
-  <pre><code class="hljs language-markdown"><span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-section&quot;</span>&gt;</span></span># Code Reviewer Agent<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+  <div class="tab-panel active" data-tab-panel="concept">
 
-You are a code reviewer. Review the provided code changes for:
-<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Security vulnerabilities
-<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Performance issues
-<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Code style violations
-<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hljs-bullet&quot;</span>&gt;</span></span>-<span class="language-xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span> Missing error handling
-
-Use the Read tool to examine files. Never modify code directly.
-Output your review as a structured markdown report.</code></pre>
-</div>
-<p>Then invoke it:</p>
+<h2 id="overview">Overview<a class="anchor" href="#overview">#</a></h2>
+<p>Agents are <strong>isolated Claude instances with specific instructions and tool access</strong>. Each agent runs in its own context window with custom prompts, tool restrictions, model selection, and optionally persistent memory. In Claude Code, agents range from built-in assistants (Explore, Plan) to fully custom agent files you define. In Claude Cowork, a coordinator + sub-agent architecture handles parallel work automatically.</p>
+<p>Agents are the right choice when you need Claude to take on a specific persona with constrained capabilities, operate in isolated context (without polluting the main session), or coordinate parallel work across multiple independent contexts.</p>
+<p>The key difference between agents and skills: agents run in <strong>separate context windows</strong> with full isolation, while skills run inline in the main context (unless using <code>context: fork</code>).</p>
+<h2 id="how-it-works">How It Works<a class="anchor" href="#how-it-works">#</a></h2>
+<h3 id="in-claude-code">In Claude Code<a class="anchor" href="#in-claude-code">#</a></h3>
+<p>Claude Code provides several <strong>built-in agents</strong>:</p>
+<ul>
+<li><strong>Explore</strong> -- Uses Haiku model, read-only, for fast codebase exploration</li>
+<li><strong>Plan</strong> -- Research and planning agent</li>
+<li><strong>Bash</strong> -- Shell command execution agent</li>
+<li><strong>general-purpose</strong> -- Default subagent type</li>
+<li><strong>claude-code-guide</strong> -- Documentation helper</li>
+</ul>
+<p><strong>Custom agents</strong> are defined as markdown files at <code>.claude/agents/my-agent.md</code>. The file contains YAML frontmatter (up to 14 fields) followed by markdown instructions that define the agent&#39;s behavior, persona, and workflow.</p>
+<p>Invoke a custom agent from the CLI:</p>
 <div class="code-block">
   <div class="code-header">
     <span class="code-lang">bash</span>
@@ -51,8 +102,330 @@ Output your review as a structured markdown report.</code></pre>
   </div>
   <pre><code class="hljs language-bash">claude --agent reviewer &lt;span class=<span class="hljs-string">&quot;hljs-string&quot;</span>&gt;&amp;quot;Review the changes <span class="hljs-keyword">in</span> src/auth/&amp;quot;&lt;/span&gt;</code></pre>
 </div>
-<h2 id="coming-soon">Coming Soon<a class="anchor" href="#coming-soon">#</a></h2>
-<p>Full content including agent file format, tool restrictions, prompt engineering patterns, and agent vs skill comparison will be added in Phases 2-4.</p>
+<p>Claude can also spawn subagents automatically during complex tasks, delegating subtasks to specialized agents that operate in their own context windows.</p>
+<p><strong>Agent Teams</strong> enable multiple independent agents coordinating via shared task lists. Each agent runs in its own context, optionally in git worktree isolation. Enable with:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-bash">CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1</code></pre>
+</div>
+<h3 id="in-claude-cowork">In Claude Cowork<a class="anchor" href="#in-claude-cowork">#</a></h3>
+<p>Cowork uses a <strong>coordinator + sub-agent architecture</strong>:</p>
+<ol>
+<li>The coordinator decomposes tasks into parallel sub-agent jobs</li>
+<li>Example: one agent extracts data, another synthesizes, a third assembles output</li>
+<li>The coordinator merges outputs and presents a draft for review</li>
+<li>Sub-agents are bundled within plugins</li>
+</ol>
+<p>This architecture is automatic -- users describe an outcome and step away. Cowork handles the decomposition and parallelization.</p>
+<h2 id="when-to-use-agents">When to Use Agents<a class="anchor" href="#when-to-use-agents">#</a></h2>
+<p><strong>Use Agents when:</strong></p>
+<ul>
+<li>You need context isolation -- the agent&#39;s work should not pollute your main session</li>
+<li>You need a specific persona with constrained tool access (e.g., a read-only reviewer)</li>
+<li>You need persistent memory that accumulates knowledge across sessions</li>
+<li>You need parallel execution with multiple agents working on different aspects simultaneously</li>
+<li>You want a reproducible, shareable workflow that others can invoke via <code>claude --agent</code></li>
+</ul>
+<p><strong>Don&#39;t use Agents when:</strong></p>
+<ul>
+<li>You just need inline guidance or instructions (use <a href="skills.html">Skills</a> instead -- they are lighter weight and auto-invoke)</li>
+<li>You need deterministic automation at lifecycle events (use <a href="hooks.html">Hooks</a> instead)</li>
+<li>You need to connect to external tools or data (use <a href="mcp.html">MCP</a> instead -- agents can <em>use</em> MCP servers, but MCP provides the tools)</li>
+</ul>
+<p><strong>Agents vs other extension points:</strong></p>
+<ul>
+<li><strong>Agents vs Skills:</strong> Agents get their own isolated context window, can have persistent memory, their own MCP servers, and can be invoked via CLI with <code>--agent</code>. Skills are instructions loaded into the main session, auto-invoked by description matching. Use an agent for autonomous multi-step work; use a skill for inline guidance. (Skills with <code>context: fork</code> bridge the gap by running in a separate context.)</li>
+<li><strong>Agents vs Direct Prompting:</strong> Agents provide reproducible, shareable workflows. Instead of typing the same complex prompt repeatedly, define it once as an agent file and invoke it with <code>claude --agent my-agent</code>. Team members get the same behavior.</li>
+</ul>
+<h2 id="configuration">Configuration<a class="anchor" href="#configuration">#</a></h2>
+<h3 id="agent-file-format">Agent File Format<a class="anchor" href="#agent-file-format">#</a></h3>
+<p>Custom agents in Claude Code use markdown files with YAML frontmatter:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">yaml</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-yaml"><span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-meta&quot;&gt;---&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;name:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;code-reviewer&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;description:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Reviews&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;code&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;changes&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;for&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;quality&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;and&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;security&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;issues&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;tools:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Read,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Grep,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Glob&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;disallowedTools:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Bash,&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Write&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;model:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;opus&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;permissionMode:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;plan&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;maxTurns:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-number&quot;&gt;20&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;skills:&lt;/span&gt;</span>
+  <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-bullet&quot;&gt;-&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;code-standards&lt;/span&gt;</span>
+  <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-bullet&quot;&gt;-&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;security-review&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;mcpServers:&lt;/span&gt;</span>
+  <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;github:&lt;/span&gt;</span>
+    <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;command:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;npx&lt;/span&gt;</span>
+    <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;args:&lt;/span&gt;</span> [<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;&amp;quot;@modelcontextprotocol/server-github&amp;quot;&lt;/span&gt;</span>]
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;hooks:&lt;/span&gt;</span>
+  <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;PostToolUse:&lt;/span&gt;</span>
+    <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-bullet&quot;&gt;-&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;matcher:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;&amp;quot;Read&amp;quot;&lt;/span&gt;</span>
+      <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;command:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;&amp;quot;echo</span> <span class="hljs-string">&amp;#x27;File</span> <span class="hljs-attr">reviewed:</span> <span class="hljs-string">$CLAUDE_FILE_PATH&amp;#x27;&amp;quot;&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;memory:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;project&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;background:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-literal&quot;&gt;false&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;isolation:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;worktree&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-meta&quot;&gt;---</span>
+<span class="hljs-string">&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-comment&quot;&gt;#</span> <span class="hljs-string">Code</span> <span class="hljs-string">Reviewer</span> <span class="hljs-string">Agent&lt;/span&gt;</span>
+
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;You</span> <span class="hljs-string">are</span> <span class="hljs-string">a</span> <span class="hljs-string">senior</span> <span class="hljs-string">code</span> <span class="hljs-string">reviewer.</span> <span class="hljs-string">Examine</span> <span class="hljs-string">all</span> <span class="hljs-string">changed</span> <span class="hljs-string">files</span> <span class="hljs-string">for:&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-bullet&quot;&gt;-&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Security&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;vulnerabilities&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-bullet&quot;&gt;-&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Performance&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;issues&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-bullet&quot;&gt;-&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Code&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;style&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;violations&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-bullet&quot;&gt;-&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Missing&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;error&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;handling&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-bullet&quot;&gt;-&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Test&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;coverage&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;gaps&lt;/span&gt;</span>
+
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;Output&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;a&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;structured&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;markdown&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;report&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;with&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;severity&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;levels.&lt;/span&gt;</span></code></pre>
+</div>
+<h3 id="key-configuration-fields">Key Configuration Fields<a class="anchor" href="#key-configuration-fields">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Purpose</th>
+<th>Values</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>name</code></td>
+<td>Display name (required)</td>
+<td>Any string</td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td>Auto-discovery trigger (required)</td>
+<td>Descriptive text</td>
+</tr>
+<tr>
+<td><code>tools</code> / <code>disallowedTools</code></td>
+<td>Control available tools</td>
+<td>Tool name list</td>
+</tr>
+<tr>
+<td><code>model</code></td>
+<td>Override model</td>
+<td><code>opus</code>, <code>sonnet</code>, <code>haiku</code>, or inherit</td>
+</tr>
+<tr>
+<td><code>permissionMode</code></td>
+<td>Permission level</td>
+<td><code>default</code>, <code>acceptEdits</code>, <code>plan</code>, <code>bypassPermissions</code></td>
+</tr>
+<tr>
+<td><code>maxTurns</code></td>
+<td>Limit agentic loops</td>
+<td>Number</td>
+</tr>
+<tr>
+<td><code>skills</code></td>
+<td>Preload skills into agent context</td>
+<td>Skill name list</td>
+</tr>
+<tr>
+<td><code>mcpServers</code></td>
+<td>Agent-scoped MCP servers</td>
+<td>Server config objects</td>
+</tr>
+<tr>
+<td><code>hooks</code></td>
+<td>Agent-scoped lifecycle hooks</td>
+<td>Hook config objects</td>
+</tr>
+<tr>
+<td><code>memory</code></td>
+<td>Persistent cross-session knowledge</td>
+<td><code>user</code>, <code>project</code>, <code>local</code></td>
+</tr>
+<tr>
+<td><code>background</code></td>
+<td>Run in background</td>
+<td>Boolean</td>
+</tr>
+<tr>
+<td><code>isolation</code></td>
+<td>Git worktree isolation</td>
+<td><code>worktree</code></td>
+</tr>
+</tbody></table>
+<h3 id="agent-memory">Agent Memory<a class="anchor" href="#agent-memory">#</a></h3>
+<p>Agents can maintain persistent knowledge across sessions:</p>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>Location</th>
+<th>Visibility</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>user</code></td>
+<td><code>~/.claude/agent-memory/&lt;name&gt;/</code></td>
+<td>Cross-project, personal</td>
+</tr>
+<tr>
+<td><code>project</code></td>
+<td><code>.claude/agent-memory/&lt;name&gt;/</code></td>
+<td>Team-shared via git</td>
+</tr>
+<tr>
+<td><code>local</code></td>
+<td><code>.claude/agent-memory-local/&lt;name&gt;/</code></td>
+<td>Personal, per-project</td>
+</tr>
+</tbody></table>
+<p>Memory is written by the agent itself and loaded at the start of each session.</p>
+<h3 id="agent-vs-command-vs-skill">Agent vs Command vs Skill<a class="anchor" href="#agent-vs-command-vs-skill">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Dimension</th>
+<th>Agent</th>
+<th>Command</th>
+<th>Skill</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Context</td>
+<td>Separate (isolated)</td>
+<td>Inline (main)</td>
+<td>Inline*</td>
+</tr>
+<tr>
+<td>User-invocable</td>
+<td>No /menu</td>
+<td>Yes /name</td>
+<td>Yes /name</td>
+</tr>
+<tr>
+<td>Auto-invoked</td>
+<td>Yes (by description)</td>
+<td>Never</td>
+<td>Yes (by description)</td>
+</tr>
+<tr>
+<td>Own context</td>
+<td>Yes (isolated)</td>
+<td>No</td>
+<td>No*</td>
+</tr>
+<tr>
+<td>Model override</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Tool restrictions</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Hooks</td>
+<td>Yes</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Memory</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Preload skills</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td>MCP servers</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+</tr>
+</tbody></table>
+<p>* Skills with <code>context: fork</code> get separate context, behaving like an agent.</p>
+<p><strong>When to use each:</strong></p>
+<ul>
+<li><strong>Agent</strong> -- Autonomous multi-step work, context isolation, parallel teams</li>
+<li><strong>Command</strong> -- User-initiated entry point, orchestration (legacy, prefer skills)</li>
+<li><strong>Skill</strong> -- Reusable knowledge, auto-invoke on intent</li>
+</ul>
+<h3 id="worktree-isolation">Worktree Isolation<a class="anchor" href="#worktree-isolation">#</a></h3>
+<p>Agents with <code>isolation: worktree</code> run in isolated git worktrees to avoid conflicts during parallel development:</p>
+<div class="code-block">
+  <div class="code-header">
+    <span class="code-lang">yaml</span>
+    <button class="copy-btn" aria-label="Copy code">Copy</button>
+  </div>
+  <pre><code class="hljs language-yaml"><span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-meta&quot;&gt;---&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;name:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;feature-builder&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-attr&quot;&gt;isolation:&lt;/span&gt;</span> <span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-string&quot;&gt;worktree&lt;/span&gt;</span>
+<span class="hljs-string">&lt;span</span> <span class="hljs-string">class=&quot;hljs-meta&quot;&gt;---&lt;/span&gt;</span></code></pre>
+</div>
+<p>This creates a separate working copy of the repository for each agent, preventing file conflicts when multiple agents work simultaneously.</p>
+<h2 id="best-practices">Best Practices<a class="anchor" href="#best-practices">#</a></h2>
+<ul>
+<li>Use agents for tasks that need <strong>context isolation</strong> -- code review, research, parallel feature work</li>
+<li>Use <code>isolation: worktree</code> for agents that modify files in parallel</li>
+<li>Use the <code>memory</code> field for agents that accumulate knowledge over time</li>
+<li>Preload <code>skills:</code> to give agents specialized knowledge at startup</li>
+<li>Use <code>model: haiku</code> for subagents doing lightweight exploration</li>
+<li>Use <code>model: opus</code> for agents doing complex reasoning (architecture, review)</li>
+<li>Set <code>maxTurns</code> to prevent runaway agent loops</li>
+<li>Use <code>disallowedTools</code> for read-only agents (e.g., reviewers that should not modify code)</li>
+<li>Agent teams coordinate via shared task lists -- enable experimentally</li>
+</ul>
+<h2 id="common-questions">Common Questions<a class="anchor" href="#common-questions">#</a></h2>
+<p><strong>What are subagents and how do they work?</strong>
+Subagents are specialized AI assistants that Claude Code spawns to handle subtasks. Each subagent runs in its own isolated context with custom prompts, tool restrictions, and model selection. Built-in subagents include Explore (Haiku, read-only), Plan (research), and general-purpose. Custom subagents are defined as markdown files in <code>.claude/agents/</code>.</p>
+<p><strong>How do Agent Teams work?</strong>
+Agent Teams enable multiple independent agents coordinating via shared task lists. Each agent runs in its own context, optionally in git worktree isolation for parallel development without conflicts. Enable with <code>CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1</code>. In Cowork, this coordinator + sub-agent architecture is built in.</p>
+<p><strong>How does agent memory work?</strong>
+Agents can maintain persistent cross-session knowledge. Three scopes: <code>user</code> (cross-project at <code>~/.claude/agent-memory/&lt;name&gt;/</code>), <code>project</code> (team-shared via git), and <code>local</code> (personal, per-project). The agent writes its own memory, which loads at session start.</p>
+<p><strong>When should I use an agent vs a skill?</strong>
+Use an agent when you need context isolation, persistent memory, MCP server access, or parallel execution. Use a skill when you need inline instructions that auto-invoke based on task context. Skills with <code>context: fork</code> bridge the gap by running in a separate context like an agent.</p>
+  </div>
+  <div class="tab-panel" data-tab-panel="howto">
+
+<h2 id="how-to-guides">How-To Guides<a class="anchor" href="#how-to-guides">#</a></h2>
+<div class="callout callout-info">
+  <div class="callout-title">Info</div>
+  <p>Step-by-step guides for Agents are coming in Phase 4.</p>
+</div>
+<p>Planned guides:</p>
+<ul>
+<li><p>How to create a custom agent -- <em>coming soon</em></p>
+</div>
+<div class="tab-panel" data-tab-panel="reference"></li>
+</ul>
+<h2 id="technical-reference">Technical Reference<a class="anchor" href="#technical-reference">#</a></h2>
+<div class="callout callout-info">
+  <div class="callout-title">Info</div>
+  <p>Detailed reference specs for Agents are coming in Phase 4.</p>
+</div>
+<p>Planned references:</p>
+<ul>
+<li><p>Agent file format spec (all fields, validation rules) -- <em>coming soon</em></p>
+</li>
+<li><p>Environment variables reference -- <em>coming soon</em></p>
+</div>
+</div></li>
+</ul>
+<h2 id="related">Related<a class="anchor" href="#related">#</a></h2>
+<ul>
+<li><a href="skills.html">Skills</a> -- Skills provide reusable instructions; agents provide isolated execution contexts</li>
+<li><a href="plugins.html">Plugins</a> -- Plugins can bundle agent definitions alongside skills</li>
+<li><a href="hooks.html">Hooks</a> -- Agents can include scoped hooks in their frontmatter</li>
+<li><a href="mcp.html">MCP</a> -- Agents can declare their own MCP servers</li>
+</ul>
 
     </article>
   </main>
