@@ -9,26 +9,38 @@ section: topics
 
 # Memory System
 
+<div class="tabs">
+  <div class="tab-group">
+    <button class="tab-btn active" data-tab="concept">Concept</button>
+    <button class="tab-btn" data-tab="howto">How-To</button>
+    <button class="tab-btn" data-tab="reference">Reference</button>
+  </div>
+  <div class="tab-panel active" data-tab-panel="concept">
+
 ## Overview
+
+Memory is how Claude remembers things across sessions -- the system for persisting context beyond a single conversation. Without memory, every Claude session would start from zero, requiring you to re-explain your project's conventions, preferences, and quirks each time.
 
 Claude's memory system operates across four layers, each with different scope, persistence, and authorship. Together they ensure Claude retains project context, user preferences, and learned patterns across sessions -- without requiring you to repeat yourself.
 
-The layers range from project-wide CLAUDE.md files that the whole team shares, to per-agent memory that individual agents maintain autonomously. Understanding which layer to use is key to effective long-term Claude usage.
+Understanding which layer to use is key to effective long-term Claude usage.
 
 ## How It Works
 
+### The 4-Layer Architecture
+
 Claude's memory system has four distinct layers:
 
-| System | Who Writes | Who Reads | Scope |
-|--------|-----------|-----------|-------|
-| **CLAUDE.md** | You (the developer) | Claude + all agents | Project-wide |
-| **Auto-memory** | Claude (automatically) | Claude only | Per-project, per-user |
-| **/memory command** | You (manually) | Claude only | Per-project, per-user |
-| **Agent memory** | The agent itself | That specific agent only | Configurable |
+| Layer | Who Writes | Who Reads | Scope | Persistence |
+|-------|-----------|-----------|-------|-------------|
+| **CLAUDE.md** | You (the developer) | Claude + all agents | Project-wide | Always loaded |
+| **Auto-memory** | Claude (automatically) | Claude only | Per-project, per-user | First 200 lines loaded |
+| **/memory command** | You (manually) | Claude only | Per-project, per-user | Written to auto-memory file |
+| **Agent memory** | The agent itself | That specific agent only | Configurable | Loaded at agent startup |
 
 ### In Claude Code
 
-**CLAUDE.md** is the foundation of the memory system. It's a markdown file you write and maintain, loaded at every session start. All agents in the project can read it. See the [Projects](projects.html) page for full details.
+**CLAUDE.md** is the foundation of the memory system. It's a markdown file you write and maintain, loaded at every session start. All agents in the project can read it. It is never compacted -- critical information here is always available. See the [Projects](projects.html) page for full details.
 
 **Auto-memory** is Claude's own learning journal. When Claude discovers important patterns during a session -- your preferred naming conventions, common mistakes to avoid, project quirks -- it can save them automatically:
 
@@ -38,13 +50,13 @@ Claude's memory system has four distinct layers:
 
 The first 200 lines of the memory file are auto-loaded at session start. Toggle auto-memory with the `/memory` command.
 
-You can also instruct Claude to remember things explicitly:
+You can also instruct Claude to remember things explicitly using the **/memory command**:
 
 ```
 > "Remember: always use our custom Button component from @/components/ui, never raw HTML buttons"
 ```
 
-This persists in the memory file and is available in future sessions.
+This persists in the memory file and is available in future sessions. The /memory command writes to the same auto-memory file -- the distinction is whether Claude writes automatically or you write explicitly.
 
 **Agent memory** allows individual agents to maintain their own persistent knowledge. Memory scope is configured in the agent's frontmatter:
 
@@ -70,42 +82,24 @@ Claude Chat uses **Projects** as its memory mechanism:
 - **Folder-specific instructions** provide context when working in specific directories
 - Plugin configurations also contribute to Cowork's contextual awareness
 
-## Configuration
+## When to Use Each Layer
 
-### Controlling Auto-Memory
+Each memory layer serves a different purpose. Here is when to use each:
 
-Toggle auto-memory on or off during a session:
+- **CLAUDE.md** -- Project standards, coding conventions, architecture decisions, workflow instructions. Use for anything the whole team should know. This is the most reliable layer because it is always loaded and never compacted.
+- **Auto-memory** -- Let Claude learn your preferences organically. Good for personal patterns that emerge over time (naming preferences, common mistakes to avoid, project quirks).
+- **/memory command** -- Important one-off facts you want Claude to remember: "my API key format is X", "always use tabs not spaces in this project", "the staging server is at deploy.example.com".
+- **Agent memory** -- Specialized knowledge for custom agents that need to accumulate expertise over time. An agent that reviews PRs might learn your team's review standards across sessions.
 
-```
-/memory
-```
+### What Persists and What Doesn't
 
-Auto-memory files are stored per-project, per-user. They are gitignored by default since they contain personal observations.
-
-### CLAUDE.md Loading in Monorepos
-
-Understanding how CLAUDE.md loads is critical for monorepo setups:
-
-- **UP** -- Claude walks from the current working directory to the repo root at startup, loading all CLAUDE.md files found
-- **DOWN** -- Subdirectory CLAUDE.md files load lazily when Claude reads files in that directory
-- **SIBLING** -- Never loads (directories at the same level are independent)
-
-This means a monorepo can have a root CLAUDE.md with shared conventions plus package-specific CLAUDE.md files that load on demand.
-
-### Memory File Format
-
-Memory files are plain markdown. Claude writes them in a structured format:
-
-```markdown
-## Learned Preferences
-- This project uses pnpm, not npm
-- Tests go in __tests__/ directory
-- Always use the custom Button component from @/components/ui
-
-## Project Patterns
-- API routes follow REST conventions in src/app/api/
-- Database migrations use Prisma, never raw SQL
-```
+| Item | Survives session restart? | Scope |
+|------|--------------------------|-------|
+| CLAUDE.md files | Yes (always loaded) | Project-wide |
+| Auto-memory | Yes (first 200 lines) | Per-project, per-user |
+| Agent memory | Yes (at agent startup) | Per-agent |
+| Conversation history | No (fresh each session) | Session only |
+| Session transcripts | Stored locally, resumable with `claude --resume` | Local |
 
 ## Best Practices
 
@@ -131,6 +125,37 @@ Most likely, context window compression occurred. When a conversation exceeds th
 
 **What persists between sessions and what doesn't?**
 CLAUDE.md files always load. Auto-memory loads (first 200 lines). Agent memory loads for that agent. Conversation history does NOT persist -- each session starts fresh. Session transcripts are stored locally and can be resumed with `claude --resume`.
+
+  </div>
+  <div class="tab-panel" data-tab-panel="howto">
+
+## How-To Guides
+
+> [!INFO]
+> Step-by-step guides for Memory are coming in Phase 4.
+
+Planned guides:
+- Setting up effective CLAUDE.md files -- _coming soon_
+- Configuring agent memory scopes -- _coming soon_
+- Managing auto-memory and the /memory command -- _coming soon_
+- Memory strategies for monorepos -- _coming soon_
+
+  </div>
+  <div class="tab-panel" data-tab-panel="reference">
+
+## Technical Reference
+
+> [!INFO]
+> Detailed reference specs for Memory are coming in Phase 4.
+
+Planned references:
+- Memory file locations and format -- _coming soon_
+- Auto-memory loading behavior and limits -- _coming soon_
+- Agent memory scope configuration -- _coming soon_
+- CLAUDE.md loading order in monorepos -- _coming soon_
+
+  </div>
+</div>
 
 ## Related
 

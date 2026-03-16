@@ -9,27 +9,50 @@ section: topics
 
 # Settings Hierarchy
 
+<div class="tabs">
+  <div class="tab-group">
+    <button class="tab-btn active" data-tab="concept">Concept</button>
+    <button class="tab-btn" data-tab="howto">How-To</button>
+    <button class="tab-btn" data-tab="reference">Reference</button>
+  </div>
+  <div class="tab-panel active" data-tab-panel="concept">
+
 ## Overview
 
-Settings control Claude Code's behavior at multiple levels, from organization-wide enforcement down to per-session CLI arguments. The settings hierarchy follows a strict precedence order -- higher-priority settings always override lower ones, ensuring that enterprise policies can't be bypassed by individual users while still allowing personal customization within approved boundaries.
+Settings are the configuration hierarchy that controls Claude Code's behavior -- how different scopes of settings merge and override each other. From organization-wide enforcement down to per-session CLI arguments, the settings hierarchy follows a strict precedence order where higher-priority settings always win.
+
+This matters because it lets teams enforce standards while individuals customize their experience. An enterprise admin can mandate security policies that no developer can bypass, while each developer can still set their own model preferences and tool permissions within those boundaries.
 
 Settings cover everything from model selection and permission modes to tool restrictions, MCP server policies, and 140+ environment variables.
 
 ## How It Works
 
+### The 5-Level Precedence
+
+Settings are resolved in a strict priority order. Higher priority always overrides lower:
+
+| Priority | Source | Scope | Who Controls |
+|----------|--------|-------|-------------|
+| **1 (highest)** | Managed settings (MDM/Registry) | Organization-wide | Admins only |
+| **2** | CLI arguments | Current session | Developer |
+| **3** | `.claude/settings.local.json` | Project (personal) | Developer |
+| **4** | `.claude/settings.json` | Project (shared via git) | Team |
+| **5 (lowest)** | `~/.claude/settings.json` | User-wide | Developer |
+
+Managed settings always win -- they cannot be overridden by any lower-priority source. This makes them the enforcement mechanism for enterprise policies.
+
+### Why This Matters
+
+The settings hierarchy enables a layered approach to configuration:
+
+- **Enterprise security teams** set managed policies: which MCP servers are allowed, which tools are denied, whether bypass mode is disabled
+- **Team leads** configure shared project settings: approved tool permissions, MCP servers, hooks for linting
+- **Individual developers** add personal overrides: model preferences, additional tool permissions, personal MCP servers
+- **Per-session needs** are handled by CLI flags: temporary model switches, one-off permission modes
+
+Each layer adds to (or overrides) the layers below it. No lower layer can undo a higher layer's restrictions.
+
 ### In Claude Code
-
-Settings are resolved in a strict priority order:
-
-| Priority | Location | Scope |
-|----------|----------|-------|
-| **1 (highest)** | Managed settings (MDM/Registry) | Organization-wide |
-| **2** | CLI arguments | Current session |
-| **3** | `.claude/settings.local.json` | Project (personal) |
-| **4** | `.claude/settings.json` | Project (shared via git) |
-| **5 (lowest)** | `~/.claude/settings.json` | User-wide |
-
-Managed settings always win -- they can't be overridden by any lower-priority source. This makes them the enforcement mechanism for enterprise policies.
 
 **Permission rules** use an allow/ask/deny model with wildcard matching:
 
@@ -72,6 +95,16 @@ Claude Chat settings are managed through the web interface:
 - **Customize menu** -- Global instructions, connector controls, plugin management
 - **Plugin settings** -- Each installed plugin can include default settings
 - **Internet access toggle** -- Users control whether Cowork can access the web
+
+## When to Use Each Level
+
+Choose the right settings level for your use case:
+
+- **Managed settings** (enterprise) -- Security policies that must be enforced organization-wide: allowed/denied MCP servers, prohibited tools, mandatory audit hooks. Only admins can set these.
+- **CLI flags** -- Temporary overrides for specific tasks: `claude --model haiku` for a quick search, `claude --permission-mode plan` for read-only exploration. These don't persist.
+- **settings.local.json** (project, personal) -- Your personal project preferences that shouldn't be shared: additional tool permissions for your workflow, personal MCP servers, model preferences. Automatically gitignored.
+- **settings.json** (project, shared) -- Team-wide project settings: approved tool permissions, shared MCP server configs, linting hooks. Check this into git.
+- **User settings** (~/.claude/settings.json) -- Global personal defaults that apply across all projects: your default model, commonly used tool permissions, personal MCP servers.
 
 ## Configuration
 
@@ -203,6 +236,37 @@ Managed (MDM) > CLI arguments > `.claude/settings.local.json` (personal project)
 
 **How do I configure the model and thinking behavior?**
 Use `/model` during a session, `ANTHROPIC_MODEL` env var for persistent override, or `model` in skill/agent frontmatter for per-task override. Control thinking with `MAX_THINKING_TOKENS`. Set effort level with `CLAUDE_CODE_EFFORT_LEVEL` (Low/Med/High).
+
+  </div>
+  <div class="tab-panel" data-tab-panel="howto">
+
+## How-To Guides
+
+> [!INFO]
+> Step-by-step guides for Settings are coming in Phase 4.
+
+Planned guides:
+- Configuring project-shared settings for your team -- _coming soon_
+- Setting up managed enterprise policies -- _coming soon_
+- Customizing model selection and thinking behavior -- _coming soon_
+- Managing permissions with allow/deny rules -- _coming soon_
+
+  </div>
+  <div class="tab-panel" data-tab-panel="reference">
+
+## Technical Reference
+
+> [!INFO]
+> Detailed reference specs for Settings are coming in Phase 4.
+
+Planned references:
+- Complete settings.json schema -- _coming soon_
+- All 140+ environment variables -- _coming soon_
+- Managed settings deployment guide -- _coming soon_
+- Permission mode reference -- _coming soon_
+
+  </div>
+</div>
 
 ## Related
 
