@@ -40,18 +40,15 @@ scripts/
     validate.sh <- Helper scripts (optional)
 ```
 
-The YAML frontmatter controls how the skill behaves. The 10 frontmatter fields define the skill's identity, permissions, and execution context:
+The YAML frontmatter controls how the skill behaves. There are **10 frontmatter fields** that define the skill's identity, permissions, and execution context. The most important ones:
 
-- **`name`** -- Display name and `/slash` command identifier
-- **`description`** -- The most important field. Controls when Claude auto-invokes the skill via progressive disclosure. Write a clear, specific description that matches the tasks you want the skill to handle.
+- **`name`** -- Display name and `/slash` command identifier (max 64 chars, lowercase/hyphens)
+- **`description`** -- Controls when Claude auto-invokes the skill via progressive disclosure. Write a clear, specific description that matches the tasks you want the skill to handle.
 - **`allowed-tools`** -- Restricts which tools the skill can use. No permission prompts for listed tools.
 - **`model`** -- Override the model used (e.g., `haiku` for cheap/fast tasks, `opus` for complex reasoning).
 - **`context: fork`** -- Run the skill in an isolated subagent context, giving it behavior similar to an agent.
-- **`hooks`** -- Attach lifecycle hooks scoped to this skill only.
-- **`argument-hint`** -- Autocomplete hint shown in the `/` menu.
-- **`user-invocable`** -- Whether the skill appears in the `/` menu.
-- **`disable-model-invocation`** -- Prevent auto-invocation (require explicit `/` command).
-- **`agent`** -- Subagent type when used with `context: fork`.
+
+For the complete frontmatter specification with all 10 fields, types, defaults, and validation rules, see the **Reference** tab.
 
 The resolution order for how Claude chooses between different extension types:
 1. **Skill** (inline) -- auto-invoked based on description match
@@ -130,26 +127,260 @@ Three strategies: (1) project-level via git in `.claude/skills/`, (2) bundle int
   </div>
   <div class="tab-panel" data-tab-panel="howto">
 
-## How-To Guides
+## How to Create a Skill with Correct Frontmatter
 
-> [!INFO]
-> Step-by-step guides for Skills are coming in Phase 4.
+Build a reusable skill that Claude auto-invokes based on task context, or invoke it manually with a `/` command.
 
-Planned guides:
-- How to create a skill with correct frontmatter -- _coming soon_
-- How to configure CLAUDE.md for a project -- _coming soon_
+### Prerequisites
+
+- Claude Code installed and working (`claude --version`)
+- A project with a `.claude/` directory (or willingness to create one)
+- A repeatable process you want Claude to follow consistently
+
+### Step 1: Create the Skill Directory
+
+```bash
+mkdir -p .claude/skills
+```
+
+This creates the project-level skills directory. Skills placed here are shared with your team via git.
+
+### Step 2: Create the Skill File with Frontmatter
+
+Create a file at `.claude/skills/deploy-checker.md` with complete YAML frontmatter:
+
+```yaml
+---
+name: deploy-checker
+description: Validates deployment readiness by checking test status, lint results, and environment configuration before pushing to production
+argument-hint: "[environment]"
+disable-model-invocation: false
+user-invocable: true
+allowed-tools: Read, Grep, Glob, Bash
+model: sonnet
+context: fork
+agent: general-purpose
+hooks:
+  PostToolUse:
+    - matcher: "Bash"
+      hooks:
+        - type: command
+          command: "./scripts/validate.sh"
+---
+```
+
+**Key fields explained:**
+- **`name`** -- The `/` command name. Must be lowercase with hyphens, max 64 characters.
+- **`description`** -- Controls when Claude auto-invokes this skill. Be specific about what tasks it handles.
+- **`allowed-tools`** -- Restricts the skill to only these tools. No permission prompts for listed tools.
+- **`context: fork`** -- Runs the skill in an isolated subagent context so it does not pollute your main session.
+
+### Step 3: Write the Skill Body
+
+Below the frontmatter, add the markdown instructions that tell Claude what to do:
+
+```markdown
+# Deploy Checker
+
+You are a deployment readiness validator. When invoked, check the following
+for the target environment (provided as $ARGUMENTS or defaulting to "staging"):
+
+## Checks to Run
+
+1. **Test status** -- Run `npm test` and verify all tests pass
+2. **Lint results** -- Run `npm run lint` and verify zero errors
+3. **Environment config** -- Verify `.env.$ARGUMENTS` exists and has all required variables
+4. **Build** -- Run `npm run build` and verify it succeeds
+5. **Git status** -- Verify no uncommitted changes
+
+## Output Format
+
+Provide a structured report:
+- Environment: $ARGUMENTS
+- Tests: PASS/FAIL (count)
+- Lint: PASS/FAIL (error count)
+- Config: PASS/FAIL (missing vars)
+- Build: PASS/FAIL
+- Git: CLEAN/DIRTY
+
+End with a clear GO / NO-GO recommendation.
+```
+
+### Step 4: Test the Skill
+
+Invoke the skill in Claude Code using the `/` command:
+
+```
+/deploy-checker staging
+```
+
+Claude will run in a forked context (because of `context: fork`), execute the checks using only the allowed tools, and produce a deployment readiness report.
+
+You can also let Claude auto-invoke it. When you say something like "check if we're ready to deploy to production," the description match triggers the skill automatically.
+
+### Step 5: Create a Personal Skill for Cross-Project Reuse
+
+For skills you want available in every project, create them in your home directory:
+
+```bash
+mkdir -p ~/.claude/skills
+```
+
+Create `~/.claude/skills/git-workflow.md`:
+
+```yaml
+---
+name: git-workflow
+description: Follows the team git workflow for creating branches, commits, and pull requests
+user-invocable: true
+allowed-tools: Bash
+---
+
+# Git Workflow
+
+Follow these steps for any code change:
+
+1. Create a feature branch: `git checkout -b feature/$ARGUMENTS`
+2. Make changes and commit with conventional commit messages
+3. Push and create a PR with a descriptive title and body
+```
+
+Personal skills are available in all projects but have lower priority than project-level skills.
+
+### Verify It Works
+
+- The skill appears in the `/` command list when you type `/deploy` in Claude Code
+- Running `/deploy-checker staging` executes the checks and produces a report
+- Claude auto-invokes the skill when you describe a deployment readiness task
+
+### Troubleshooting
+
+- **Skill not appearing in `/` menu:** Check the `name` field -- it must be max 64 characters, lowercase letters and hyphens only. Ensure the file is at `.claude/skills/deploy-checker.md` (not nested deeper).
+- **Frontmatter parse errors:** Verify YAML syntax -- proper indentation, no tabs, strings with special characters quoted. Use a YAML linter if unsure.
+- **Skill not auto-invoking:** The `description` field controls auto-invocation. Make it more specific to the tasks you want matched. If `disable-model-invocation: true`, auto-invocation is disabled.
+- **Tools not available:** Check `allowed-tools` -- only listed tools are available. Omit this field to allow all tools.
+- **Character budget exceeded:** Skills have a 15,000-character budget by default. Override with the `SLASH_COMMAND_TOOL_CHAR_BUDGET` environment variable.
+
 
   </div>
   <div class="tab-panel" data-tab-panel="reference">
 
-## Technical Reference
+## Skill Frontmatter Specification
 
-> [!INFO]
-> Detailed reference specs for Skills are coming in Phase 4.
+### File Location
 
-Planned references:
-- Skill frontmatter spec (all fields, validation rules) -- _coming soon_
-- Environment variables reference -- _coming soon_
+| Scope | Path | Visibility |
+|-------|------|------------|
+| Project | `.claude/skills/*.md` | Shared via git, team-wide |
+| Personal | `~/.claude/skills/*.md` | Your own, all projects |
+| Plugin | `<plugin>/skills/*/SKILL.md` | Via plugin installation |
+
+**Discovery priority:** Enterprise > Personal > Project > Plugin.
+
+### Complete Frontmatter Example
+
+```yaml
+---
+name: deploy-checker
+description: Validates deployment readiness before pushing to production
+argument-hint: "[environment]"
+disable-model-invocation: false
+user-invocable: true
+allowed-tools: Read, Grep, Glob, Bash
+model: sonnet
+context: fork
+agent: general-purpose
+hooks:
+  PostToolUse:
+    - matcher: "Bash"
+      hooks:
+        - type: command
+          command: "./scripts/validate.sh"
+---
+```
+
+### Field Reference
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `name` | string | Yes | N/A | Display name and `/` command identifier. Max 64 characters, lowercase letters and hyphens only (`[a-z0-9-]+`). |
+| `description` | string | Yes | N/A | Controls auto-invocation via progressive disclosure. Max 1,024 characters. Must not contain XML tags. |
+| `argument-hint` | string | No | `""` | Autocomplete hint shown after the `/name` in the command menu (e.g., `"[environment]"`). |
+| `disable-model-invocation` | boolean | No | `false` | When `true`, prevents Claude from auto-invoking this skill. Requires explicit `/name` command. |
+| `user-invocable` | boolean | No | `true` | When `false`, hides the skill from the `/` menu. Used for skills that should only be auto-invoked. |
+| `allowed-tools` | string list | No | all tools | Comma-separated list of tools the skill can use. No permission prompts for listed tools. |
+| `model` | string | No | inherited | Override the model: `haiku`, `sonnet`, `opus`, or a specific model ID. |
+| `context` | enum | No | `inherit` | `fork` runs in an isolated subagent context. `inherit` runs in the main session context. |
+| `agent` | string | No | `"general-purpose"` | Subagent type when `context: fork`. Can reference a custom agent file. |
+| `hooks` | object | No | none | Lifecycle hooks scoped to this skill only. Uses the same nested hook schema as settings.json. |
+
+### String Substitutions
+
+These variables are available in the skill body (markdown instructions):
+
+| Variable | Description |
+|----------|-------------|
+| `$ARGUMENTS` | The full argument string passed after the `/name` command |
+| `$ARGUMENTS[N]` | The Nth argument (0-indexed) |
+| `$N` | Shorthand for `$ARGUMENTS[N]` (e.g., `$0`, `$1`) |
+| `${CLAUDE_SESSION_ID}` | The current session identifier |
+| `${CLAUDE_SKILL_DIR}` | Absolute path to the directory containing this skill file |
+
+### Validation Rules
+
+- `name` must match `[a-z0-9-]+` and be at most 64 characters
+- `description` must be at most 1,024 characters and must not contain XML tags
+- `allowed-tools` entries must be valid tool names recognized by Claude Code
+- `model` must be a valid model alias (`haiku`, `sonnet`, `opus`) or a full model ID
+- `context` must be either `fork` or `inherit`
+- `hooks` must follow the nested hook configuration schema (see [Hooks Reference](hooks.html))
+- Total skill content (frontmatter + body) is subject to the character budget (default 15,000; override with `SLASH_COMMAND_TOOL_CHAR_BUDGET`)
+
+### Examples
+
+**Minimal skill** (just a name and description):
+
+```yaml
+---
+name: code-review
+description: Reviews code changes for quality, security, and style issues
+---
+
+Review the code changes in the current branch. Check for:
+- Security vulnerabilities
+- Performance issues
+- Style violations
+- Missing error handling
+```
+
+**Full skill** (all fields):
+
+```yaml
+---
+name: deploy-checker
+description: Validates deployment readiness before pushing to production
+argument-hint: "[environment]"
+disable-model-invocation: false
+user-invocable: true
+allowed-tools: Read, Grep, Glob, Bash
+model: sonnet
+context: fork
+agent: general-purpose
+hooks:
+  PostToolUse:
+    - matcher: "Bash"
+      hooks:
+        - type: command
+          command: "./scripts/validate.sh"
+---
+
+# Deploy Checker
+
+Validate deployment readiness for the $ARGUMENTS environment.
+Run tests, lint, build, and environment config checks.
+Output a GO / NO-GO recommendation.
+```
+
 
   </div>
 </div>
